@@ -306,3 +306,5 @@ while True:
         ser.write("\r".encode())
         print("Wait Response Command for 3s...")
         time.sleep(3)
+
+#이거 왜 그냥 올라감
