@@ -1,6 +1,35 @@
-<!DOCTYPE html>
-
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
 {% extends 'base.html' %}
 {% block content %}
-<h1>여기서 작업하면 될듯</h1>
+<body style="background-color: dark;">
+    <div class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
+        <div class="container-xxl p-5 w-100 h-100 ">
+            <div class="row" style="height: 100%;">
+                <div class="col-10" style="background-color:aquamarine">
+                <div class="row" style="height: 70%;">
+                    <div class="col-10" style="background-color: brown;">
+                        11
+                    </div>
+                    <div class="col-2" style="background-color: rgb(225, 148, 148);">
+                        22
+                    </div>
+                </div>
+                <div class="row" style="height: 30%; background-color: blue;">
+                    상세내용
+                </div>
+                </div>
+                <div class="col-2"  style="background-color:aqua">
+                Column
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 {% endblock %}
