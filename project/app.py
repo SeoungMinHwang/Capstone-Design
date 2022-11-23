@@ -2,8 +2,8 @@ from flask import Flask, render_template, Response
 import cv2
 
 app = Flask(__name__)
-camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
-
+#camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
+camera = cv2.VideoCapture(0)
 def gen_frames():  
     while True:
         success, frame = camera.read()
@@ -21,7 +21,6 @@ def video_feed():
 
 @app.route('/')
 def index():
-
     return render_template('index.html')
 
 
