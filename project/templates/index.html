@@ -1,6 +1,5 @@
-
 <head>
-    <title>Bootstrap Example</title>
+    <title>CCTV Monitoring</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -11,25 +10,21 @@
 {% block content %}
 <body style="background-color: dark;">
     <div class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
-        <div class="container-xxl p-5 w-100 h-100 ">
         <div class="container-xxl p-5 w-75 h-100 ">
             <div class="row" style="height: 100%;">
-                <div class="col-10" style="background-color:aquamarine">
-                <div class="row" style="height: 70%;">
-                    <div class="col-10" style="background-color: brown;">
-                        11
-                    </div>
-                    <div class="col-2" style="background-color: rgb(225, 148, 148);">
-                        22
                 <div class="col-10">
                 <div class="row" style="height: 70%;" >
+                    <!-- CCTV 화면 -->
                     <div class="col-10" style="background-color:blueviolet;">
+                        <!-- <video controls autoplay="autoplay" muted style="height: 100%; width: 100%; object-fit: fill;">
+                            <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4">
+                        </video> -->
                         <div class="ratio" style="width: 100%; height: 100%;">
                             <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
                             <!-- <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4"> -->
                             <img src="{{ url_for('video_feed') }}" width="100%">
-                        </div>
-                    </div>
+                        </div>                    </div>
+                    <!-- CCTV 목록 -->
                     <div class="col-2"> 
                         <div class="btn-group-vertical" style="width: 100%; height:100%">
                             <button type="button" class="btn btn-dark">남악1</button>
@@ -39,18 +34,24 @@
                             <button type="button" class="btn btn-dark">하당1</button>
                             <button type="button" class="btn btn-dark">하당2</button>
                           </div>
-                        </div>
              </div>
                 </div>
+                <!-- 상세내용 -->
                 <div class="row" style="height: 30%; background-color: blue;">
                     상세내용
                 </div>
                 </div>
+                <!-- 처리결과 -->
                 <div class="col-2"  style="background-color:aqua">
-                Column
+                처리결과
                 </div>
             </div>
         </div>
     </div>
+    <!-- <script>
+        function toggleVideo() {
+          document.getElementById("cctv").src = { url_for('static', filename="example2.mp4") };
+        }
+    </script> -->
 </body>
 {% endblock %}
