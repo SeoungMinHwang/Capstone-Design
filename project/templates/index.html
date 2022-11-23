@@ -1,5 +1,5 @@
 <head>
-    <title>Bootstrap Example</title>
+    <title>CCTV Monitoring</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -14,13 +14,14 @@
             <div class="row" style="height: 100%;">
                 <div class="col-10">
                 <div class="row" style="height: 70%;" >
+                    <!-- CCTV 화면 -->
                     <div class="col-10" style="background-color:blueviolet;">
-                        <div class="ratio" style="width: 100%; height: 100%;">
-                            <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
+                        <!-- <video controls autoplay="autoplay" muted style="height: 100%; width: 100%; object-fit: fill;">
                             <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4">
-                            보이지않아~~무엇도~
-                        </div>
+                        </video> -->
+                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/fCO7f0SmrDc" title="(여자)아이들((G)I-DLE) - 'Nxde' Official Music Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
+                    <!-- CCTV 목록 -->
                     <div class="col-2"> 
                         <div class="btn-group-vertical" style="width: 100%; height:100%">
                             <button type="button" class="btn btn-dark">남악1</button>
@@ -32,15 +33,22 @@
                           </div>
              </div>
                 </div>
+                <!-- 상세내용 -->
                 <div class="row" style="height: 30%; background-color: blue;">
                     상세내용
                 </div>
                 </div>
+                <!-- 처리결과 -->
                 <div class="col-2"  style="background-color:aqua">
-                Column
+                처리결과
                 </div>
             </div>
         </div>
     </div>
+    <!-- <script>
+        function toggleVideo() {
+          document.getElementById("cctv").src = { url_for('static', filename="example2.mp4") };
+        }
+    </script> -->
 </body>
 {% endblock %}
