@@ -10,16 +10,27 @@
 {% block content %}
 <body style="background-color: dark;">
     <div class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
-        <div class="container-xxl p-5 w-100 h-100 ">
+        <div class="container-xxl p-5 w-75 h-100 ">
             <div class="row" style="height: 100%;">
-                <div class="col-10" style="background-color:aquamarine">
-                <div class="row" style="height: 70%;">
-                    <div class="col-10" style="background-color: brown;">
-                        11
+                <div class="col-10">
+                <div class="row" style="height: 70%;" >
+                    <div class="col-10" style="background-color:blueviolet;">
+                        <div class="ratio" style="width: 100%; height: 100%;">
+                            <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
+                            <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4">
+                            보이지않아~~무엇도~
+                        </div>
                     </div>
-                    <div class="col-2" style="background-color: rgb(225, 148, 148);">
-                        22
-                    </div>
+                    <div class="col-2"> 
+                        <div class="btn-group-vertical" style="width: 100%; height:100%">
+                            <button type="button" class="btn btn-dark">남악1</button>
+                            <button type="button" class="btn btn-dark">남악2</button>
+                            <button type="button" class="btn btn-dark">목포대1</button>
+                            <button type="button" class="btn btn-dark">목포대2</button>
+                            <button type="button" class="btn btn-dark">하당1</button>
+                            <button type="button" class="btn btn-dark">하당2</button>
+                          </div>
+             </div>
                 </div>
                 <div class="row" style="height: 30%; background-color: blue;">
                     상세내용
