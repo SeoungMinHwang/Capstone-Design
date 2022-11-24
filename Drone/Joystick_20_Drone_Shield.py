@@ -32,6 +32,12 @@ checkSum = 0
 firstRoll = 0
 firstPitch = 0
 
+#추가 변수
+
+drone_state = True #드론 이동 가능 상태
+dmove_direction = "" #이동방향
+fall_detect = False #감지했는지
+
 #-------------------------------------------------
 def checkNextStep():
     global currentStep
@@ -69,17 +75,23 @@ def analog_read(channel):
 def checkThrottle():
     global throttle
     
-    if GPIO.input(switch_list[1]) == 0:
-        if throttle > 59:
-            throttle -= 20
-        elif throttle > 3:
-            throttle -= 4
-    
-    if GPIO.input(switch_list[0]) == 0:
-        if throttle < 20:
-           throttle = 20
-        elif throttle < 181:
-            throttle += 20
+    #하강
+    # if GPIO.input(switch_list[1]) == 0:
+    #     if throttle > 59:
+    #         throttle -= 20
+    #     elif throttle > 3:
+    #         throttle -= 4
+    #
+    #상승
+    # if GPIO.input(switch_list[0]) == 0:
+    #     if throttle < 20:
+    #        throttle = 20
+    #     elif throttle < 181:
+    #         throttle += 20
+    if throttle < 20:  #처음 시작시 or 바닥에 있으면 20까지
+        throttle = 20
+    elif throttle < 80: #80밑이면 20씩 올려서 유지
+        throttle += 20
 
 def checkPitch():
     global pitch
@@ -204,20 +216,130 @@ for i in range(6):
 
 print("\nRaspberryPi Drone Joystick Shield Started!\n")
 
-#컨트롤러 버튼입력에 따른 이동
+# #컨트롤러 버튼입력에 따른 이동
+# while True:
+#     if currentStep == 0:
+#         checkCrLfProcess()
+    
+#     elif currentStep == 1:
+#         if GPIO.input(switch_list[4]) == 0:
+#             ser.flushOutput()
+#             ser.flushInput()
+#             uartString = ""
+#             firstRoll = analog_read(2)
+#             firstPitch = analog_read(3)
+#             ser.write("atd".encode())
+#             ser.write("083a5c1f15d5".encode())
+#             ser.write("\r".encode())
+#             checkNextStep()
+    
+#     elif currentStep == 2:
+#         if uartString.find("\r\nOK\r\n",0,6) == 0:
+#             print("Wait Connect")
+#             checkNextStep()
+
+#         else:
+#             print("Connect 1 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 3:
+#         if uartString.find("\r\nCONNECT ",0,10) == 0:
+#             print("Connect OK")
+#             time.sleep(0.3)
+#             uartString = ""
+#             currentStep += 1
+
+#         else:
+#             print("Connect 2 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 4:
+#         checkThrottle()
+#         checkPitch()
+#         checkRoll()
+#         checkYaw()
+#         checkEmergency()
+#         checkCRC()
+#         sendDroneCommand()
+#         time.sleep(0.1)
+
+#         if GPIO.input(switch_list[5]) == 0:
+#             print("Request Disconnect")
+#             time.sleep(1)
+#             ser.flushInput()
+#             uartString = ""
+#             ser.write("ath".encode())
+#             ser.write("\r".encode())
+#             checkNextStep()
+    
+#     elif currentStep == 5:
+#         if uartString.find("\r\nOK\r\n",0,6) == 0:
+#             print("Wait Disconnect")
+#             checkNextStep()
+
+#         else:
+#             print("Disconnect 1 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 6:
+#         if uartString.find("\r\nDISCONNECT",0,12) == 0:
+#             print("Disconnect 1 OK")
+#             checkNextStep()
+
+#         else:
+#             print("Disconnect 2 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 7:
+#         if uartString.find("\r\nREADY",0,7) == 0:
+#             print("Disconnect 2 OK")
+#             time.sleep(0.3)
+#             uartString = ""
+#             currentStep = 1
+
+#         else:
+#             print("Disconnect 3 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     else:
+#         if ser.inWaiting():
+#             uartString = ""
+#             time.sleep(0.5)
+#             while ser.inWaiting():
+#                 uartString += ser.read().decode()
+
+#             print(uartString)
+#             uartString = ""
+
+#         uartString = input("Enter AT Command: ")
+#         ser.write(uartString.encode())
+#         ser.write("\r".encode())
+#         print("Wait Response Command for 3s...")
+#         time.sleep(3)
+
+#가지 확인
+
+# #드론 자동 이동
+# #--------------------------------------------------------
+
 while True:
     if currentStep == 0:
         checkCrLfProcess()
     
     elif currentStep == 1:
-        if GPIO.input(switch_list[4]) == 0:
+        if drone_state:
             ser.flushOutput()
             ser.flushInput()
             uartString = ""
             firstRoll = analog_read(2)
             firstPitch = analog_read(3)
             ser.write("atd".encode())
-            ser.write("083a5c1f11ac".encode())
+            ser.write("083a5c1f15d5".encode())
             ser.write("\r".encode())
             checkNextStep()
     
@@ -242,7 +364,7 @@ while True:
             print("Connect 2 ERROR")
             uartString = ""
             currentStep = 100
-    
+    #버튼이 눌렸거나 높이 위험 확인 및 이동
     elif currentStep == 4:
         checkThrottle()
         checkPitch()
@@ -310,32 +432,25 @@ while True:
         print("Wait Response Command for 3s...")
         time.sleep(3)
 
-#가지 확인
+# #웹페이지에서 계속해서 출동확인 맡을지>?????
 
-#드론 자동 이동
-#--------------------------------------------------------
-drone_state = False #드론 이동 가능 상태
-dmove_direction = "" #이동방향
-fall_detect = False
-#웹페이지에서 계속해서 출동확인 맡을지>?????
+# if fall_detect:
+#     print("good")
 
-if fall_detect:
-    return 0
+# #if 감지: 
+# # 전원 설정(전원on 및 신호연결)
+# # 이동(왼쪽or 오른쪽or 가운데 , 전원)
 
-#if 감지: 
-# 전원 설정(전원on 및 신호연결)
-# 이동(왼쪽or 오른쪽or 가운데 , 전원)
-
-# 목적: 드론을 방향으로 나아가게한다.
-# 입력: 방향, 전원상태
-# 출력: 드론상태(이동중, 정지), 이동방향
-#이동(방향, 전원):
-#   if 전원:
-#       제자리날기
-#       if (왼쪽 오른쪽 가운데):
-#           방향으로 회전
-#       전진
-#       내려오기
-def moveDrone(dmove_direction):
-    #드론 이동임
-    return 0
+# # 목적: 드론을 방향으로 나아가게한다.
+# # 입력: 방향, 전원상태
+# # 출력: 드론상태(이동중, 정지), 이동방향
+# #이동(방향, 전원):
+# #   if 전원:
+# #       제자리날기
+# #       if (왼쪽 오른쪽 가운데):
+# #           방향으로 회전
+# #       전진
+# #       내려오기
+# def moveDrone(dmove_direction):
+#     #드론 이동임
+#     return 0
