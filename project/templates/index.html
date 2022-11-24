@@ -19,7 +19,15 @@
                         <!-- <video controls autoplay="autoplay" muted style="height: 100%; width: 100%; object-fit: fill;">
                             <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4">
                         </video> -->
-                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/fCO7f0SmrDc" title="(여자)아이들((G)I-DLE) - 'Nxde' Official Music Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="ratio" style="width: 100%; height: 100%;">
+                            <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
+                            <!-- <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4"> -->
+                            <img src="{{ url_for('video_feed') }}" width="100%">
+                            <div class="mask text-light d-flex justify flex-column" style="text-align: right;">
+                                <h1 id="clock">clock</h1>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- CCTV 목록 -->
                     <div class="col-2"> 
@@ -30,13 +38,13 @@
                             <button type="button" class="btn btn-dark">목포대2</button>
                             <button type="button" class="btn btn-dark">하당1</button>
                             <button type="button" class="btn btn-dark">하당2</button>
-                          </div>
-             </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- 상세내용 -->
-                <div class="row" style="height: 30%; background-color: blue;">
-                    상세내용
-                </div>
+                    <div class="row" style="height: 30%; background-color: blue;">
+                        상세내용
+                    </div>
                 </div>
                 <!-- 처리결과 -->
                 <div class="col-2"  style="background-color:aqua">
@@ -50,5 +58,27 @@
           document.getElementById("cctv").src = { url_for('static', filename="example2.mp4") };
         }
     </script> -->
+    <script>
+        var Target = document.getElementById("clock");
+        function clock() {
+            var time = new Date();
+
+            var month = time.getMonth();
+            var date = time.getDate();
+            var day = time.getDay();
+            var week = ['일', '월', '화', '수', '목', '금', '토'];
+
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+
+            Target.innerText = 
+            `${month + 1}월 ${date}일 ${week[day]}요일 ` +
+            `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+                
+        }
+        clock();
+        setInterval(clock, 100);
+    </script>
 </body>
 {% endblock %}
