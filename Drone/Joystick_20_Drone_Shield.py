@@ -359,7 +359,7 @@ while True:
             time.sleep(0.3)
             uartString = ""
             currentStep += 1
-
+#확인
         else:
             print("Connect 2 ERROR")
             uartString = ""
