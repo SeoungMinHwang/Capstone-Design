@@ -1,3 +1,5 @@
+
+
 #-------------------------------------------------
 import serial
 import RPi.GPIO as GPIO
@@ -202,6 +204,7 @@ for i in range(6):
 
 print("\nRaspberryPi Drone Joystick Shield Started!\n")
 
+#컨트롤러 버튼입력에 따른 이동
 while True:
     if currentStep == 0:
         checkCrLfProcess()
@@ -308,3 +311,31 @@ while True:
         time.sleep(3)
 
 #가지 확인
+
+#드론 자동 이동
+#--------------------------------------------------------
+drone_state = False #드론 이동 가능 상태
+dmove_direction = "" #이동방향
+fall_detect = False
+#웹페이지에서 계속해서 출동확인 맡을지>?????
+
+if fall_detect:
+    return 0
+
+#if 감지: 
+# 전원 설정(전원on 및 신호연결)
+# 이동(왼쪽or 오른쪽or 가운데 , 전원)
+
+# 목적: 드론을 방향으로 나아가게한다.
+# 입력: 방향, 전원상태
+# 출력: 드론상태(이동중, 정지), 이동방향
+#이동(방향, 전원):
+#   if 전원:
+#       제자리날기
+#       if (왼쪽 오른쪽 가운데):
+#           방향으로 회전
+#       전진
+#       내려오기
+def moveDrone(dmove_direction):
+    #드론 이동
+    return 0
