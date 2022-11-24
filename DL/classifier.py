@@ -3,8 +3,11 @@ from tkinter import filedialog
 import os
 from PIL import Image, ImageTk
 import cv2
-from predict import predict_info
 from tkinter import messagebox as msg
+from fastai.vision.all import *
+import pathlib
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 width = 550
 height = 450
@@ -17,9 +20,23 @@ win.configure(background="black")
 win.title("BlackSwan")
 win.geometry(f'{width}x{height}')
 win.resizable(False, False)
-
+learn_inf = load_learner('export.pkl')
 
 Label(win, text="Fall Classifier", font=("맑은 고딕", 20, "bold"), fg='white', bg='black').grid(row=0, column=0, padx=5, pady=5)
+
+# print(learn_inf.dls.vocab)
+# 어떤 정보를 분류했는지 나옴
+
+# <---ex--->
+# print(learn_inf.predict('./images/fall_test.jpg'))
+# pred: 예측된 범주(문자열)
+# pred_idx : 에측된 범주의 색인 번호
+# probs : 확률
+def predict_info(img_path):
+    global learn_inf
+    pred, pred_idx, probs = learn_inf.predict(img_path)
+    
+    return (pred, probs[pred_idx])
 
 def open_dialog():
     global img, pred, prob
