@@ -337,5 +337,5 @@ if fall_detect:
 #       전진
 #       내려오기
 def moveDrone(dmove_direction):
-    #드론 이동
+    #드론 이동임
     return 0
