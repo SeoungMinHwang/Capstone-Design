@@ -26,15 +26,16 @@ def open_dialog():
     entered_file.insert(0, file)
 
     
-    if os.path.splitext(file)[1] =='.jpg':
-        img = Image.open(file).convert("RGB")
-        img = img.resize((224, 224))
-        img.save("result.png", 'png')
+    img = Image.open(file).convert("RGB")
+    img = img.resize((224, 224))
+    
+    # tkinter 에서 .jpg 지원안하기 떄문에 .png로 변환 후 적용 
+    # size를 변형했기때문에 어짜피 .png 로 변환안했어도 원본사진을 유지시킬려면 저장해야함
+    img.save("result.png", 'png') # 현재 작업 경로에 저장
         
     img = PhotoImage(file="result.png")
+    os.remove('result.png') 
     label_img.config(image=img)
-    
-    os.remove('result.png')
 
 
 entered_file = Entry(win, width=50)
