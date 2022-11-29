@@ -1,12 +1,15 @@
-from flask import Flask, render_template, Response
-import cv2
+from flask import Flask, render_template, Response, request
+import cv2,camera
 
 app = Flask(__name__)
+camera1,camera2,camera3 = camera.camera_start()
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
-camera = cv2.VideoCapture(0)
+# camera1 = cv2.VideoCapture(0)
+# camera2 = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
+# camera3 = cv2.VideoCapture(1)
 
-def gen_frames():  
+def gen_frames(camera):
     while True:
         success, frame = camera.read()
         if not success:
@@ -17,22 +20,37 @@ def gen_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+@app.route('/video_feed/<string:cctv_section>')
+def video_feed(cctv_section):
+    if cctv_section=='남악1':
+        return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section=='남악2':
+        return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section=='목포대1':
+        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+# CCTV상세정보
+@app.route('/detail')
+def detail():
+    sec = request.args.get('section')
+    return render_template('detail.html', sec=sec)
+# 로그인페이지
 @app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/login')
 def login():
     return render_template('login.html')
-
+# 전체CCTV
 @app.route('/all_cctv')
 def all_cctv():
     return render_template('all_cctv.html')
 
+# 사용자 확인
+# @app.route("/login_confirm",methods=['POST'])
+# def login_confirm():
+#     if (request.form['inputId']=='admin'and request.form['inputPassword']='123'):
+#         session['id'] = id
+#         return redirect(url_for('all_cctv'))
+#     else:
+#         return redirect(url_for('/'))
+
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=3000)
+    app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
     
