@@ -106,8 +106,9 @@ def checkThrottle():
 def checkPitch():
     global pitch
     global throttle
-    if pitch >= 110:
-        while (throttle <= 0) : 
+    if pitch >= 110: #전진이 멈추면 
+        pitch = 100
+        while (throttle <= 0) : #천천히 아래로
             throttle-=10
             checkEmergency()
             checkCRC()
