@@ -1,5 +1,5 @@
 // 확인 사이트 https://makemonument.tistory.com/119
-
+// 소켓통신? https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=zeta0807&logNo=222144886241
 var express = require("express");
 
 var request = require('request');
