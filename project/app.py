@@ -29,11 +29,11 @@ def video_feed(cctv_section):
     elif cctv_section=='목포대1':
         return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='목포대2':
-        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='하당1':
-        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(camera5), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='하당2':
-        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(camera6), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # CCTV상세정보
 @app.route('/detail')
