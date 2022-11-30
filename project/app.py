@@ -40,7 +40,8 @@ def login():
 # 전체CCTV
 @app.route('/all_cctv')
 def all_cctv():
-    return render_template('all_cctv.html')
+    cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2',]
+    return render_template('all_cctv.html',cctv_list=cctv_list)
 
 # 사용자 확인
 # @app.route("/login_confirm",methods=['POST'])
