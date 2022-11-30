@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response, request, redirect, url_for
-import cv2,camera
+import cv2, camera, kakao
+
 
 app = Flask(__name__)
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
@@ -51,6 +52,11 @@ def all_cctv():
     cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2']
     return render_template('all_cctv.html',cctv_list=cctv_list)
 
+#카카오톡 보내기페이지
+@app.route('/kakaosend')
+def kakaosend():
+    return render_template('kakao.html')
+
 # 사용자 확인
 @app.route("/login_confirm",methods=['POST'])
 def login_confirm():
@@ -61,6 +67,13 @@ def login_confirm():
         return redirect(url_for('all_cctv'))
     else:
         return redirect(url_for('login'))
+
+@app.route("/kakaotalk",methods=['POST'])
+def kakaotalk():
+    token = request.form['inputToken']
+    text = request.form['inputText']
+    kakao.sendToMeMessage(token, text)
+    return redirect('kakaosend')
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
