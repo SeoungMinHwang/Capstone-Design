@@ -1,0 +1,23 @@
+<head>
+    <title>카카오톡 메시지 보내기</title>
+</head>
+{% extends 'base.html' %}
+{% block content %}
+<body class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
+    <!-- 위쪽 공간 생성 -->
+    <div class="container" style="height: 10%;"></div>
+    <!-- 로그인 부분 -->
+    <div class="container p-5 align-items-center" style="text-align: center; vertical-align: middle; width: 350px;">
+        <form class="form-signin" action="/kakaotalk" method="post">
+            <img src={{ url_for('static', filename='logo_reverse.ico') }} style="height: 100px; width:100px; margin-bottom: 25px;"/>
+            <h1 class="h3 mb-3 font-weight-normal"></h1>
+            <label for="inputToken" class="sr-only"></label>
+            <input type="text" id="inputToken" class="form-control" name = "inputToken" placeholder="Token" required="" autofocus="">
+            <label for="inputText" class="sr-only"></label><p></p>
+            <input type="text"  style="margin-bottom: 25px" id="inputText" class="form-control" name = "inputText" placeholder="Text" required="">
+            <button class="btn btn-lg btn-secondary btn-block" type="submit" >보내기</button>
+        </form>
+
+    </div>
+</body>
+{% endblock %}

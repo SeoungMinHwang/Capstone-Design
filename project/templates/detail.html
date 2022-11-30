@@ -11,22 +11,19 @@
                 <div class="col-9">
                 <div class="row" style="height: 70%;" >
                     <!-- CCTV 화면 -->
-                    <div class="col-10" style="background-color:blueviolet;">
-                        <!-- <video controls autoplay="autoplay" muted style="height: 100%; width: 100%; object-fit: fill;">
-                            <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4">
-                        </video> -->
-                        <div class="ratio" style="width: 100%; height: 100%;">
-                            <!-- <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe> -->
-                            <!-- <source src={{ url_for('static', filename="example.mp4") }} type="video/mp4"> -->
-                            <img src="{{ url_for('video_feed') }}" width="100%">
-                            <div class="mask text-light d-flex justify flex-column" style="text-align: right;">
-                                <h1 id="clock">clock</h1>
+                    <div class="col" style="background-color:black;">
+                        <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; ">
+                            <img src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
+                            <!-- <div class="mask text-light d-flex justify flex-column">
+                                <h1 class="bottom-right" id="clock">clock</h1>
+                            </div> -->
+                            <div class="mask text-light">
+                                <h1>{{sec}}</h1>
                             </div>
                         </div>
-
                     </div>
                     <!-- CCTV 목록 -->
-                    <div class="col-2"> 
+                    <!-- <div class="col-2"> 
                         <div class="btn-group-vertical" style="width: 100%; height:100%">
                             <button type="button" class="btn btn-dark">남악1</button>
                             <button type="button" class="btn btn-dark">남악2</button>
@@ -35,7 +32,7 @@
                             <button type="button" class="btn btn-dark">하당1</button>
                             <button type="button" class="btn btn-dark">하당2</button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- 날씨, 상세정보, 드론정보 -->
                     <div class="row" style="height: 30%; background-color: blue;">
@@ -48,7 +45,6 @@
                         <div class="col-3" style="background-color:rgb(43, 25, 3)">
                             드론정보
                         </div>
-                        
                     </div>
                 </div>
                 <!-- 처리경과 및 이벤트 테이블 -->
@@ -64,11 +60,6 @@
         </div>
     </div>
     <!-- <script>
-        function toggleVideo() {
-          document.getElementById("cctv").src = { url_for('static', filename="example2.mp4") };
-        }
-    </script> -->
-    <script>
         var Target = document.getElementById("clock");
         function clock() {
             var time = new Date();
@@ -89,6 +80,6 @@
         }
         clock();
         setInterval(clock, 100);
-    </script>
+    </script> -->
 </body>
 {% endblock %}

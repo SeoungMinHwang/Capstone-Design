@@ -74,7 +74,7 @@ def analog_read(channel):
 
 def checkThrottle():
     global throttle
-    global pitch
+    
     #하강
     # if GPIO.input(switch_list[1]) == 0:
     #     if throttle > 59:
@@ -90,62 +90,44 @@ def checkThrottle():
     #         throttle += 20
     if throttle < 20:  #처음 시작시 or 바닥에 있으면 20까지
         throttle = 20
-    elif throttle < 60: #60밑이면 20씩 올려서 유지
+    elif throttle < 60: #80밑이면 20씩 올려서 유지
         throttle += 20
-
-    if throttle >= 60:
-        pitch = 75
-        time.sleep(1)
-        pitch =110
-        
-        
-
-
 
 #전진 후진
 def checkPitch():
     global pitch
-    global throttle
-    if pitch >= 110: #전진이 멈추면 
+    global firstPitch
+
+    secondPitch = analog_read(3)
+
+    if secondPitch < firstPitch - 450:
+        pitch = 75
+    elif secondPitch < firstPitch - 350:
+        pitch = 80
+    elif secondPitch < firstPitch - 250:
+        pitch = 85
+    elif secondPitch < firstPitch - 150:
+        pitch = 90
+    elif secondPitch < firstPitch - 50:
+        pitch = 95
+    elif secondPitch < firstPitch + 50:
         pitch = 100
-        while (throttle <= 0) : #천천히 아래로
-            throttle-=10
-            checkEmergency()
-            checkCRC()
-            sendDroneCommand()
-        exit()
-    # global firstPitch
-
-    # secondPitch = analog_read(3)
-
-    # if secondPitch < firstPitch - 450:
-    #     pitch = 75
-    # elif secondPitch < firstPitch - 350:
-    #     pitch = 80
-    # elif secondPitch < firstPitch - 250:
-    #     pitch = 85
-    # elif secondPitch < firstPitch - 150:
-    #     pitch = 90
-    # elif secondPitch < firstPitch - 50:
-    #     pitch = 95
-    # elif secondPitch < firstPitch + 50:
-    #     pitch = 100
-    # elif secondPitch < firstPitch + 150:
-    #     pitch = 105
-    # elif secondPitch < firstPitch + 250:
-    #     pitch = 110
-    # elif secondPitch < firstPitch + 350:
-    #     pitch = 115
-    # elif secondPitch < firstPitch + 450:
-    #     pitch = 120
-    # else:
-    #     pitch = 125
+    elif secondPitch < firstPitch + 150:
+        pitch = 105
+    elif secondPitch < firstPitch + 250:
+        pitch = 110
+    elif secondPitch < firstPitch + 350:
+        pitch = 115
+    elif secondPitch < firstPitch + 450:
+        pitch = 120
+    else:
+        pitch = 125
 
 #좌우 이동
 def checkRoll():
     global roll
     global firstRoll
-
+    
     secondRoll = analog_read(2)
     
     if secondRoll < firstRoll - 450:
@@ -238,6 +220,113 @@ for i in range(6):
 
 print("\nRaspberryPi Drone Joystick Shield Started!\n")
 
+# #컨트롤러 버튼입력에 따른 이동
+# while True:
+#     if currentStep == 0:
+#         checkCrLfProcess()
+    
+#     elif currentStep == 1:
+#         if GPIO.input(switch_list[4]) == 0:
+#             ser.flushOutput()
+#             ser.flushInput()
+#             uartString = ""
+#             firstRoll = analog_read(2)
+#             firstPitch = analog_read(3)
+#             ser.write("atd".encode())
+#             ser.write("083a5c1f15d5".encode())
+#             ser.write("\r".encode())
+#             checkNextStep()
+    
+#     elif currentStep == 2:
+#         if uartString.find("\r\nOK\r\n",0,6) == 0:
+#             print("Wait Connect")
+#             checkNextStep()
+
+#         else:
+#             print("Connect 1 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 3:
+#         if uartString.find("\r\nCONNECT ",0,10) == 0:
+#             print("Connect OK")
+#             time.sleep(0.3)
+#             uartString = ""
+#             currentStep += 1
+
+#         else:
+#             print("Connect 2 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 4:
+#         checkThrottle()
+#         checkPitch()
+#         checkRoll()
+#         checkYaw()
+#         checkEmergency()
+#         checkCRC()
+#         sendDroneCommand()
+#         time.sleep(0.1)
+
+#         if GPIO.input(switch_list[5]) == 0:
+#             print("Request Disconnect")
+#             time.sleep(1)
+#             ser.flushInput()
+#             uartString = ""
+#             ser.write("ath".encode())
+#             ser.write("\r".encode())
+#             checkNextStep()
+    
+#     elif currentStep == 5:
+#         if uartString.find("\r\nOK\r\n",0,6) == 0:
+#             print("Wait Disconnect")
+#             checkNextStep()
+
+#         else:
+#             print("Disconnect 1 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 6:
+#         if uartString.find("\r\nDISCONNECT",0,12) == 0:
+#             print("Disconnect 1 OK")
+#             checkNextStep()
+
+#         else:
+#             print("Disconnect 2 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     elif currentStep == 7:
+#         if uartString.find("\r\nREADY",0,7) == 0:
+#             print("Disconnect 2 OK")
+#             time.sleep(0.3)
+#             uartString = ""
+#             currentStep = 1
+
+#         else:
+#             print("Disconnect 3 ERROR")
+#             uartString = ""
+#             currentStep = 100
+    
+#     else:
+#         if ser.inWaiting():
+#             uartString = ""
+#             time.sleep(0.5)
+#             while ser.inWaiting():
+#                 uartString += ser.read().decode()
+
+#             print(uartString)
+#             uartString = ""
+
+#         uartString = input("Enter AT Command: ")
+#         ser.write(uartString.encode())
+#         ser.write("\r".encode())
+#         print("Wait Response Command for 3s...")
+#         time.sleep(3)
+
+#가지 확인
 
 # #드론 자동 이동
 # #--------------------------------------------------------
@@ -281,8 +370,8 @@ while True:
             currentStep = 100
     #버튼이 눌렸거나 높이 위험 확인 및 이동
     elif currentStep == 4:
-        checkThrottle() #일정 높이 올라간 뒤 앞으로 이동
-        # checkPitch()
+        checkThrottle()
+        checkPitch()
         checkRoll()
         checkYaw()
         checkEmergency()
