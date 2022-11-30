@@ -1,5 +1,3 @@
-
-
 #-------------------------------------------------
 import serial
 import RPi.GPIO as GPIO
@@ -32,17 +30,6 @@ checkSum = 0
 firstRoll = 0
 firstPitch = 0
 
-#추가 변수
-gogo = 0
-
-drone_state = True #드론 이동 가능 상태
-
-dmove_direction = "" #이동방향
-fall_detect = False #감지했는지
-
-drone_move = False #드론이 이동중인지
-
-goDronego = False
 #-------------------------------------------------
 def checkNextStep():
     global currentStep
@@ -78,38 +65,22 @@ def analog_read(channel):
     return adc_out
 
 def checkThrottle():
-    global drone_move
-    drone_move = True
     global throttle
-    global pitch
-    # switch_list = [22, 27, 17, 23, 24, 25]
-    #하강
-    # if GPIO.input(switch_list[1]) == 0:
-    #     if throttle > 59:
-    #         throttle -= 20
-    #     elif throttle > 3:
-    #         throttle -= 4
-    # #
-    # #상승
-    # if GPIO.input(switch_list[0]) == 0:
-    #     if throttle < 20:
-    #        throttle = 20
-    #     elif throttle < 181:
-    #         throttle += 20
-    if drone_move:
+    
+    if GPIO.input(switch_list[1]) == 0:
+        if throttle > 59:
+            throttle -= 20
+        elif throttle > 3:
+            throttle -= 4
+    
+    if GPIO.input(switch_list[0]) == 0:
         if throttle < 20:
            throttle = 20
-        elif throttle < 120:
+        elif throttle < 181:
             throttle += 20
-    
 
-    
-        
-#전진 후진
 def checkPitch():
     global pitch
-    global throttle
-
     global firstPitch
 
     secondPitch = analog_read(3)
@@ -137,7 +108,6 @@ def checkPitch():
     else:
         pitch = 125
 
-#좌우 이동
 def checkRoll():
     global roll
     global firstRoll
@@ -166,23 +136,10 @@ def checkRoll():
         roll = 120
     else:
         roll = 125
-def takeWeb():
-    goDronego = True        
-def drone():
-    global drone_move
-    global gogo
-    if drone_move==True:
-        
-        gogo += 1
-        if gogo >= 15 :
-            
-            drone_move = False
-            
 
-#좌우 회전
 def checkYaw():
     global yaw
-    
+
     if GPIO.input(switch_list[2]) == 0:
         yaw = 50
     elif GPIO.input(switch_list[3]) == 0:
@@ -190,13 +147,12 @@ def checkYaw():
     else:
         yaw = 100
 
-#위급상황시(정지버튼)
 def checkEmergency():
     global roll
     global pitch
     global yaw
     global throttle
-    # switch_list = [22, 27, 17, 23, 24, 25]
+    
     if GPIO.input(switch_list[4]) == 0:
         throttle = 0
         roll = 100
@@ -247,20 +203,13 @@ for i in range(6):
 print("\nRaspberryPi Drone Joystick Shield Started!\n")
 
 
-# #드론 자동 이동
-# #--------------------------------------------------------
 
 while True:
-    #드론을 출발할것인지에 대한 입력 받아오기
-    # if drone_state and goDronego:
-    #     print("드론 출발합니다")
-    #     checkNextStep()
-        
     if currentStep == 0:
         checkCrLfProcess()
     
     elif currentStep == 1:
-        if drone_state:
+        if GPIO.input(switch_list[4]) == 0:
             ser.flushOutput()
             ser.flushInput()
             uartString = ""
@@ -287,15 +236,14 @@ while True:
             time.sleep(0.3)
             uartString = ""
             currentStep += 1
-#확인
+
         else:
             print("Connect 2 ERROR")
             uartString = ""
             currentStep = 100
-    #버튼이 눌렸거나 높이 위험 확인 및 이동
+    
     elif currentStep == 4:
-        
-        checkThrottle() #일정 높이 올라간 뒤 앞으로 이동
+        checkThrottle()
         checkPitch()
         checkRoll()
         checkYaw()
@@ -303,17 +251,14 @@ while True:
         checkCRC()
         sendDroneCommand()
         time.sleep(0.1)
-        drone()
 
-        # if GPIO.input(switch_list[5]) == 0:
-        if drone_move == False:
+        if GPIO.input(switch_list[5]) == 0:
             print("Request Disconnect")
             time.sleep(1)
             ser.flushInput()
             uartString = ""
             ser.write("ath".encode())
             ser.write("\r".encode())
-            drone_state = True
             checkNextStep()
     
     elif currentStep == 5:
@@ -363,26 +308,3 @@ while True:
         ser.write("\r".encode())
         print("Wait Response Command for 3s...")
         time.sleep(3)
-
-# #웹페이지에서 계속해서 출동확인 맡을지>?????
-
-# if fall_detect:
-#     print("good")
-
-# #if 감지: 
-# # 전원 설정(전원on 및 신호연결)
-# # 이동(왼쪽or 오른쪽or 가운데 , 전원)
-
-# # 목적: 드론을 방향으로 나아가게한다.
-# # 입력: 방향, 전원상태
-# # 출력: 드론상태(이동중, 정지), 이동방향
-# #이동(방향, 전원):
-# #   if 전원:
-# #       제자리날기
-# #       if (왼쪽 오른쪽 가운데):
-# #           방향으로 회전
-# #       전진
-# #       내려오기
-# def moveDrone(dmove_direction):
-#     #드론 이동임
-#     return 0
