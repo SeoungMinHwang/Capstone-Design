@@ -1,0 +1,85 @@
+<head>
+    <title>CCTV 모니터링</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+{% extends 'base.html' %}
+{% block content %}
+<body class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
+    <div>
+        <div class="container-xxl p-5 w-75 h-100 ">
+            <div class="row" style="height: 100%;">
+                <div class="col-9">
+                <div class="row" style="height: 70%;" >
+                    <!-- CCTV 화면 -->
+                    <div class="col" style="background-color:black;">
+                        <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; ">
+                            <img src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
+                            <!-- <div class="mask text-light d-flex justify flex-column">
+                                <h1 class="bottom-right" id="clock">clock</h1>
+                            </div> -->
+                            <div class="mask text-light">
+                                <h1>{{sec}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- CCTV 목록 -->
+                    <!-- <div class="col-2"> 
+                        <div class="btn-group-vertical" style="width: 100%; height:100%">
+                            <button type="button" class="btn btn-dark">남악1</button>
+                            <button type="button" class="btn btn-dark">남악2</button>
+                            <button type="button" class="btn btn-dark">목포대1</button>
+                            <button type="button" class="btn btn-dark">목포대2</button>
+                            <button type="button" class="btn btn-dark">하당1</button>
+                            <button type="button" class="btn btn-dark">하당2</button>
+                        </div>
+                    </div> -->
+                </div>
+                <!-- 날씨, 상세정보, 드론정보 -->
+                    <div class="row" style="height: 30%; background-color: blue;">
+                        <div class="col-3" style="background-color:bisque">
+                            날씨
+                        </div>
+                        <div class="col-6" style="background-color:rgb(169, 99, 13)">
+                            클릭시 상세정보 출력
+                        </div>
+                        <div class="col-3" style="background-color:rgb(43, 25, 3)">
+                            드론정보
+                        </div>
+                    </div>
+                </div>
+                <!-- 처리경과 및 이벤트 테이블 -->
+                <div class="col-3">
+                    <div class="row" style="height: 50%; background-color: darkolivegreen;">
+                        처리경과
+                    </div>
+                    <div class="row" style="height: 50%; background-color: darkcyan;">
+                        이벤트 테이블
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <script>
+        var Target = document.getElementById("clock");
+        function clock() {
+            var time = new Date();
+
+            var month = time.getMonth();
+            var date = time.getDate();
+            var day = time.getDay();
+            var week = ['일', '월', '화', '수', '목', '금', '토'];
+
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+
+            Target.innerText = 
+            `${month + 1}월 ${date}일 ${week[day]}요일 ` +
+            `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+                
+        }
+        clock();
+        setInterval(clock, 100);
+    </script> -->
+</body>
+{% endblock %}
