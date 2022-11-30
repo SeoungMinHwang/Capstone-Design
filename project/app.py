@@ -1,5 +1,5 @@
-from flask import Flask, render_template, Response, request
-import cv2,camera
+from flask import Flask, render_template, Response, request, redirect
+import cv2, camera, kakao
 
 app = Flask(__name__)
 camera1,camera2,camera3 = camera.camera_start()
@@ -44,18 +44,17 @@ def all_cctv():
     return render_template('all_cctv.html',cctv_list=cctv_list)
 
 #카카오톡 보내기페이지
-@app.route('/kakao')
-def kakao():
+@app.route('/kakaosend')
+def kakaosend():
     return render_template('kakao.html')
 
 # 사용자 확인
-# @app.route("/login_confirm",methods=['POST'])
-# def login_confirm():
-#     if (request.form['inputId']=='admin'and request.form['inputPassword']='123'):
-#         session['id'] = id
-#         return redirect(url_for('all_cctv'))
-#     else:
-#         return redirect(url_for('/'))
+@app.route("/kakaotalk",methods=['POST'])
+def kakaotalk():
+    token = request.form['inputToken']
+    text = request.form['inputText']
+    kakao.sendToMeMessage(token, text)
+    return redirect('kakaosend')
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
