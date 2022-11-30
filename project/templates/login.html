@@ -12,9 +12,9 @@
             <img src={{ url_for('static', filename='logo_reverse.ico') }} style="height: 100px; width:100px; margin-bottom: 25px;"/>
             <h1 class="h3 mb-3 font-weight-normal"></h1>
             <label for="inputId" class="sr-only"></label>
-            <input type="text" id="inputId" class="form-control" placeholder="ID" required="" autofocus="">
+            <input type="text" id="inputId" name="inputId" class="form-control" placeholder="ID" required="" autofocus="">
             <label for="inputPassword" class="sr-only"></label><p></p>
-            <input type="password"  style="margin-bottom: 25px" id="inputPassword" class="form-control" placeholder="Password" required="">
+            <input type="password"  style="margin-bottom: 25px" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required="">
             <button class="btn btn-lg btn-secondary btn-block" type="submit" >Sign in</button>
         </form>
 
