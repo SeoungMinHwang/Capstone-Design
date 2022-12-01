@@ -6,8 +6,9 @@
 {% block content %}
 <body class="container-fluid w-100 h-100 bg-dark text-white">
     <div class="row" style="height: 50%; width: 100%; float: none; margin:0 auto;">
+        <!-- app.py에서 받은 지역 리스트를 for문으로 반복하여 카메라 화면 띄우기 -->
         {% for e in cctv_list %}
-        <div class="col-4">
+        <div class="col-4" style="background-image: url('static/nosignal.png'); background-repeat: no-repeat; background-size:20%; background-position:center;">
             <div class="ratio" style="width: 100%; height: 100%;">
                 <img onclick="sec_get('{{e}}');" src="{{ url_for('video_feed', cctv_section=e) }}" width="100%">{{e}}</img>
                 <div class="mask text-light" style="height: auto;">
@@ -19,7 +20,7 @@
     </div>
     
     <script>
-
+        // detail.html 하이퍼링크
         function sec_get(obj) {
             var section = '/detail?section=' + obj
             window.location.href = section
