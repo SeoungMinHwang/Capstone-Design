@@ -111,31 +111,31 @@ def checkPitch():
     global throttle
 
     global firstPitch
-
+    pitch = 105 #멈출 때 피치 조정 후 멈춤
     secondPitch = analog_read(3)
-
-    if secondPitch < firstPitch - 450:
-        pitch = 75
-    elif secondPitch < firstPitch - 350:
-        pitch = 80
-    elif secondPitch < firstPitch - 250:
-        pitch = 85
-    elif secondPitch < firstPitch - 150:
-        pitch = 90
-    elif secondPitch < firstPitch - 50:
-        pitch = 95
-    elif secondPitch < firstPitch + 50:
-        pitch = 100
-    elif secondPitch < firstPitch + 150:
-        pitch = 105
-    elif secondPitch < firstPitch + 250:
-        pitch = 110
-    elif secondPitch < firstPitch + 350:
-        pitch = 115
-    elif secondPitch < firstPitch + 450:
-        pitch = 120
-    else:
-        pitch = 125
+    
+    # if secondPitch < firstPitch - 450:
+    #     pitch = 75
+    # elif secondPitch < firstPitch - 350:
+    #     pitch = 80
+    # elif secondPitch < firstPitch - 250:
+    #     pitch = 85
+    # elif secondPitch < firstPitch - 150:
+    #     pitch = 90
+    # elif secondPitch < firstPitch - 50:
+    #     pitch = 95
+    # elif secondPitch < firstPitch + 50:
+    #     pitch = 100
+    # elif secondPitch < firstPitch + 150:
+    #     pitch = 105
+    # elif secondPitch < firstPitch + 250:
+    #     pitch = 110
+    # elif secondPitch < firstPitch + 350:
+    #     pitch = 115
+    # elif secondPitch < firstPitch + 450:
+    #     pitch = 120
+    # else:
+    #     pitch = 125
 
 #좌우 이동
 def checkRoll():
@@ -172,7 +172,6 @@ def drone():
     global drone_move
     global gogo
     if drone_move==True:
-        
         gogo += 1
         if gogo >= 15 :
             
