@@ -1,6 +1,14 @@
 <head>
     <title>CCTV 모니터링</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script>
+        $(document).ready(function(){
+            if ("{{session['username']}}"==""){
+                alert("올바른 경로가 아닙니다.");
+                location.href="/login"
+            }
+        })
+    </script>
 </head>
 {% extends 'base.html' %}
 {% block content %}
@@ -17,6 +25,7 @@
             </div>
         </div>
         {% endfor %}
+        <button onclick="logout()" type="button" class="btn btn-secondary btn-lg btn-block">logout</button>
     </div>
     
     <script>
@@ -25,7 +34,9 @@
             var section = '/detail?section=' + obj
             window.location.href = section
         }
-        
+        function logout(){
+            window.location.href = '/logout'
+        }
     </script>
 </body>
 {% endblock %}
