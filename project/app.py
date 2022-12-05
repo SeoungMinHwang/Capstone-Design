@@ -1,8 +1,9 @@
-from flask import Flask, render_template, Response, request, redirect, url_for
+from flask import Flask, render_template, Response, request, redirect, url_for,session
 import cv2, camera, kakao
 
 
 app = Flask(__name__)
+app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
@@ -10,6 +11,7 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 # camera2 = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera3 = cv2.VideoCapture(1)
 
+# 영상 긁어오기
 def gen_frames(camera):
     while True:
         success, frame = camera.read()
@@ -21,6 +23,7 @@ def gen_frames(camera):
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+# 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
     if cctv_section=='남악1':
@@ -39,18 +42,36 @@ def video_feed(cctv_section):
 # CCTV상세정보
 @app.route('/detail')
 def detail():
-    sec = request.args.get('section')
-    return render_template('detail.html', sec=sec)
+    if 'username' in session:
+        sec = request.args.get('section')
+        return render_template('detail.html', sec=sec)
+    else:
+        return redirect(url_for('login'))
+
 # 로그인페이지
 @app.route('/login')
 @app.route('/')
 def login():
     return render_template('login.html')
+
 # 전체CCTV
 @app.route('/all_cctv')
 def all_cctv():
-    cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2']
-    return render_template('all_cctv.html',cctv_list=cctv_list)
+    if 'username' in session:
+    # CCTV 지역 리스트
+        cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2']
+        return render_template('all_cctv.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
+    
+# CCTV큰 화면
+@app.route('/big_screen')
+def big_screen():
+    if 'username' in session:
+        sec = request.args.get('section')
+        return render_template('big_screen.html', sec=sec)
+    else:
+        return redirect(url_for('login'))
 
 #카카오톡 보내기페이지
 @app.route('/kakaosend')
@@ -63,11 +84,19 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     if (inputId=='admin'and inputPassword=='123'):
-        # session['id'] = inputId
+        session['username'] = inputId
         return redirect(url_for('all_cctv'))
     else:
         return redirect(url_for('login'))
 
+# 사용자 로그아웃
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+# 카카오 토큰 및 텍스트 input
 @app.route("/kakaotalk",methods=['POST'])
 def kakaotalk():
     token = request.form['inputToken']

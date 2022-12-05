@@ -6,6 +6,7 @@ import cv2
 from tkinter import messagebox as msg
 from fastai.vision.all import *
 import pathlib
+
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
@@ -33,9 +34,7 @@ Label(win, text="Fall Classifier", font=("맑은 고딕", 20, "bold"), fg='white
 # pred_idx : 에측된 범주의 색인 번호
 # probs : 확률
 def predict_info(img_path):
-    global learn_inf
     pred, pred_idx, probs = learn_inf.predict(img_path)
-    
     return (pred, probs[pred_idx])
 
 def open_dialog():
@@ -58,10 +57,6 @@ def open_dialog():
     label_img.config(image=img)
     pred, prob = predict_info(path)
     
-    # print(type(pred), type(prob))
-    
-    #  predic.config(text=pred)
-    # proba.config(text=f'{(prob*100):0.2f}')
     os.remove('result.png')
 
 def classifiy_btn():
