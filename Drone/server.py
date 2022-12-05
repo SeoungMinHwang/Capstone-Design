@@ -6,13 +6,16 @@ import time
 def send(sock):
     while True:
         sendData = input('>>>')
+        sender.
         sock.send(sendData.encode('utf-8'))
+        if sendData == '/종료': break
 
 
 def receive(sock):
     while True:
         recvData = sock.recv(1024)
         print('상대방 :', recvData.decode('utf-8'))
+        if recvData.decode('utf-8') == '/종료': break
 
 
 port = 8081
