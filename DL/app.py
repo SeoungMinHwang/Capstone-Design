@@ -24,7 +24,7 @@ def predict_info(img):
 
 st.title("Image Fall Detection, Classification")
 
-st.write("> **이미지 탐지 모델과 분류 모델**")
+st.write("> **이미지 탐지 모델과 분류 모델 성능 비교**")
 uploaded_file = st.file_uploader('', type=['png', 'jpg'])
 tmp_loc = False
 
@@ -42,7 +42,7 @@ if uploaded_file is not None:
         st.image(image_local, caption='')
         if st.button('탐지하기'):
             result=model([image_local], size=640)
-            print(result.save())
+            result.save()
             
             det_img = Image.open('./runs/detect/exp/result.jpg')
             st.image(det_img,caption='')
