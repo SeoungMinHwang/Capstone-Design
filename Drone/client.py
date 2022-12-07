@@ -15,10 +15,10 @@ def receive(sock):
     while True:
         recvData = sock.recv(1024)
         print('상대방 :', recvData.decode('utf-8'))
-        if (recvData.decode('utf-8') == "/종료"):break
+        if recvData.decode('utf-8') == "/종료":break
 
 # serverip = '192.168.35.221'
-serverip = '172.17.244.110'
+serverip = '172.0.0.1'
 port = 8081
 
 clientSock = socket(AF_INET, SOCK_STREAM)
