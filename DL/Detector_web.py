@@ -7,7 +7,6 @@ import streamlit as st
 from PIL import Image
 import io
 import os
-import pathlib
 import shutil
 
 import torch
