@@ -1,7 +1,7 @@
 # ------------------------------------------
 # 웹기반 streamlit으로 실신자 분류기 판별
 # 실행 방법
-# 터미널 창에 streamlit run app.py 입력
+# 터미널 창에 streamlit run <파일이름> 입력
 #-------------------------------------------
 from fastai.vision.all import *
 import streamlit as st
