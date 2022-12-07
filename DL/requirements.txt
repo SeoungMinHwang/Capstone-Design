@@ -226,6 +226,7 @@ pexpect @ file:///tmp/build/80754af9/pexpect_1605563209008/work
 pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
 Pillow==9.0.1
 <<<<<<< HEAD
+<<<<<<< HEAD
 pkginfo @ file:///tmp/build/80754af9/pkginfo_1643162084911/work
 platformdirs==2.5.4
 plotly @ file:///opt/conda/conda-bld/plotly_1646671701182/work
@@ -416,3 +417,7 @@ zope.interface @ file:///C:/ci/zope.interface_1625036252485/work
 pandas==1.4.2
 opencv-python==4.6.0.66
 >>>>>>> 2d0a1b9afd480bf5a78d7cf576d0aaf32201c58b
+=======
+pandas==1.4.2
+opencv-python==4.6.0.66
+>>>>>>> origin
