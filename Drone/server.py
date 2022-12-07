@@ -1,3 +1,4 @@
+#라즈베리파이에서 사용
 from socket import *
 import threading
 import time
@@ -13,6 +14,9 @@ def receive(sock):
     while True:
         recvData = sock.recv(1024)
         print('상대방 :', recvData.decode('utf-8'))
+        if (recvData.decode('utf-8')=="드론"):
+            exec("C:\workspace_git\Capstone-Design\Drone\Start_Drone.py")
+
 
 
 port = 8081
