@@ -5,6 +5,8 @@ import serial
 import RPi.GPIO as GPIO
 import time
 import spidev
+from socket import *
+import threading
 
 #-------------------------------------------------
 ser = serial.Serial('/dev/ttyS0',9600,timeout=0.001)
@@ -43,6 +45,7 @@ fall_detect = False #감지했는지
 drone_move = False #드론이 이동중인지
 
 goDronego = False
+switch_list = [22, 27, 17, 23, 24, 25]
 #-------------------------------------------------
 def checkNextStep():
     global currentStep
@@ -88,7 +91,7 @@ def checkThrottle():
            throttle = 20
         elif throttle < 120:
             throttle += 20
-    # switch_list = [22, 27, 17, 23, 24, 25]
+    
     #하강
     # if GPIO.input(switch_list[1]) == 0:
     #     if throttle > 59:
@@ -166,8 +169,7 @@ def checkRoll():
         roll = 120
     else:
         roll = 125
-def takeWeb():
-    goDronego = True        
+    
 def drone():
     global drone_move
     global gogo
@@ -238,131 +240,142 @@ def checkCRC():
     checkSum = commandBit + roll + pitch + yaw + throttle + operationBit
     checkSum = checkSum & 0x00ff
 
-#-------------------------------------------------
-switch_list = [22, 27, 17, 23, 24, 25]
 
-for i in range(6):
-    GPIO.setup(switch_list[i], GPIO.IN)
+def send(sock):
+    while True:
+        sendData = input('>>>')
+        sock.send(sendData.encode('utf-8'))
+
+
+def receive(sock):
+    while True:
+        recvData = sock.recv(1024)
+        print('상대방 :', recvData.decode('utf-8'))
+        if (recvData.decode('utf-8')=="드론"):
+            start_Drone()
+#-------------------------------------------------
 
 print("\nRaspberryPi Drone Joystick Shield Started!\n")
 
 
 # #드론 자동 이동
 # #--------------------------------------------------------
-
-while True:
+def start_Drone():
+    global firstRoll
+    global firstPitch
+    while True:
     #드론을 출발할것인지에 대한 입력 받아오기
-    # if drone_state and goDronego:
+    # if drone_state and fall_detect:
     #     print("드론 출발합니다")
     #     checkNextStep()
         
-    if currentStep == 0:
-        checkCrLfProcess()
-    
-    elif currentStep == 1:
-        if drone_state:
-            ser.flushOutput()
-            ser.flushInput()
-            uartString = ""
-            firstRoll = analog_read(2)
-            firstPitch = analog_read(3)
-            ser.write("atd".encode())
-            ser.write("083a5c1f15d5".encode())
-            ser.write("\r".encode())
-            checkNextStep()
-    
-    elif currentStep == 2:
-        if uartString.find("\r\nOK\r\n",0,6) == 0:
-            print("Wait Connect")
-            checkNextStep()
-
-        else:
-            print("Connect 1 ERROR")
-            uartString = ""
-            currentStep = 100
-    
-    elif currentStep == 3:
-        if uartString.find("\r\nCONNECT ",0,10) == 0:
-            print("Connect OK")
-            time.sleep(0.3)
-            uartString = ""
-            currentStep += 1
-#확인
-        else:
-            print("Connect 2 ERROR")
-            uartString = ""
-            currentStep = 100
-    #버튼이 눌렸거나 높이 위험 확인 및 이동
-    elif currentStep == 4:
+        if currentStep == 0:
+            checkCrLfProcess()
         
-        checkThrottle() #일정 높이 올라간 뒤 앞으로 이동
-        checkPitch()
-        checkRoll()
-        checkYaw()
-        checkEmergency()
-        checkCRC()
-        sendDroneCommand()
-        time.sleep(0.1)
-        drone()
+        elif currentStep == 1:
+            if drone_state:
+                ser.flushOutput()
+                ser.flushInput()
+                uartString = ""
+                firstRoll = analog_read(2)
+                firstPitch = analog_read(3)
+                ser.write("atd".encode())
+                ser.write("083a5c1f15d5".encode())
+                ser.write("\r".encode())
+                checkNextStep()
+        
+        elif currentStep == 2:
+            if uartString.find("\r\nOK\r\n",0,6) == 0:
+                print("Wait Connect")
+                checkNextStep()
 
-        # if GPIO.input(switch_list[5]) == 0:
-        if drone_move == False:
-            print("Request Disconnect")
-            time.sleep(1)
-            ser.flushInput()
-            uartString = ""
-            ser.write("ath".encode())
+            else:
+                print("Connect 1 ERROR")
+                uartString = ""
+                currentStep = 100
+        
+        elif currentStep == 3:
+            if uartString.find("\r\nCONNECT ",0,10) == 0:
+                print("Connect OK")
+                time.sleep(0.3)
+                uartString = ""
+                currentStep += 1
+    #확인
+            else:
+                print("Connect 2 ERROR")
+                uartString = ""
+                currentStep = 100
+        #버튼이 눌렸거나 높이 위험 확인 및 이동
+        elif currentStep == 4:
+            
+            checkThrottle() #일정 높이 올라간 뒤 앞으로 이동
+            checkPitch()
+            checkRoll()
+            checkYaw()
+            checkEmergency()
+            checkCRC()
+            sendDroneCommand()
+            time.sleep(0.1)
+            drone()
+
+            # if GPIO.input(switch_list[5]) == 0:
+            if drone_move == False:
+                print("Request Disconnect")
+                time.sleep(1)
+                ser.flushInput()
+                uartString = ""
+                ser.write("ath".encode())
+                ser.write("\r".encode())
+                drone_state = True
+                checkNextStep()
+        
+        elif currentStep == 5:
+            if uartString.find("\r\nOK\r\n",0,6) == 0:
+                print("Wait Disconnect")
+                checkNextStep()
+
+            else:
+                print("Disconnect 1 ERROR")
+                uartString = ""
+                currentStep = 100
+        
+        elif currentStep == 6:
+            if uartString.find("\r\nDISCONNECT",0,12) == 0:
+                print("Disconnect 1 OK")
+                checkNextStep()
+
+            else:
+                print("Disconnect 2 ERROR")
+                uartString = ""
+                currentStep = 100
+        
+        elif currentStep == 7:
+            if uartString.find("\r\nREADY",0,7) == 0:
+                print("Disconnect 2 OK")
+                time.sleep(0.3)
+                uartString = ""
+                currentStep = 1
+
+            else:
+                print("Disconnect 3 ERROR")
+                uartString = ""
+                currentStep = 100
+        
+        else:
+            if ser.inWaiting():
+                uartString = ""
+                time.sleep(0.5)
+                while ser.inWaiting():
+                    uartString += ser.read().decode()
+
+                print(uartString)
+                uartString = ""
+
+            uartString = input("Enter AT Command: ")
+            ser.write(uartString.encode())
             ser.write("\r".encode())
-            drone_state = True
-            checkNextStep()
-    
-    elif currentStep == 5:
-        if uartString.find("\r\nOK\r\n",0,6) == 0:
-            print("Wait Disconnect")
-            checkNextStep()
-
-        else:
-            print("Disconnect 1 ERROR")
-            uartString = ""
-            currentStep = 100
-    
-    elif currentStep == 6:
-        if uartString.find("\r\nDISCONNECT",0,12) == 0:
-            print("Disconnect 1 OK")
-            checkNextStep()
-
-        else:
-            print("Disconnect 2 ERROR")
-            uartString = ""
-            currentStep = 100
-    
-    elif currentStep == 7:
-        if uartString.find("\r\nREADY",0,7) == 0:
-            print("Disconnect 2 OK")
-            time.sleep(0.3)
-            uartString = ""
-            currentStep = 1
-
-        else:
-            print("Disconnect 3 ERROR")
-            uartString = ""
-            currentStep = 100
-    
-    else:
-        if ser.inWaiting():
-            uartString = ""
-            time.sleep(0.5)
-            while ser.inWaiting():
-                uartString += ser.read().decode()
-
-            print(uartString)
-            uartString = ""
-
-        uartString = input("Enter AT Command: ")
-        ser.write(uartString.encode())
-        ser.write("\r".encode())
-        print("Wait Response Command for 3s...")
-        time.sleep(3)
+            print("Wait Response Command for 3s...")
+            time.sleep(3)
 
 # #웹페이지에서 계속해서 출동확인 맡을지>?????
 
@@ -386,3 +399,27 @@ while True:
 # def moveDrone(dmove_direction):
 #     #드론 이동임
 #     return 0
+
+
+
+port = 8081
+
+serverSock = socket(AF_INET, SOCK_STREAM)
+serverSock.bind(('', port))
+serverSock.listen(1)
+
+print('%d번 포트로 접속 대기중...'%port)
+
+connectionSock, addr = serverSock.accept()
+
+print(str(addr), '에서 접속되었습니다.')
+
+sender = threading.Thread(target=send, args=(connectionSock,))
+receiver = threading.Thread(target=receive, args=(connectionSock,))
+
+sender.start()
+receiver.start()
+
+while True:
+    time.sleep(1)
+    pass
