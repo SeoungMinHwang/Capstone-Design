@@ -16,7 +16,7 @@ def receive(sock):
         recvData = sock.recv(1024)
         print('상대방 :', recvData.decode('utf-8'))
         if (recvData.decode('utf-8')=="드론"):
-            exec("C:\workspace_git\Capstone-Design\Drone\Start_Drone.py")
+            open("/home/blackswan/capstone/Capstone-Design-1/Drone/Start_Drone.py")
 
 
 
