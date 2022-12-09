@@ -1,6 +1,14 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao
+import cv2, camera, kakao, pymysql
 
+conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
+cur = conn.cursor()
+cur.execute('SELECT * FROM eventt')
+eventlist = cur.fetchall()
+cur.execute('SELECT * FROM Response')
+responselist = cur.fetchall()
+cur.execute('select * from drone')
+dronelist = cur.fetchall()
 
 app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
@@ -44,7 +52,7 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        return render_template('detail.html', sec=sec)
+        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec)
     else:
         return redirect(url_for('login'))
 
