@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
 import cv2, camera, kakao, pymysql
+from weather_search import get_weather_daum, job
 
 conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
 cur = conn.cursor()
