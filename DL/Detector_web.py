@@ -33,7 +33,7 @@ if uploaded_file is not None:
         
         if st.button('탐지하기'):
             result=model([img_local])
-            print(result.save())
+            result.save()
 
             det_img = Image.open('./runs/detect/exp/result.jpg')
             st.image(det_img,caption='')

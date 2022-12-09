@@ -9,7 +9,6 @@ from PIL import Image
 import io
 import os
 import pathlib
-import subprocess
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
