@@ -82,6 +82,12 @@ def checkThrottle():
     drone_move = True
     global throttle
     global pitch
+   
+    if drone_move:
+        if throttle < 20:
+           throttle = 20
+        elif throttle < 120:
+            throttle += 20
     # switch_list = [22, 27, 17, 23, 24, 25]
     #하강
     # if GPIO.input(switch_list[1]) == 0:
@@ -96,12 +102,6 @@ def checkThrottle():
     #        throttle = 20
     #     elif throttle < 181:
     #         throttle += 20
-    if drone_move:
-        if throttle < 20:
-           throttle = 20
-        elif throttle < 120:
-            throttle += 20
-    
 
     
         
