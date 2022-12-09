@@ -13,7 +13,7 @@ subnetip		VARCHAR(20) NOT NULL
 
 #이벤트테이블
 CREATE TABLE Eventt(
-eventid			INTEGER PRIMARY KEY,
+eventid			INT AUTO_INCREMENT PRIMARY KEY,
 CCTVid			INTEGER,
 eventtime		datetime,
 
