@@ -7,7 +7,7 @@ import time
 import spidev
 from socket import *
 import threading
-
+from flask import Flask, render_template, Response, request
 
 
 
@@ -395,17 +395,33 @@ def start_Drone():
             time.sleep(3)
 
 def send(sock):
-    while True:
-        sendData = input('>>>')
-        sock.send(sendData.encode('utf-8'))
+    # while True:
+    sendData = input('>>>')
+    sock.send(sendData.encode('utf-8'))
 
 
 def receive(sock):
-    while True:
-        recvData = sock.recv(1024)
-        print('상대방 :', recvData.decode('utf-8'))
-        if (recvData.decode('utf-8') == "드론"):
-            start_Drone()
+    # while True:
+    recvData = sock.recv(1024)
+    print('상대방 :', recvData.decode('utf-8'))
+    if (recvData.decode('utf-8') == "드론"):
+        start_Drone()
+    
+            
+def start_app():
+    app = Flask(__name__)
+
+
+    @app.route('/')
+    def drone_but():
+        return render_template('drone_but.html')
+    @app.route('/drone', methods=['GET'])
+    def drone_go():
+        return open("Drone/Start_Drone.py")
+
+    if __name__ == "__main__":
+        app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
+        
 port = 8081
 
 serverSock = socket(AF_INET, SOCK_STREAM)
@@ -421,9 +437,11 @@ print(str(addr), '에서 접속되었습니다.')
 
 sender = threading.Thread(target=send, args=(connectionSock,))
 receiver = threading.Thread(target=receive, args=(connectionSock,))
+starter = threading.Thread(target=start_app, args=(connectionSock,))
 
 sender.start()
 receiver.start()
+starter.start()
 
 while True:
     time.sleep(1)
