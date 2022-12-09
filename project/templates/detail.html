@@ -10,29 +10,15 @@
             <div class="row" style="height: 100%;">
                 <div class="col-9">
                 <div class="row" style="height: 70%;" >
-                    <!-- CCTV 화면 -->
-                    <div class="col" style="background-color:black;">
+                    <!-- CCTV 화면  원클릭 : 이전 페이지 / 더블클릭 : 전체화면으로 보기 -->
+                    <div class="col" style="background-image: url('static/nosignal.png'); background-repeat: no-repeat; background-size:20%; background-position:center;">
                         <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; ">
-                            <img src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
-                            <!-- <div class="mask text-light d-flex justify flex-column">
-                                <h1 class="bottom-right" id="clock">clock</h1>
-                            </div> -->
-                            <div class="mask text-light">
+                            <img id="node" src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
+                            <div class="mask text-light" style="height: auto;">
                                 <h1>{{sec}}</h1>
                             </div>
                         </div>
                     </div>
-                    <!-- CCTV 목록 -->
-                    <!-- <div class="col-2"> 
-                        <div class="btn-group-vertical" style="width: 100%; height:100%">
-                            <button type="button" class="btn btn-dark">남악1</button>
-                            <button type="button" class="btn btn-dark">남악2</button>
-                            <button type="button" class="btn btn-dark">목포대1</button>
-                            <button type="button" class="btn btn-dark">목포대2</button>
-                            <button type="button" class="btn btn-dark">하당1</button>
-                            <button type="button" class="btn btn-dark">하당2</button>
-                        </div>
-                    </div> -->
                 </div>
                 <!-- 날씨, 상세정보, 드론정보 -->
                     <div class="row" style="height: 30%; background-color: blue;">
@@ -59,27 +45,30 @@
             </div>
         </div>
     </div>
-    <!-- <script>
-        var Target = document.getElementById("clock");
-        function clock() {
-            var time = new Date();
-
-            var month = time.getMonth();
-            var date = time.getDate();
-            var day = time.getDay();
-            var week = ['일', '월', '화', '수', '목', '금', '토'];
-
-            var hours = time.getHours();
-            var minutes = time.getMinutes();
-            var seconds = time.getSeconds();
-
-            Target.innerText = 
-            `${month + 1}월 ${date}일 ${week[day]}요일 ` +
-            `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-                
+    <script>
+        var timer = 0
+        var delay = 200
+        var prevent = false
+        //원클릭
+        node.onclick = (evnt) => {
+            timer = setTimeout(() => {
+                if(!prevent){
+                    window.history.back();
+                }
+                prevent = false
+            }, delay)
         }
-        clock();
-        setInterval(clock, 100);
-    </script> -->
+        //더블클릭
+        node.ondblclick = (evnt) => {
+            clearTimeout(timer)
+            prevent=true
+            sec_get("{{sec}}");
+        }
+        //big_screen.html 하이퍼링크
+        function sec_get(obj) {
+            var section = '/big_screen?section=' + obj
+            window.location.href = section
+        }
+    </script>
 </body>
 {% endblock %}

@@ -1,0 +1,23 @@
+<head>
+    <title>CCTV 전체화면</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+{% extends 'base.html' %}
+{% block content %}
+<body class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
+    <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; background-image: url('static/nosignal.png'); background-repeat: no-repeat; background-size:20%; background-position:center;">
+        <img onclick="goback()" src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
+        <div class="mask text-light" style="height: auto;">
+            <h1>{{sec}}</h1>
+        </div>
+    </div>
+    <script>
+        //뒤로가기
+        function goback(){
+            window.history.back();
+        }
+    </script>
+</body>
+
+
+{% endblock %}

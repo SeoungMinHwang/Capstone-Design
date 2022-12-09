@@ -33,10 +33,17 @@ FOREIGN KEY (eventid) REFERENCES Eventt(eventid)
 #드론 테이블
 CREATE TABLE Drone(
 droneid			INTEGER PRIMARY KEY,
-dronestate		VARCHAR(20),
+dronestate		VARCHAR(20)
+);
+
+#드론 이벤트 테이블
+CREATE TABLE DroneEvent(
+droneid			INTEGER,
 eventid			INTEGER,
 
-FOREIGN KEY (eventid) REFERENCES Response(eventid)
+PRIMARY KEY(droneid, eventid),
+FOREIGN KEY (droneid) REFERENCES Drone(droneid),
+FOREIGN KEY (eventid) REFERENCES Eventt(eventid)
 );
 
 #동영상 링킹 테이블
