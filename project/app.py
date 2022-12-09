@@ -36,11 +36,11 @@ def gen_frames(camera):
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
     if cctv_section=='남악1':
-        return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera1)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='남악2':
-        return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera2)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='목포대1':
-        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera3)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='목포대2':
         return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='하당1':
