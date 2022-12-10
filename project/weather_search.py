@@ -44,10 +44,8 @@ if __name__ == "__main__":
     # 처음 한번은 먼저 가져와야함
     location = "전라남도 무안군 청계면"
     job(location)
-    
     # 1시간 마다 Update
-    # schedule.every(3).hour.do(job, location)
-    schedule.every(5).seconds.do(job, location)
+    schedule.every(1).hour.do(job, location)
     
     while True:
         try:

@@ -1,6 +1,15 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao
+import cv2, camera, kakao, pymysql
+from weather_search import get_weather_daum, job
 
+conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
+cur = conn.cursor()
+cur.execute('SELECT * FROM eventt')
+eventlist = cur.fetchall()
+cur.execute('SELECT * FROM Response')
+responselist = cur.fetchall()
+cur.execute('select * from drone')
+dronelist = cur.fetchall()
 
 app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
@@ -27,11 +36,11 @@ def gen_frames(camera):
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
     if cctv_section=='남악1':
-        return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera1)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='남악2':
-        return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera2)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='목포대1':
-        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen_frames(cv2.VideoCapture(camera3)), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='목포대2':
         return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section=='하당1':
@@ -44,7 +53,7 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        return render_template('detail.html', sec=sec)
+        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec)
     else:
         return redirect(url_for('login'))
 

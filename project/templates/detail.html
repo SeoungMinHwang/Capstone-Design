@@ -21,25 +21,78 @@
                     </div>
                 </div>
                 <!-- 날씨, 상세정보, 드론정보 -->
-                    <div class="row" style="height: 30%; background-color: blue;">
+                    <div class="row" style="height: 30%">
                         <div class="col-3" style="background-color:bisque">
                             날씨
                         </div>
                         <div class="col-6" style="background-color:rgb(169, 99, 13)">
                             클릭시 상세정보 출력
                         </div>
-                        <div class="col-3" style="background-color:rgb(43, 25, 3)">
-                            드론정보(Drone)
+                        <div class="col-3">
+                            <div class = "hide-scroll" style="height: 100%">
+                                <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th>드론번호</th>
+                                            <th>드론상태</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i in dronelist %}
+                                    <tr>
+                                        <td>{{ i[0] }}</td>
+                                        <td>{{ i[1] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <!-- 처리경과 및 이벤트 테이블 -->
                 <div class="col-3">
-                    <div class="row" style="height: 50%; background-color: darkolivegreen;">
-                        처리경과(response)
+                    <div class="row" style="height: 50%">
+                        <div class = "hide-scroll" style="height: 100%">
+                            <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
+                                <thead>
+                                    <tr>
+                                        <th>이벤트 번호</th>
+                                        <th>처리경과</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in responselist %}
+                                <tr>
+                                    <td>{{ i[0] }}</td>
+                                    <td>{{ i[1] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="row" style="height: 50%; background-color: darkcyan;">
-                        이벤트 테이블(eventt)
+                    <div class="row" style="height: 50%">
+                        <div class = "table-responsive" style="height: 100%">
+                        <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
+                            <thead>
+                                <tr>
+                                    <th>이벤트ID</th>
+                                    <th>CCTVID</th>
+                                    <th>이벤트발생시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in eventlist %}
+                            <tr>
+                                <td>{{ i[0] }}</td>
+                                <td>{{ i[1] }}</td>
+                                <td>{{ i[2] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
             </div>
