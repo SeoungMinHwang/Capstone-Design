@@ -92,7 +92,6 @@ def kakaosend():
 def drone_but():
     return render_template('drone_but.html')
 
-
 # 사용자 확인
 @app.route("/login_confirm",methods=['POST'])
 def login_confirm():
