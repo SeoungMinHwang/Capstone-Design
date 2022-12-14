@@ -1,8 +1,10 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
 import cv2, camera, kakao, pymysql
 from weather_search import get_weather_daum, job
+import requests
+from bs4 import BeautifulSoup
 
-conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
+conn = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='capstone', charset='utf8')
 cur = conn.cursor()
 cur.execute('SELECT * FROM eventt')
 eventlist = cur.fetchall()
@@ -53,7 +55,8 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec)
+        weather_list = get_weather_daum('전라남도 무안군 청계면')
+        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec, weather_list=weather_list )
     else:
         return redirect(url_for('login'))
 
@@ -106,7 +109,7 @@ def login_confirm():
 # 사용자 로그아웃
 @app.route('/logout')
 def logout():
-    session.clear()
+    session.pop('username',None)
     return redirect(url_for('login'))
 
 
@@ -117,6 +120,14 @@ def kakaotalk():
     text = request.form['inputText']
     kakao.sendToMeMessage(token, text)
     return redirect('kakaosend')
+
+# 날씨 정보 불러오기
+@app.route("/get_weather")
+def weather():
+    weather_list = job('전라남도 무안군 청계면')
+    return render_template('detail.html', weather_list)
+
+    
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)

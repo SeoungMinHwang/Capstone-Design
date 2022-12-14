@@ -1,4 +1,4 @@
-import cv2, pafy
+import cv2
 # 카메라 주소 설정
 def camera_start():
     # video = pafy.new(url='https://youtu.be/N2NtCIVPo2M', gdata=False)
