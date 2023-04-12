@@ -71,7 +71,7 @@ def login():
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
         return render_template('all_cctv.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -102,7 +102,7 @@ def login_confirm():
     inputPassword = request.form['inputPassword']
     if (inputId=='admin'and inputPassword=='123'):
         session['username'] = inputId
-        return redirect(url_for('all_cctv'))
+        return render_template('map.html')
     else:
         return redirect(url_for('login'))
 
@@ -127,8 +127,15 @@ def weather():
     weather_list = job('전라남도 무안군 청계면')
     return render_template('detail.html', weather_list)
 
+@app.route('/map')
+def map():
+    if 'username' in session:
+    # CCTV 지역 리스트
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        return render_template('map.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
     
-
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
     
