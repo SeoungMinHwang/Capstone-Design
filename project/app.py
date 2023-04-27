@@ -4,7 +4,7 @@ from weather_search import get_weather_daum, job
 import requests
 from bs4 import BeautifulSoup
 
-conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
+conn = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='capstone', charset='utf8')
 cur = conn.cursor()
 cur.execute('SELECT * FROM eventt')
 eventlist = cur.fetchall()
@@ -166,6 +166,17 @@ def profile():
         return render_template('profile.html')
     else:
         return redirect(url_for('login'))
+    
+
+
+#카카오톡 보내기페이지
+@app.route('/drone_popup')
+def drone_popup():
+    #창을 켰을 때 만 상태를 받아옴
+    return render_template('drone_popup.html')
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
