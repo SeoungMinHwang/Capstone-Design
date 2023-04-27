@@ -2,17 +2,14 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col-9">
-        <div class="map" id="map" style="width:70%;height:100%;"></div>
+    <div class="col-10">
+        <div class="map" id="map" style="margin-left:5px; width:80%;height:100%;"></div>
     </div>
-    <div class="col-3" style="margin-top: 30px;">
+    <div class="col-1" style="margin-top: 10px;">
         {% for e in cctv_list %}
-        <button type="button" class="btn btn-dark btn-lg btn-block" style="width: 80%; height:30%;">{{e}}</button>
-        <p style="margin-top: 30px;"></p>
+        <button type="button" class="btn btn-dark btn-lg btn-block" onclick="sec_get('{{e}}');" style="margin-left:15px; width: 140%; height:15%;">{{e}}</button>
+        <p style="margin-top: 20px;"></p>
         {% endfor %}
-
-        </table>
-
     </div>
 </div>
 

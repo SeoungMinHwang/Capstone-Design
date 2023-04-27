@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="../static/js/bootstrap.min.js">
 
   <script>
+   
+
     $(document).ready(function () {
       $(".hamburger .hamburger__inner").click(function () {
         $(".wrapper").toggleClass("active")
@@ -30,13 +32,19 @@
     $(document).ready(function () {
       $(".hamburger .hamburger__inner").click();
     });
-    function logout(){
+    function logout() {
       window.location.href = '/logout'
-  } function profile(){
+    } function profile() {
       window.location.href = '/profile'
-}
+    }    // detail.html 하이퍼링크
+    function sec_get(obj) {
+      var section = '/detail?section=' + obj
+      window.location.href = section
+    }
+
   </script>
 </head>
+
 <body style="overflow-x: hidden">
 
   <div class="wrapper">
@@ -50,14 +58,14 @@
       </div>
       <div class="menu">
         <div class="logo">
-          <a href="/map"><img src="../static/banner.png " style="width:auto; height:60px;" alt="logo"></a>
+          <a href="/map"><img src="../static/banner.png " style="height:100%;" alt="logo"></a>
         </div>
         <div class="right_menu">
           <ul>
             <li><i class="fas fa-user"></i>
               <div class="profile_dd">
                 <div class="dd_item" onclick="profile()">Profile</div>
-                <div class="dd_item" onclick="logout()" >Logout</div>
+                <div class="dd_item" onclick="logout()">Logout</div>
               </div>
             </li>
           </ul>
@@ -87,15 +95,20 @@
               <a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
                 <span class="title">모니터링 &nbsp;<i class="fa fa-caret-down"></i></span></a>
               <ul class="submenu">
-                <li><a href="/detail?section=공대1,2"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                <li><a href="/detail?section=공대1,2호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
                     <span class="title">공대1,2호관</span></a></li>
-                <li><a href="/detail?section=공대3"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                <li><a href="/detail?section=공대3호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
                     <span class="title">공대3호관</span></a></li>
-                <li><a href="/detail?section=공대4"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                <li><a href="/detail?section=공대4호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
                     <span class="title">공대4호관</span></a></li>
-                <li><a href="/detail?section=공대5"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                <li><a href="/detail?section=공대5호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
                     <span class="title">공대5호관</span></a></li>
-  
+                <li><a href="/detail?section=대외협력관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                     <span class="title">대외협력관</span></a></li>
+                <li><a href="/detail?section=스포츠센터"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                    <span class="title">스포츠센터</span></a></li>
+    
+
               </ul>
             </li>
             <li>
@@ -105,12 +118,12 @@
               </a>
             </li>
           </ul>
-          <div class="profile">
+          <!-- <div class="profile">
             <div class="profile_info">
               <p>&nbsp;&nbsp;&nbsp;Welcome</p>
               <p class="profile_name">&nbsp;&nbsp;&nbsp;Admin</p>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="container">
@@ -154,7 +167,7 @@
 
   </div>
   <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
-    href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
+      href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
   </footer>
 
 </body>

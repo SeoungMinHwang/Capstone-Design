@@ -16,7 +16,7 @@
 
 .top_navbar{
   background: #1d1d1d;
-  height: 60px;
+  height: 50px;
   display: flex;
   position: fixed;
   width: 100%;
@@ -25,7 +25,7 @@
 }
 
 .top_navbar .hamburger{
-  width: 80px;
+  width: 60px;
   background: #1d1d1d;
   position: relative;
   font-size: 28px;
@@ -37,7 +37,7 @@
   left: 50%;
   transform: translate(-50%,-50%);
   cursor: pointer;
-  width: 40px;
+  width: 50px;
   height: 20px;
 }
 
@@ -47,7 +47,7 @@
   background: #fff;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 5px;
 }
 
 .top_navbar .hamburger div.two{
@@ -60,7 +60,7 @@
 }
 
 .top_navbar .menu{
-  width: calc(100% - 80px);
+  width: calc(100% - 60px);
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -131,9 +131,9 @@
 
 .main_container .sidebar{
   position: fixed;
-  top: 60px;
+  top: 50px;
   left: 0;
-  width: 225px;
+  width: 190px;
   height: 100%;
   background: #333333;
   transition: all 0.3s ease;
@@ -159,7 +159,6 @@
 .main_container .sidebar .sidebar__inner .has-submenu .submenu a{
   font-size: 12px;
   font-weight: 900;
-  
 }
 
 .main_container .sidebar .profile{
@@ -181,10 +180,10 @@
 
 
 .main_container .container{
-  margin-top: 60px;
+  margin-top: 50px;
   max-width: 100%;
-  width: calc(100% - 225px);
-  margin-left: 225px;
+  /* width: calc(100% - 190px); */
+  margin-left: 190px;
   padding: 10px;
   margin-bottom:20px;
   transition: all 0.3s ease;
@@ -199,7 +198,7 @@
   color: #fff;
   font-size: 18px;
   font-weight: 900;
-  padding: 20px 30px;
+  padding: 20px 16px;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -225,17 +224,18 @@
 }
 
 .main_container .container .item{
+  float: right;
   background: #fff;
   border: 1px solid #E0F2F1;
   margin-bottom: 30px;
   padding: 20px;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 22px;
 }
 
 /* after adding active class */
 .wrapper.active .sidebar{
-  width: 80px;
+  width: 60px;
 }
 
 .wrapper.active .sidebar ul li a span.title,
@@ -245,6 +245,6 @@
 }
 
 .wrapper.active .main_container .container{
-  width: calc(100% - 80px);
-  margin-left: 80px;
+  width: calc(100% - 60px);
+  margin-left: 70px;
 }

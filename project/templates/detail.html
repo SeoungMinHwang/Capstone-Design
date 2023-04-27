@@ -4,128 +4,46 @@
 </head>
 {% extends 'base.html' %}
 {% block content %}
-<body class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
-    <div>
-        <div class="container-xxl p-5 w-75 h-100 ">
-            <div class="row" style="height: 100%;">
-                <div class="col-9">
-                <div class="row" style="height: 70%;" >
-                    <!-- CCTV 화면  원클릭 : 이전 페이지 / 더블클릭 : 전체화면으로 보기 -->
-                    <div class="col" style="background-image: url('static/nosignal.png'); background-repeat: no-repeat; background-size:20%; background-position:center;">
-                        <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; ">
-                            <img id="node" src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
-                            <div class="mask text-light" style="height: auto;">
-                                <h1>{{sec}}</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 날씨, 상세정보, 드론정보 -->
-                    <div class="row" style="height: 30%">
-                        <div class="col-3">
-                            <h1>기온 :  {{weather_list[0]}}</h1>
-                            <h1>날씨 정보 :  {{weather_list[1]}}</h1>
-                            <h1>풍속 :  {{weather_list[2]}}</h1>
-                            <h1>습도 :  {{weather_list[3]}}</h1>
-                            <h1>미세먼지 :  {{weather_list[4]}}</h1>
-                        </div>
-                        <div class="col-6" style="background-color:rgb(169, 99, 13)">
-                            클릭시 상세정보 출력
-                        </div>
-                        <div class="col-3">
-                            <div class = "hide-scroll" style="height: 100%">
-                                <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th>드론번호</th>
-                                            <th>드론상태</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for i in dronelist %}
-                                    <tr>
-                                        <td>{{ i[0] }}</td>
-                                        <td>{{ i[1] }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 처리경과 및 이벤트 테이블 -->
-                <div class="col-3">
-                    <div class="row" style="height: 50%">
-                        <div class = "hide-scroll" style="height: 100%">
-                            <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                                <thead>
-                                    <tr>
-                                        <th>이벤트 번호</th>
-                                        <th>처리경과</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in responselist %}
-                                <tr>
-                                    <td>{{ i[0] }}</td>
-                                    <td>{{ i[1] }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row" style="height: 50%">
-                        <div class = "table-responsive" style="height: 100%">
-                        <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                            <thead>
-                                <tr>
-                                    <th>이벤트ID</th>
-                                    <th>CCTVID</th>
-                                    <th>이벤트발생시간</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in eventlist %}
-                            <tr>
-                                <td>{{ i[0] }}</td>
-                                <td>{{ i[1] }}</td>
-                                <td>{{ i[2] }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                    </div>
-                    </div>
-                </div>
-            </div>
+<!-- <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+    <div class="ratio" style="width: 100%; height: 100%;">
+        <img onclick="sec_get('{{sec}}');" src="{{ url_for('video_feed', cctv_section=sec) }}"
+            onerror="this.src='static/nosignal4.png'" width="50%">
+        <div class="mask text-light" style="height: auto;">
+            <h4>{{sec}}</h4>
         </div>
     </div>
-    <script>
-        var timer = 0
-        var delay = 200
-        var prevent = false
-        //원클릭
-        node.onclick = (evnt) => {
-            timer = setTimeout(() => {
-                if(!prevent){
-                    window.history.back();
-                }
-                prevent = false
-            }, delay)
-        }
-        //더블클릭
-        node.ondblclick = (evnt) => {
-            clearTimeout(timer)
-            prevent=true
-            sec_get("{{sec}}");
-        }
-        //big_screen.html 하이퍼링크
-        function sec_get(obj) {
-            var section = '/big_screen?section=' + obj
-            window.location.href = section
-        }
-    </script>
-</body>
+</div> -->
+<div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width:80%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+    <div class="ratio" style="width: 100%; height: 100%;">
+        <img onclick="sec_get('{{sec}}');" src="{{ url_for('video_feed', cctv_section=sec) }}" onerror="this.src='static/nosignal4.png'" width="50%">
+        <div class="mask text-light" style="height: auto;">
+            <h4>{{sec}}</h4>
+        </div>
+    </div>
+</div>
+<script>
+    var timer = 0
+    var delay = 200
+    var prevent = false
+    //원클릭
+    node.onclick = (evnt) => {
+        timer = setTimeout(() => {
+            if (!prevent) {
+                window.history.back();
+            }
+            prevent = false
+        }, delay)
+    }
+    //더블클릭
+    node.ondblclick = (evnt) => {
+        clearTimeout(timer)
+        prevent = true
+        sec_get("{{sec}}");
+    }
+    //big_screen.html 하이퍼링크
+    function sec_get(obj) {
+        var section = '/big_screen?section=' + obj
+        window.location.href = section
+    }
+</script>
 {% endblock %}
