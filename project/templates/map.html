@@ -1,0 +1,78 @@
+<head></head>
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-9">
+        <div class="map" id="map" style="width:70%;height:100%;"></div>
+    </div>
+    <div class="col-3" style="margin-top: 30px;">
+        {% for e in cctv_list %}
+        <button type="button" class="btn btn-dark btn-lg btn-block" style="width: 80%; height:30%;">{{e}}</button>
+        <p style="margin-top: 30px;"></p>
+        {% endfor %}
+
+        </table>
+
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=118f9bce48db93a54fc3125796745885"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+        mapOption = {
+            center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
+            level: 2 // 지도의 확대 레벨
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    // 마커를 표시할 위치와 title 객체 배열입니다 
+    var positions = [
+        {
+            title: '공대4',
+            latlng: new kakao.maps.LatLng(34.9130096158476, 126.43770974215572)
+        },
+        {
+            title: '공대1,2',
+            latlng: new kakao.maps.LatLng(34.912543818087656, 126.436394346095)
+        },
+        {
+            title: '공대3',
+            latlng: new kakao.maps.LatLng(34.91305599869959, 126.43702004357176)
+        },
+        {
+            title: '공대5',
+            latlng: new kakao.maps.LatLng(34.91441487047608, 126.43897772651881)
+        }
+    ];
+
+    // 마커 이미지의 이미지 주소입니다
+    var imageSrc = "../static/marker.png";
+
+    for (var i = 0; i < positions.length; i++) {
+
+        // 마커 이미지의 이미지 크기 입니다
+        var imageSize = new kakao.maps.Size(30, 40);
+
+        // 마커 이미지를 생성합니다    
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: map, // 마커를 표시할 지도
+            position: positions[i].latlng, // 마커를 표시할 위치
+            title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image: markerImage // 마커 이미지
+        });
+        kakao.maps.event.addListener(marker, 'click', function () {
+            var position = this.getPosition();
+            var section = this.getTitle();
+            location.href = '/detail?section=' + section;
+        });
+    }
+</script>
+
+{% endblock %}

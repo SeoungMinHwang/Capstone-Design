@@ -62,3 +62,10 @@ seventid		INTEGER	PRIMARY KEY,
 eventname		VARCHAR(20),
 eventstate		VARCHAR(20)
 );
+
+#유저 테이블
+CREATE TABLE Users(
+id				VARCHAR(30) PRIMARY KEY,
+passwords		VARCHAR(100),
+fame			VARCHAR(10)
+);

@@ -71,7 +71,7 @@ def login():
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['남악1','남악2','목포대1','목포대2','하당1','하당2']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
         return render_template('all_cctv.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -100,9 +100,11 @@ def drone_but():
 def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
+    # CCTV 지역 리스트
+    cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
     if (inputId=='admin'and inputPassword=='123'):
         session['username'] = inputId
-        return redirect(url_for('all_cctv'))
+        return render_template('map.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
 
@@ -127,7 +129,54 @@ def weather():
     weather_list = job('전라남도 무안군 청계면')
     return render_template('detail.html', weather_list)
 
+# 메인 페이지(지도)
+@app.route('/map')
+def map():
+    if 'username' in session:
+    # CCTV 지역 리스트
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        return render_template('map.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
+
+# 대시보드
+@app.route("/dashboard")
+def dashboard():
+    if 'username' in session:
+    # CCTV 지역 리스트
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        return render_template('dashboard.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
     
+# 이벤트로그
+@app.route("/eventlog")
+def eventlog():
+    if 'username' in session:
+    # CCTV 지역 리스트
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        return render_template('eventlog.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
+    
+# 프로파일
+@app.route("/profile")
+def profile():
+    if 'username' in session:
+        return render_template('profile.html')
+    else:
+        return redirect(url_for('login'))
+    
+
+
+#카카오톡 보내기페이지
+@app.route('/drone_popup')
+def drone_popup():
+    #창을 켰을 때 만 상태를 받아옴
+    return render_template('drone_popup.html')
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)

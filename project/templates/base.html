@@ -1,21 +1,162 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/js/bootstrap.min.js">
-    <style>
-        .bottom-right {
-          position: absolute;
-          bottom: 4px;
-          right: 8px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title> Vision Guard Monitoring System</title>
+  <link rel="stylesheet" href="../static/styles.css">
+  <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <!-- SideBar-Menu CSS -->
+  <link rel="stylesheet" href="../static/css/styles.css">
+
+  <!-- Demo CSS -->
+  <link rel="stylesheet" href="../static/css/demo.css">
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/js/bootstrap.min.js">
+
+  <script>
+    $(document).ready(function () {
+      $(".hamburger .hamburger__inner").click(function () {
+        $(".wrapper").toggleClass("active")
+      })
+
+      $(".top_navbar .fas").click(function () {
+        $(".profile_dd").toggleClass("active");
+      });
+    })
+    $(document).ready(function () {
+      $(".hamburger .hamburger__inner").click();
+    });
+    function logout(){
+      window.location.href = '/logout'
+  } function profile(){
+      window.location.href = '/profile'
+}
+  </script>
 </head>
-<body>
-    {% block content %}
-    {% endblock %}
+<body style="overflow-x: hidden">
+
+  <div class="wrapper">
+    <div class="top_navbar">
+      <div class="hamburger">
+        <div class="hamburger__inner">
+          <div class="one"></div>
+          <div class="two"></div>
+          <div class="three"></div>
+        </div>
+      </div>
+      <div class="menu">
+        <div class="logo">
+          <a href="/map"><img src="../static/banner.png " style="width:auto; height:60px;" alt="logo"></a>
+        </div>
+        <div class="right_menu">
+          <ul>
+            <li><i class="fas fa-user"></i>
+              <div class="profile_dd">
+                <div class="dd_item" onclick="profile()">Profile</div>
+                <div class="dd_item" onclick="logout()" >Logout</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="main_container">
+      <div class="sidebar">
+        <div class="sidebar__inner">
+          <ul>
+            <li>
+              <a href="/map">
+                <span class="icon">
+                  <i class="fa fa-home" aria-hidden="true"></i>
+                </span>
+                <span class="title">Vision Guard</span>
+              </a>
+            </li>
+            <li>
+              <a href="/dashboard">
+                <span class="icon"><i class="fas fa-dice-d6"></i></span>
+                <span class="title">대시보드</span>
+              </a>
+            </li>
+            <li class="has-submenu">
+              <a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
+                <span class="title">모니터링 &nbsp;<i class="fa fa-caret-down"></i></span></a>
+              <ul class="submenu">
+                <li><a href="/detail?section=공대1,2"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                    <span class="title">공대1,2호관</span></a></li>
+                <li><a href="/detail?section=공대3"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                    <span class="title">공대3호관</span></a></li>
+                <li><a href="/detail?section=공대4"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                    <span class="title">공대4호관</span></a></li>
+                <li><a href="/detail?section=공대5"><span class="icon"><i class="fa fa-map-marker"></i></span>
+                    <span class="title">공대5호관</span></a></li>
+  
+              </ul>
+            </li>
+            <li>
+              <a href="/eventlog">
+                <span class="icon"><i class="fa fa-history"></i></span>
+                <span class="title">이벤트 로그</span>
+              </a>
+            </li>
+          </ul>
+          <div class="profile">
+            <div class="profile_info">
+              <p>&nbsp;&nbsp;&nbsp;Welcome</p>
+              <p class="profile_name">&nbsp;&nbsp;&nbsp;Admin</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="hihi">
+          {% block content %}
+          {% endblock %}
+        </div>
+        <!-- <header class="intro">
+          <h1> CSS Sidebar Menu with icons Example </h1>
+          <p> SideBar Menu Using HTML CSS and jQuery.</p>
+          <p> Written in HTML, CSS, JavaScript... </p>
+          <div class="action">
+            <a href="https://www.codehim.com/menu/css-sidebar-navigation-menu-with-icons/"
+              title="Back to download and tutorial page" class="btn back">Back to Tutorial</a>
+            <a href="https://github.com/codingmarket07/SideBar-Menu-N19" title="View, Fork or Star on GitHub"
+              class="btn github">View on GitHub</a>
+          </div>
+        </header>
+
+
+        <div class="item">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
+          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
+          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
+          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
+        </div>
+        <div class="item">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
+          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
+          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
+          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
+        </div>
+        <div class="item">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
+          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
+          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
+          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
+        </div> -->
+      </div>
+    </div>
+
+  </div>
+  <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
+    href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
+  </footer>
+
 </body>
+
 </html>
