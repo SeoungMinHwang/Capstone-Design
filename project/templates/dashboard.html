@@ -1,6 +1,150 @@
 <head></head>
 {% extends 'base.html' %}
 {% block content %}
+<div style="padding:25px;">
+  <div class="row">
+    <div class="col-5" style="height:100%;">
+      <div class="row" style="height:50%;">
+        <b style=" text-align:center;font-size: 20px;">요일별 감지 횟수</b>
+        <canvas id="DayofWeek" style="width:100%;"></canvas>
+      </div>
+      <div class="row" style="height:50%; margin-top:50px;">
+        <b style=" text-align:center;font-size: 20px;">월별 감지 횟수</b>
+        <canvas id="Monthly" style="width:100%;"></canvas>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-5">
+      <div class="row" style="height:50%;">
+        <b style=" text-align:center; font-size: 20px;">CCTV별 감지 비율</b>
+        <canvas id="DetRateByCCTV" style="width:100%; height:90%;"></canvas>
+      </div>
+      <div class="row" style="height:20%; font-weight:600; font-size:20; margin-top:50px; text-align: center;">
+        <div class="col-4">
+          <p>공대1,2호관</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#ff0540" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+        <div class="col-4">
+          <p>공대3호관</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#ff0540" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+        <div class="col-4">
+          <p>공대4호관</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#6b70ff" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="row" style="height:20%; font-weight:600; font-size:20; text-align: center;">
+        <div class="col-4">
+          <p>공대5호관</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#ff0540" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+        <div class="col-4">
+          <p>대외협력관</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#ff0540" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+        <div class="col-4">
+          <p>스포츠센터</p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#ff0540" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
+  const DoW = document.getElementById('DayofWeek');
+  const Month = document.getElementById('Monthly');
+  const DRBC = document.getElementById('DetRateByCCTV');
 
+  new Chart(DoW, {
+    type: 'line',
+    data: {
+      labels: ['Mon.','Tues.','Wed.','Thurs.','Fri.','Sat.','Sun.'],
+      datasets: [{
+        label: '요일별 감지 횟수',
+        data: [1, 3, 2, 5, 6, 2, 9],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins:{
+        legend:{
+          display : false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  new Chart(Month, {
+    type: 'line',
+    data: {
+      labels: ['Jan.','Feb.','Mar.','Apr.','May.','Jun','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'],
+      datasets: [{
+        label: '월별 감지 횟수',
+        data: [1, 3, 2, 5, 6, 2, 9,8,11,10,7,4],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins:{
+        legend:{
+          display : false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  new Chart(DRBC, {
+    type: 'doughnut',
+    data: {
+      labels: ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터'],
+      datasets: [{
+        data: [1, 3, 2, 5, 6, 2],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins:{
+        legend: {
+          position: 'right',
+      }
+      },
+      scales: {
+        
+        y: {
+          beginAtZero: true,
+        }
+      },
+      title: {
+        display: true,
+        text: 'Custom Chart Title'
+      }
+    }
+  });
+  
+</script>
 {% endblock %}
