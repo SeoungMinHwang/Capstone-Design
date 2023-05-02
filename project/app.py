@@ -95,7 +95,6 @@ def kakaosend():
 def drone_but():
     return render_template('drone_but.html')
 
-
 # 사용자 확인
 @app.route("/login_confirm",methods=['POST'])
 def login_confirm():
@@ -167,6 +166,17 @@ def profile():
         return render_template('profile.html')
     else:
         return redirect(url_for('login'))
+    
+
+
+#카카오톡 보내기페이지
+@app.route('/drone_popup')
+def drone_popup():
+    #창을 켰을 때 만 상태를 받아옴
+    return render_template('drone_popup.html')
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
