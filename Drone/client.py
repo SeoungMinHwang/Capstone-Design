@@ -9,16 +9,18 @@ def send(sock):
         sendData = input('>>>')
         sock.send(sendData.encode('utf-8'))
         
-        if sendData == "/종료":break
+        if sendData.encode('utf-8') == "":break
+        
 
 def receive(sock):
     while True:
         recvData = sock.recv(1024)
         print('상대방 :', recvData.decode('utf-8'))
-        if recvData.decode('utf-8') == "/종료":break
+        if recvData.decode('utf-8') == "":
+            break
 
-# serverip = '192.168.35.221'
-serverip = '172.0.0.1'
+serverip = '192.168.29.238'
+# serverip = '172.0.0.1'
 port = 8081
 
 clientSock = socket(AF_INET, SOCK_STREAM)
