@@ -1,8 +1,8 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
 import cv2, camera, kakao, pymysql
 from weather_search import get_weather_daum, job
-import requests
-from bs4 import BeautifulSoup
+# import requests
+# from bs4 import BeautifulSoup
 
 conn = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='capstone', charset='utf8')
 cur = conn.cursor()
@@ -37,17 +37,17 @@ def gen_frames(camera):
 # 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
-    if cctv_section=='남악1':
-        return Response(gen_frames(cv2.VideoCapture(camera1)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='남악2':
-        return Response(gen_frames(cv2.VideoCapture(camera2)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='목포대1':
-        return Response(gen_frames(cv2.VideoCapture(camera3)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='목포대2':
+    if cctv_section=='공대1,2호관':
+        return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section=='공대3호관':
+        return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section=='공대4호관':
+        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section=='공대5호관':
         return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='하당1':
+    elif cctv_section=='대외협력관':
         return Response(gen_frames(camera5), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='하당2':
+    elif cctv_section=='스포츠센터':
         return Response(gen_frames(camera6), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # CCTV상세정보
@@ -71,7 +71,7 @@ def login():
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('all_cctv.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -101,7 +101,7 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
-    cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+    cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
     if (inputId=='admin'and inputPassword=='123'):
         session['username'] = inputId
         return render_template('map.html',cctv_list=cctv_list)
@@ -134,7 +134,7 @@ def weather():
 def map():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('map.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -144,7 +144,7 @@ def map():
 def dashboard():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('dashboard.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -154,7 +154,7 @@ def dashboard():
 def eventlog():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
+        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('eventlog.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
