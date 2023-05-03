@@ -4,7 +4,7 @@ from weather_search import get_weather_daum, job
 # import requests
 # from bs4 import BeautifulSoup
 
-conn = pymysql.connect(host='127.0.0.1', user='root', password='7097', db='capstone', charset='utf8')
+conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='root', password='1234', db='capstone', charset='utf8')
 cur = conn.cursor()
 cur.execute('SELECT * FROM eventt')
 eventlist = cur.fetchall()
