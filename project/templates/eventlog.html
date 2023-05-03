@@ -1,6 +1,64 @@
 <head></head>
 {% extends 'base.html' %}
 {% block content %}
+<link href="https://unpkg.com/tabulator-tables@4.0.5/dist/css/tabulator.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/tabulator_bootstrap4.min.css'/>" />
+<div class="row" style="height:100%;">
+    <div class="col-7" style="margin-left:20px; margin-top:10px;">
+        <div id="event-table"></div>
+    </div>
+    <div class="col-4" style="margin-left:20px; margin-top:10px;">
+        <div id="drone-table"></div>
+    </div>
+</div>
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.0.5/dist/js/tabulator.min.js"></script>
+<script>
+    var eventData = [
+    {eventnum: 1, location:"공대1,2호관", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 2, location:"공대3호관", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 3, location:"공대4호관", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 4, location:"스포츠센터", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 5, location:"공대3호관", eventtime:"14/05/1982", action:"false"},
+    {eventnum: 6, location:"공대3호관", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 7, location:"대외협력관", eventtime:"14/05/1982", action:"false"},
+    {eventnum: 8, location:"공대3호관", eventtime:"14/05/1982", action:"true"},
+    {eventnum: 9, location:"스포츠센터", eventtime:"14/05/1982", action:"true"}
+    ]
+    $(function(){
+        var eventtable = new Tabulator("#event-table", {
+        height:"99%",
+        layout:"fitColumns",
+        placeholder:"No Data",
+        columns : [
+        {title:"이벤트번호", field:"eventnum", align:"center", sorter:"number", frozen:true},
+        {title:"장소", field:"location", sorter:"string", width:200},
+        {title:"발생시간", field:"eventtime",sorter:"date", width:350},
+        {title:"드론출동여부", field:"action", align:"center", formatter:"tickCross", sorter:"boolean"}
+        ]
+      });
+      eventtable.setData(eventData);
+    });
 
+    var droneData = [
+    {dronenum: 1, dronestate:"true"},
+    {dronenum: 2, dronestate:"true"},
+    {dronenum: 3, dronestate:"false"},
+    {dronenum: 4, dronestate:"false"},
+    {dronenum: 5, dronestate:"true"},
+    {dronenum: 6, dronestate:"true"}
+    ]
+    $(function(){
+        var dronetable = new Tabulator("#drone-table", {
+        layout:"fitColumns",
+        placeholder:"No Data",
+        columns : [
+        {title:"드론번호", field:"dronenum", align:"center", sorter:"number"},
+        {title:"드론상태", field:"dronestate", align:"center", formatter:"tickCross", sorter:"boolean"}
+        ]
+      });
+      dronetable.setData(droneData);
+    });
+
+</script>
 
 {% endblock %}

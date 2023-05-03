@@ -4,18 +4,20 @@ from weather_search import get_weather_daum, job
 # import requests
 # from bs4 import BeautifulSoup
 
-conn = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='capstone', charset='utf8')
+conn = pymysql.connect(host='orion.mokpo.ac.kr', port=8391, user='remote', password='1234', db='capstone', charset='utf8')
 cur = conn.cursor()
-cur.execute('SELECT * FROM eventt')
+cur.execute('SELECT * FROM Eventt')
 eventlist = cur.fetchall()
 cur.execute('SELECT * FROM Response')
 responselist = cur.fetchall()
-cur.execute('select * from drone')
+cur.execute('select * from Drone')
 dronelist = cur.fetchall()
 
 app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
+cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
+
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -37,17 +39,17 @@ def gen_frames(camera):
 # 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
-    if cctv_section=='공대1,2호관':
+    if cctv_section==cctv_list[0]:
         return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='공대3호관':
+    elif cctv_section==cctv_list[1]:
         return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='공대4호관':
+    elif cctv_section==cctv_list[2]:
         return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='공대5호관':
+    elif cctv_section==cctv_list[3]:
         return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='대외협력관':
+    elif cctv_section==cctv_list[4]:
         return Response(gen_frames(camera5), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='스포츠센터':
+    elif cctv_section==cctv_list[5]:
         return Response(gen_frames(camera6), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # CCTV상세정보
@@ -55,8 +57,7 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        weather_list = get_weather_daum('전라남도 무안군 청계면')
-        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec, weather_list=weather_list )
+        return render_template('detail.html',sec=sec)
     else:
         return redirect(url_for('login'))
 
@@ -71,7 +72,6 @@ def login():
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('all_cctv.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -101,7 +101,6 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
-    cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
     if (inputId=='admin'and inputPassword=='123'):
         session['username'] = inputId
         return render_template('map.html',cctv_list=cctv_list)
@@ -134,7 +133,6 @@ def weather():
 def map():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('map.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -144,7 +142,6 @@ def map():
 def dashboard():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('dashboard.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -154,7 +151,6 @@ def dashboard():
 def eventlog():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         return render_template('eventlog.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -174,8 +170,6 @@ def profile():
 def drone_popup():
     #창을 켰을 때 만 상태를 받아옴
     return render_template('drone_popup.html')
-
-
 
 
 if __name__ == "__main__":
