@@ -1,21 +1,14 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao, pymysql
+import cv2, camera, kakao, query
 from weather_search import get_weather_daum, job
 # import requests
 # from bs4 import BeautifulSoup
 
-conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='root', password='1234', db='capstone', charset='utf8')
-cur = conn.cursor()
-cur.execute('SELECT * FROM eventt')
-eventlist = cur.fetchall()
-cur.execute('SELECT * FROM Response')
-responselist = cur.fetchall()
-cur.execute('select * from drone')
-dronelist = cur.fetchall()
-
 app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
+
+cctv_list = query.cctv_list()
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -56,7 +49,7 @@ def detail():
     if 'username' in session:
         sec = request.args.get('section')
         weather_list = get_weather_daum('전라남도 무안군 청계면')
-        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec, weather_list=weather_list )
+        return render_template('detail.html')
     else:
         return redirect(url_for('login'))
 
@@ -154,8 +147,9 @@ def dashboard():
 def eventlog():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
-        return render_template('eventlog.html',cctv_list=cctv_list)
+        # cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
+        eventlist = query.show_event()
+        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist)
     else:
         return redirect(url_for('login'))
     
