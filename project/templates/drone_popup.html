@@ -18,7 +18,7 @@
         })
       })
       
-      //매초 상태를 받아오는 코드
+	  //매초 상태를 받아오는 코드
       var intervalId
       
       $('#myModal').on('shown.bs.modal', function () {
@@ -44,34 +44,6 @@
           }
         })
       }
-      
-      function getTextColor(value) {
-        if (value === 'success') {
-          return 'green'
-        } else if (value === 'warning') {
-          return 'yellow'
-        } else if (value === 'error') {
-          return 'red'
-        } else {
-          return 'black' // 기본값
-        }
-      }
-      
-      function changeTextColor() {
-        const response = '{"status": "success"}' // 예시 JSON 데이터
-        const data = JSON.parse(response) // JSON 문자열을 JavaScript 객체로 변환
-      
-        const status = data.status // JSON 데이터에서 값을 가져옴
-        const textColor = getTextColor(status) // 글씨 색을 결정하는 함수 호출
-      
-        const element = document.getElementById('status-text') // 스타일을 변경할 요소를 가져옴
-        element.style.color = textColor // 스타일 속성 변경
-      }
-      
-      // 화면이 로드될 때 실행할 코드
-      window.onload = function () {
-        changeTextColor()
-      } 
     </script>
   </head>
   <body>
@@ -98,13 +70,13 @@
                       <div class="row">
                         <div class="form-group text-center">
                           <label for="recipient-name" class="control-label">드론 상태</label>
-                          <h1 class="text-primary" id="status-text">대기중...</h1>
+                          <input type="text" class="form-control" id="recipient-name" />
                         </div>
                       </div>
                       <div class="row">
                         <div class="form-group text-center">
                           <button type="button" class="btn btn-primary btn-circle">출발</button>
-                          <button type="button" class="btn btn-circle" style="background-color: aquamarine;">귀환</button>
+                          <button type="button" class="btn btn-primary btn-circle">귀환</button>
                         </div>
                       </div>
                     </div>
