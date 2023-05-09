@@ -38,7 +38,12 @@ def show_drone(cursor):
 @auto_conn_disconn
 def cctv_list(cursor):
     cursor.execute(f"""select place from CCTV""")
-    return cursor.fetchall()
+    
+    output = []
+    for i in cursor.fetchall():
+        output.append(i[0])
+    
+    return output
 
 @auto_conn_disconn
 def show_users(cursor):
@@ -56,4 +61,4 @@ def show_event(cursor):
 # show_users()
 # show_drone()
 # print(show_event())
-print(cctv_list())
+# print(cctv_list())
