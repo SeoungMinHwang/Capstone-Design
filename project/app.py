@@ -131,9 +131,11 @@ def map():
 # 대시보드
 @app.route("/dashboard")
 def dashboard():
+    day_per_eventlist = query.event_per_day()
+    month_per_eventlist = query.event_per_month()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('dashboard.html',cctv_list=cctv_list)
+        return render_template('dashboard.html',cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist)
     else:
         return redirect(url_for('login'))
     
