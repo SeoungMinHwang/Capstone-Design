@@ -78,6 +78,7 @@ def event_per_day(cursor):
         result[i[0]-1] = i[1]
     return result
 
+# 월별 이벤트 개수
 @auto_conn_disconn
 def event_per_month(cursor):
     result = [0,0,0,0,0,0,0,0,0,0,0,0]
@@ -90,5 +91,14 @@ def event_per_month(cursor):
         result[i[0] - 1] = i[1]
     return result
 
-
-# print(event_per_month())
+# 장소별 이벤트 비율
+@auto_conn_disconn
+def event_per_place(cursor):
+    result = [0, 0, 0, 0, 0, 0]
+    cursor.execute(f"""select CCTVid, count(*)
+                   from Eventt
+                   group by CCTVid
+                   order by CCTVid""")
+    for i in cursor.fetchall():
+        result[i[0]-1] = i[1]
+    return result
