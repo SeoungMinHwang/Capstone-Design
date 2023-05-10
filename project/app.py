@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao, query
+import cv2, camera, kakao, query, go_login
 from weather_search import get_weather_daum, job
 # import requests
 # from bs4 import BeautifulSoup
@@ -92,7 +92,7 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
-    if (inputId=='admin'and inputPassword=='123'):
+    if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
         session['username'] = inputId
         return render_template('map.html',cctv_list=cctv_list)
     else:

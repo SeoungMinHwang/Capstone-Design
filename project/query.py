@@ -58,7 +58,14 @@ def show_event(cursor):
     cursor.execute(f"""select A.eventid as 이벤트번호, B.place as 장소, A.eventtime as 발생시간 from Eventt A natural join CCTV B""")
     return cursor.fetchall()
 
-# show_users()
-# show_drone()
-# print(show_event())
-# print(cctv_list())
+# 로그인
+@auto_conn_disconn
+def get_password(cursor,id):
+    cursor.execute(f"""select passwords from Users where id = "{id}" """)
+    password = cursor.fetchall()[0][0]
+    return password
+
+# select DAYOFWEEK(eventtime) as "요일",count(*) as "개수" from eventt group by DAYOFWEEK(eventtime);
+
+
+# print(can_login("admin"))
