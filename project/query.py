@@ -65,7 +65,20 @@ def get_password(cursor,id):
     password = cursor.fetchall()[0][0]
     return password
 
+# 요일별 이벤트 갯수 출력 형식 : [요일,갯수]
+@auto_conn_disconn
+def event_per_day(cursor):
+    days = {1 : "Sun", 2 : "Mon", 3 : "Tue", 4 : "Wed", 5 : "Thu", 6 : "Fri", 7 : "Sat"}
+    result = []
+    cursor.execute(f"""select DAYOFWEEK(eventtime), count(*) 
+                   from Eventt 
+                   where eventtime between DATE_ADD(Now(), INTERVAL -1 WEEK) AND NOW()
+                   group by DAYOFWEEK(eventtime)
+                   order by "요일" """)
+    for i in cursor.fetchall():
+        result.append([days[i[0]],i[1]])
+    return result
 # select DAYOFWEEK(eventtime) as "요일",count(*) as "개수" from eventt group by DAYOFWEEK(eventtime);
 
 
-# print(can_login("admin"))
+print(event_per_day())
