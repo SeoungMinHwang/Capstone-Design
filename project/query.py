@@ -99,5 +99,7 @@ def map_list(cursor):
     result = []
     cursor.execute(f"""select placename, latitude, longitude from CCTV """)
     for i in cursor.fetchall():
-        result.append(list(i))
+        result.append([i[0],float(i[1]), float(i[2])])
     return result
+
+# print(map_list())

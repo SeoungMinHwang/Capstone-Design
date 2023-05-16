@@ -93,8 +93,9 @@ def login_confirm():
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
     if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
+        map_list = query.map_list()
         session['username'] = inputId
-        return render_template('map.html',cctv_list=cctv_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
 
@@ -125,7 +126,7 @@ def map():
     map_list = query.map_list()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('map.html',cctv_list=cctv_list, map_list = map_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
 
