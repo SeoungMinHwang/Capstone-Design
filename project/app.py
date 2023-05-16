@@ -122,9 +122,10 @@ def weather():
 # 메인 페이지(지도)
 @app.route('/map')
 def map():
+    map_list = query.map_list()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('map.html',cctv_list=cctv_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list = map_list)
     else:
         return redirect(url_for('login'))
 

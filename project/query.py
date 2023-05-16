@@ -93,3 +93,11 @@ def event_per_place(cursor):
     for i in cursor.fetchall():
         result[i[0]-1] = i[1]
     return result
+
+@auto_conn_disconn
+def map_list(cursor):
+    result = []
+    cursor.execute(f"""select placename, latitude, longitude from CCTV """)
+    for i in cursor.fetchall():
+        result.append(list(i))
+    return result
