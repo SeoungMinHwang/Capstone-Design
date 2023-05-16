@@ -3,13 +3,13 @@
 </head>
 {% extends 'base2.html' %}
 {% block content %}
-<body class="container-fluid-maxwidth w-100 h-100 text-white" style="background-color: #333333;">
+<body class="container-fluid-maxwidth w-100 h-100 text-white" style="background-color: #e6e1e1ba;">
     <!-- 위쪽 공간 생성 -->
     <div class="container" style="height: 10%;"></div>
     <!-- 로그인 부분 -->
     <div class="container p-5 align-items-center" style="text-align: center; vertical-align: middle; width: 350px;">
         <form class="form-signin" action="/login_confirm" method="post">
-            <img src={{ url_for('static', filename='logo_reverse.ico') }} style="height: 100px; width:100px; margin-bottom: 25px;"/>
+            <img src={{ url_for('static', filename='logo.ico') }} style="height: 100px; width:100px; margin-bottom: 25px;"/>
             <h1 class="h3 mb-3 font-weight-normal"></h1>
             <label for="inputId" class="sr-only"></label>
             <input type="text" id="inputId" name="inputId" class="form-control" placeholder="ID" required="" autofocus="">
