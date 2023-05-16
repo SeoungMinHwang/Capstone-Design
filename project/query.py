@@ -101,5 +101,3 @@ def map_list(cursor):
     for i in cursor.fetchall():
         result.append([i[0],float(i[1]), float(i[2])])
     return result
-
-# print(map_list())
