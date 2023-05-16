@@ -47,7 +47,7 @@ def cctv_list(cursor):
 
 @auto_conn_disconn
 def show_users(cursor):
-    cursor.execute(f"""SELECT * FROM Users""")
+    cursor.execute(f"""SELECT * FROM USERS""")
     
     print(cursor.fetchall())
     return cursor.fetchall()
@@ -61,7 +61,7 @@ def show_event(cursor):
 # 로그인
 @auto_conn_disconn
 def get_password(cursor,id):
-    cursor.execute(f"""select passwords from Users where id = "{id}" """)
+    cursor.execute(f"""select passwords from USERS where id = "{id}" """)
     password = cursor.fetchall()[0][0]
     return password
 
