@@ -25,19 +25,10 @@ def auto_conn_disconn(original_func):
         return query_result
         
     return wrapper    
-    
-
-
-@auto_conn_disconn
-def show_drone(cursor):
-    cursor.execute(f"""SELECT * FROM Drone""")
-    
-    print(cursor.fetchall())
-    return cursor.fetchall()
 
 @auto_conn_disconn
 def cctv_list(cursor):
-    cursor.execute(f"""select place from CCTV""")
+    cursor.execute(f"""select placename from CCTV""")
     
     output = []
     for i in cursor.fetchall():
@@ -47,7 +38,7 @@ def cctv_list(cursor):
 
 @auto_conn_disconn
 def show_users(cursor):
-    cursor.execute(f"""SELECT * FROM Users""")
+    cursor.execute(f"""SELECT * FROM USERS""")
     
     print(cursor.fetchall())
     return cursor.fetchall()
@@ -55,13 +46,13 @@ def show_users(cursor):
 # 이벤트번호, 장소, 발생시간 나오는 쿼리문
 @auto_conn_disconn
 def show_event(cursor):
-    cursor.execute(f"""select A.eventid as 이벤트번호, B.place as 장소, A.eventtime as 발생시간 from Eventt A natural join CCTV B""")
+    cursor.execute(f"""select A.eventid as 이벤트번호, B.placename as 장소, A.eventtime as 발생시간 from FALLEVENT A natural join CCTV B""")
     return cursor.fetchall()
 
 # 로그인
 @auto_conn_disconn
 def get_password(cursor,id):
-    cursor.execute(f"""select passwords from Users where id = "{id}" """)
+    cursor.execute(f"""select passwords from USERS where id = "{id}" """)
     password = cursor.fetchall()[0][0]
     return password
 
@@ -70,7 +61,7 @@ def get_password(cursor,id):
 def event_per_day(cursor):
     result = [0,0,0,0,0,0,0]
     cursor.execute(f"""select DAYOFWEEK(eventtime), count(*) 
-                   from Eventt 
+                   from FALLEVENT 
                    where eventtime between DATE_ADD(Now(), INTERVAL -1 WEEK) AND NOW()
                    group by DAYOFWEEK(eventtime)
                    order by DAYOFWEEK(eventtime) """)
@@ -83,7 +74,7 @@ def event_per_day(cursor):
 def event_per_month(cursor):
     result = [0,0,0,0,0,0,0,0,0,0,0,0]
     cursor.execute(f"""select MONTH(eventtime), count(*)
-                   from Eventt
+                   from FALLEVENT
                    where eventtime between DATE_ADD(Now(), INTERVAL -1 YEAR) AND NOW()
                    group by MONTH(eventtime)
                    order by MONTH(eventtime) """)
@@ -96,7 +87,7 @@ def event_per_month(cursor):
 def event_per_place(cursor):
     result = [0, 0, 0, 0, 0, 0]
     cursor.execute(f"""select CCTVid, count(*)
-                   from Eventt
+                   from FALLEVENT
                    group by CCTVid
                    order by CCTVid""")
     for i in cursor.fetchall():
