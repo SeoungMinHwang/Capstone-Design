@@ -1,6 +1,7 @@
 import functools
 import pymysql
 import locale
+import time
 
 
 # 데코레이터 정의 부분 
@@ -102,4 +103,16 @@ def map_list(cursor):
         result.append([i[0],float(i[1]), float(i[2])])
     return result
 
-# print(map_list())
+@auto_conn_disconn
+def event_list(cursor, placename):
+    result = []
+    cursor.execute(f"""select eventtime, eventtype
+                   from FALLEVENT
+                   where cctvid in (select cctvid from CCTV where placename = "{placename}")
+                   ORDER BY eventtime DESC
+                   LIMIT 3 """)
+    for i in cursor.fetchall():
+        result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'), i[1]])
+    return result
+
+# print(event_list("공대4호관"))

@@ -93,9 +93,11 @@ def login_confirm():
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
     if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
+        placename = request.args.get('placename','목포대학교')
         map_list = query.map_list()
+        eventlist = query.event_list(placename)
         session['username'] = inputId
-        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list=map_list,eventlist=eventlist)
     else:
         return redirect(url_for('login'))
 
@@ -123,12 +125,20 @@ def weather():
 # 메인 페이지(지도)
 @app.route('/map')
 def map():
+    placename = request.args.get('placename','목포대학교')
     map_list = query.map_list()
+    eventlist = query.event_list(placename)
     if 'username' in session:
     # CCTV 지역 리스트
         return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
+
+@app.route('/map_get')    
+def map_get():
+    placename = request.args.get('placename','목포대학교')
+    eventlist = query.event_list(placename)
+    return eventlist
 
 # 대시보드
 @app.route("/dashboard")

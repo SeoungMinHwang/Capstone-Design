@@ -3,6 +3,7 @@
 {% block content %}
 <link href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css" rel="stylesheet">
 <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="row" style="height:85%;">
     <div class="map" id="map" style="margin-left:15px; width:100%;height:100%;"></div>
     <div class="col-3" style="margin-top:30px; margin-left:30px;">
@@ -66,13 +67,29 @@
             latlng: new kakao.maps.LatLng({{e[1]}}, {{e[2]}})
         })
     {% endfor %}
-       
 
-    // 마커 이미지의 이미지 주소입니다
-    var imageSrc = "../static/marker.png";
+    function sendData(marker){
+      $.ajax({
+        type : 'get',           // 타입 (get, post, put 등등)
+        url : '/map_get',           // 요청할 서버url
+        async : true,            // 비동기화 여부 (default : true)
+        headers : {              // Http header
+          "Content-Type" : "application/json",
+          "X-HTTP-Method-Override" : "GET"
+        },
+        dataType : 'text',       // 데이터 타입 (html, xml, json, text 등등)
+        data : placename = "placename="+marker.getTitle(),
+        success : function(result) { // 결과 성공 콜백함수
+            console.log(result);
+        },
+        error : function(request, status, error) { // 결과 에러 콜백함수
+            console.log(error)
+        }
+    })
+    }
 
-    for (var i = 0; i < positions.length; i++) {
-
+    // 마커를 생성하고 지도 위에 표시하는 함수
+    function addMarker(position, content, title) {
         // 마커 이미지의 이미지 크기 입니다
         var imageSize = new kakao.maps.Size(30, 40);
 
@@ -82,16 +99,61 @@
         // 마커를 생성합니다
         var marker = new kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
-            position: positions[i].latlng, // 마커를 표시할 위치
-            title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            position: position, // 마커를 표시할 위치
+            title: title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             image: markerImage // 마커 이미지
         });
-        kakao.maps.event.addListener(marker, 'click', function () {
-            var position = this.getPosition();
-            var section = this.getTitle();
-            location.href = '/detail?section=' + section;
+
+        kakao.maps.event.addListener(marker, "click", function () {
+          sendData(marker)
+          infowindow.setContent(content);
+          infowindow.open(map, marker);
         });
+
+        marker.setMap(map);
+      }
+
+    // 마커 이미지의 이미지 주소입니다
+    var imageSrc = "../static/marker.png";
+
+    var infowindow = new kakao.maps.InfoWindow({
+        zIndex: 1,
+        removable : true
+      });
+
+    for (var i = 0; i < positions.length; i++) {
+      var content = '<div class="wrap" ; style="width:250px; height: 200px;">' + 
+        '   <div class="info">' + 
+        '       <div class="title">' + 
+                    positions[i].title  + 
+        '       </div>' + 
+        '       <div class="body">' + 
+        '  <table id="table"  class="bg-dark p-2 text-dark bg-opacity-10" data-page-size="3" data-toggle="table" style="width:100%;">' +
+        '    <thead>' +
+        '        <tr>' +
+        '            <th data-field="operate" data-loading-template="loadingTemplate" data-halign="center" data-align="left" data-formatter="operateFormatter" data-height="100">이벤트 발생 시간</th>' +
+        '            <th data-field="operate" data-loading-template="loadingTemplate" data-halign="center" data-align="left" data-formatter="operateFormatter" data-height="100">이벤트 타입</th>' +           
+        '         </tr>' +
+        '     </thead>' +
+        '       <tbody>' +
+        '         {% for e in eventlist %}' +
+        '        <tr>' +
+        '            <td>' +
+        '                <p>{{ e.0 }}</p>' +
+        '            </td>' +
+        '            <td>' +
+        '                <p>{{ e.1 }}</p>' +
+        '            </td>' +
+        '        </tr>' +
+        '        {% endfor %}' +
+        '     </tbody>' +
+        '   </table>' +
+        '       </div>' +     
+        '   </div>';
+
+        addMarker(positions[i].latlng, content, positions[i].title);
     }
+
 </script>
 
 {% endblock %}
