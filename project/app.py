@@ -1,7 +1,8 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
 import cv2, camera, kakao, query, go_login, json
 from weather_search import get_weather_daum, job
-# import requests
+import pymysql, json
+import requests
 # from bs4 import BeautifulSoup
 
 app = Flask(__name__)
@@ -57,6 +58,7 @@ def detail():
 @app.route('/')
 def login():
     return render_template('login.html')
+
 
 # 전체CCTV
 @app.route('/all_cctv')
@@ -173,12 +175,59 @@ def profile():
     
 
 
-#카카오톡 보내기페이지
-@app.route('/drone_popup')
+#이벤트 발생시 드론화면
+@app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
 def drone_popup():
     #창을 켰을 때 만 상태를 받아옴
     return render_template('drone_popup.html')
 
+def frame_generator(frame_base64):
+    while True:
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_base64.encode() + b'\r\n')
+
+@app.route('/drone_video', methods=['GET', 'POST'])
+def drone_video():
+    frame_data = request.form.get('data')
+
+    return Response(frame_generator(frame_data), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route("/takeoff")
+def takeoff():
+  # 드론을 이륙시킵니다.
+#   drone.takeoff()
+    #@app.route("/")
+    # def index():
+    # # 다른 Flask 서버에 요청을 보냅니다.
+    drone_url = "http://192.168.10.2:3000/takeoff"
+    response = requests.get(drone_url)
+
+  # 응답을 처리합니다.
+    return "The other Flask server took off!"
+
+#   return "드론 이륙"
+
+@app.route("/land")
+def land():
+  # 드론을 착륙시킵니다.
+#   drone.land()
+    print("Land")
+#   return "드론 착륙"
+
+@app.route("/droneStatus", methods=["GET"])
+def droneStatus():
+    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
+    cursor = conn.cursor()
+    sql = '''select droneid, dronestate 
+            from DRONE 
+            WHERE droneid = 2 
+            group by droneid, dronestate desc 
+            limit 1;'''
+    cursor.execute(sql)
+    status_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    conn.close()
+
+    return status_result
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)

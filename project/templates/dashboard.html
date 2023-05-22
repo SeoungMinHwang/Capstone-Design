@@ -1,10 +1,18 @@
 <head></head>
 {% extends 'base.html' %}
 {% block content %}
+<link href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css" rel="stylesheet">
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
 <div style="padding:25px;">
   <div class="row" style="height:90%;">
     <div class="col-6" style="height:100%;">
       <div class="row" style="height:50%; display: flex;justify-content: center;">
+        <div class="col-6">
+          123
+        </div>
+        <div class="col-6">
+          dd
+        </div>
       </div>
       <div class="row" style="height:50%; display: flex;justify-content: center;">
         <b style=" text-align:center;font-size: 20px; margin-top:5px;">요일별 감지 횟수</b>
@@ -107,6 +115,5 @@
       }
     }
   });
-  
 </script>
 {% endblock %}
