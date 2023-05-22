@@ -151,9 +151,17 @@
 }
 
 
-.main_container .sidebar .sidebar__inner .has-submenu:hover .submenu {
+.main_container .sidebar .sidebar__inner .has-submenu.active .submenu {
   display: block; /* 마우스 오버시 서브메뉴를 보이게 함 */
 }
+.main_container .sidebar .sidebar__inner .has-submenu .submenu .ssubmenu {
+  display: none; /* 마우스 오버시 서브메뉴를 보이게 함 */
+}
+
+.main_container .sidebar .sidebar__inner .has-submenu .submenu:hover .ssubmenu {
+  display: block; /* 마우스 오버시 서브메뉴를 보이게 함 */
+}
+
 
 /* 서브메뉴 폰트 */
 .main_container .sidebar .sidebar__inner .has-submenu .submenu a{
