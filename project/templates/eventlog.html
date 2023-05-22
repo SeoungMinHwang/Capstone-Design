@@ -1,52 +1,40 @@
 <head></head>
 {% extends 'base.html' %}
 {% block content %}
-<link href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css" rel="stylesheet">
-<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
 <div class="row" style="height: 100%;">
-  <div style="margin-left:20px; margin-top:10px; height:85%; width:97%;">
-    <div class="form-group" style="width: 10%; float: left; margin-top:10px; margin-right:5px;height:auto;">
-      <select class="form-control" id="sel">
-        <option value="location">장소</option>
-        <option value="eventtime">발생시간</option>
-      </select>
-    </div>
-    <table id="table" data-toolbar="#toolbar" data-toggle="table" data-pagination="true" data-search="true"
-      data-search-align="left" data-custom-search="customSearch" data-sortable="true" data-sort-reset-page="true"
-      data-page-size="25" data-url="../static/eventtable.json" data-header-style="headerStyle">
+  <div style="margin-left:20px; margin-top:10px; height:85%; width:97%;">    
+    <table
+      id="table"
+      data-url="../static/eventtable.json"
+      data-filter-control="true"
+      data-pagination="true"
+      data-page-size="25">
       <thead>
         <tr>
-          <th data-field="eventnum" data-sortable="true">이벤트번호</th>
-          <th data-field="location" data-sortable="true">장소</th>
-          <th data-field="eventtime" data-sortable="true">발생시간</th>
-          <th data-field="action" data-sortable="true">드론출동여부</th>
+          <th data-field="location" data-filter-control="select" data-sortable="true" data-width="10" data-width-unit="%">장소</th>
+          <th data-field="eventtime" data-filter-control="input" data-sortable="true"data-width="20" data-width-unit="%">발생시간</th>
+          <th data-field="action" data-filter-control="select" data-sortable="true"data-width="30" data-width-unit="%">조치</th>
+          <th data-field="state" data-filter-control="select" data-sortable="true"data-width="10" data-width-unit="%">조치 상태</th>
+          <th data-field="drone" data-filter-control="select" data-sortable="true"data-width="10" data-width-unit="%">출동 드론</th>
+          <th data-field="sns" data-filter-control="select" data-sortable="true"data-width="10" data-width-unit="%">SNS 발송</th>
         </tr>
       </thead>
     </table>
   </div>
 </div>
 <script>
-  var type = 'location';
+  var $table = $('#table')
 
   $(function() {
-    $("#sel").on("change", function() {
-      type = $(this).val(); // 선택한 값으로 type 변수 변경
-      $("#table").bootstrapTable("refresh"); // 테이블 새로고침
-    });
-  });
+    $table.bootstrapTable({
+      sortReset: true
+    })
 
-  function customSearch(data, text) {
-    return data.filter(function (row) {
-      // 선택한 옵션에 따라 해당 필드를 검색
-      switch (type) {
-        case "location":
-          return row.location.indexOf(text) > -1;
-        case "eventtime":
-          return row.eventtime.indexOf(text) > -1;
-        default:
-          return false;
-      }
-    });
-  }
+    $('#sortReset').change(function () {
+      $table.bootstrapTable('refreshOptions', {
+        sortReset: $('#sortReset').prop('checked')
+      })
+    })
+  })
 </script>
 {% endblock %}
