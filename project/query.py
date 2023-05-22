@@ -57,6 +57,14 @@ def get_password(cursor,id):
     password = cursor.fetchall()[0][0]
     return password
 
+@auto_conn_disconn
+def get_idlist(cursor):
+    result = []
+    cursor.execute(f"""select id from USERS""")
+    for i in cursor.fetchall():
+        result.append(i[0])
+    return result
+
 # 요일별 이벤트 갯수 출력 형식 : [요일,갯수]
 @auto_conn_disconn
 def event_per_day(cursor):
@@ -115,4 +123,4 @@ def event_list(cursor, placename):
         result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'), i[1]])
     return result
 
-# print(event_list("공대4호관"))
+# print(get_idlist())

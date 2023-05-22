@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao, query, go_login
+import cv2, camera, kakao, query, go_login, json
 from weather_search import get_weather_daum, job
 # import requests
 # from bs4 import BeautifulSoup
@@ -92,10 +92,12 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
-    if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
-        map_list = query.map_list()
-        session['username'] = inputId
-        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+    idlist = query.get_idlist()
+    if inputId in idlist:
+        if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
+            map_list = query.map_list()
+            session['username'] = inputId
+            return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
 
@@ -134,7 +136,9 @@ def map():
 def map_get():
     placename = request.args.get('placename')
     eventlist = query.event_list(placename)
-    return eventlist
+    result = json.dumps(eventlist)
+    print(result)
+    return result
 
 # 대시보드
 @app.route("/dashboard")
