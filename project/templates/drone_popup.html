@@ -23,23 +23,33 @@ $(function() {
     clearInterval(intervalId)
   })
 
-  function getVideoFrame() {
-    $.ajax({
-        url: '/drone_video',
-        type: 'GET',
-        success: function(response) {
-            $('#videoPlayer').attr('src', 'data:image/jpeg;base64,' + response);
-        },
-        error: function() {
-            console.log('Failed to get frame status.');
+  $(function() {
+    // Flask 서버의 URL을 설정합니다.
+    var url = '/drone_video';
+  
+    // 비디오 태그를 만듭니다.
+    var video = $('#video');
+  
+    // 비디오 태그를 업데이트하는 함수를 만듭니다.
+    function updateVideo() {
+      // Flask 서버에 요청합니다.
+      $.ajax({
+        url: url,
+        method: 'POST',
+        success: function(data) {
+          // 프레임을 바이트 배열로 디코딩합니다.
+          var encoded_frame = data;
+          var frame = cv2.imdecode(encoded_frame, cv2.IMREAD_COLOR);
+  
+          // 프레임을 비디오 태그에 설정합니다.
+          video.attr('src', frame);
         }
-    });
-
-    function playVideo() {
-      var videoElement = document.getElementById('videoPlayer');
-      videoElement.play();
-  }
-}
+      }); 
+    }
+  
+    // 업데이트 비디오 타이머를 설정합니다.
+    setInterval(updateVideo, 500);
+  });
 
   function getStatus() {
     // 서버로 AJAX 요청을 보내고 응답을 받아옴 상태: [대기 출동 출동중 고장 착륙중 착륙]
@@ -92,7 +102,8 @@ $(function() {
               <div class="container-fluid">
                 <div class="row">
                   <div class="col-md-8 col-sm-12">
-                    <video id="videoPlayer" autoplay></video>
+                    <video id="video" width="640" height="480" controls></video>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
                   </div>
                   <div class="col-md-4 col-sm-12">
                     <div class="row justify-content-center">
