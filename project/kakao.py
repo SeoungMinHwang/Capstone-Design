@@ -1,25 +1,43 @@
 import json
 import requests
 
-# 친구 uuid 가져오기
-def getuuidList(token):
-    """
-    친구 uuid 가져오기 함수
-    메시지 보내는 함수에서 uuid가져오는데 사용
-    """
+def f_auth():
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': "7257f938553965cf0ca3c2d561fd91d9",
+        'redirect_uri': "wwww.localhost.com",
+        'code': authorize_code,
+    }
 
-    header = {"Authorization": 'Bearer ' + token}
-    url = "https://kapi.kakao.com/v1/api/talk/friends" #친구 정보 요청
+    response = requests.post(url, data=data)
+    tokens = response.json()
 
-    result = json.loads(requests.get(url, headers=header).text)
+    with open("kakao_code.json", "w") as fp:
+        json.dump(tokens, fp)
+    with open("kakao_code.json", "r") as fp:
+        ts = json.load(fp)
+    r_token = ts["refresh_token"]
+    return r_token
 
-    friends_list = result.get("elements")
-    friends_id = []
+# # 친구 uuid 가져오기
+# def getuuidList(token):
+#     """
+#     친구 uuid 가져오기 함수
+#     메시지 보내는 함수에서 uuid가져오는데 사용
+#     """
 
-    for friend in friends_list:
-        friends_id.append(str(friend.get("uuid")))
+#     header = {"Authorization": 'Bearer ' + token}
+#     url = "https://kapi.kakao.com/v1/api/talk/friends" #친구 정보 요청
 
-    return friends_id
+#     result = json.loads(requests.get(url, headers=header).text)
+
+#     friends_list = result.get("elements")
+#     friends_id = []
+
+#     for friend in friends_list:
+#         friends_id.append(str(friend.get("uuid")))
+
+#     return friends_id
 
 # 카카오톡 보내는 함수
 def sendToMeMessage(token,text):
