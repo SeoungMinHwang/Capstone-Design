@@ -185,9 +185,14 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    frame_data = request.form.get('data')
+    encoded_frame = request.data
+    frame = cv2.imdecode(encoded_frame, cv2.IMREAD_COLOR)
 
-    return Response(frame_generator(frame_data), mimetype='multipart/x-mixed-replace; boundary=frame')
+    # 프레임을 비디오 태그에 인코딩합니다.
+    encoded_frame = cv2.imencode('.jpg', frame)[1]
+
+    # 프레임을 반환합니다.
+    return encoded_frame
 
 @app.route("/takeoff")
 def takeoff():
