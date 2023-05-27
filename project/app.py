@@ -100,6 +100,8 @@ def login_confirm():
             map_list = query.map_list()
             session['username'] = inputId
             return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+        else:
+            return redirect(url_for('login'))
     else:
         return redirect(url_for('login'))
 

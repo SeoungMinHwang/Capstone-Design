@@ -2,6 +2,30 @@ import json
 import requests
 
 def f_auth():
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': "7257f938553965cf0ca3c2d561fd91d9",
+        'redirect_uri': "wwww.localhost.com",
+        'code': authorize_code,
+    }
+
+    response = requests.post(url, data=data)
+    tokens = response.json()
+
+    with open("kakao_code.json", "w") as fp:
+        json.dump(tokens, fp)
+    with open("kakao_code.json", "r") as fp:
+        ts = json.load(fp)
+    r_token = ts["refresh_token"]
+    return r_token
+
+# # 친구 uuid 가져오기
+# def getuuidList(token):
+#     """
+#     친구 uuid 가져오기 함수
+#     메시지 보내는 함수에서 uuid가져오는데 사용
+#     """
+def f_auth():
     url = 'https://kauth.kakao.com/oauth/token'
     data = {
         'grant_type': 'authorization_code',
