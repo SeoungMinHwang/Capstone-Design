@@ -69,22 +69,22 @@ a.btn:hover {
 .down:before{content: "\f019"}
 .back:before{content:"\f112"} */
 .credit {
-   background: #fff;
+   background: #1d1d1d;
    padding: 12px;
    font-size: 9pt;
    text-align: center;
-   color: #333;
+   color: #ffffff;
    /* margin-top: 40px; */
 
 }
 
 .credit a {
-   color: #333;
+   color: #ffffff;
    text-decoration: none;
 }
 
 .credit a:hover {
-   color: #1DBF73;
+   color: #2666e6;
 }
 
 .credit a:hover:after {

@@ -13,6 +13,10 @@
   <!-- Demo CSS -->
   <link rel="stylesheet" href="../static/css/demo.css">
   <!-- bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
   <link rel="stylesheet" href="../static/css/bootstrap.min.css">
   <link rel="stylesheet" href="../static/js/bootstrap.min.js">
   <!-- table -->
@@ -49,6 +53,14 @@
       });
     });
   </script>
+  <style>
+    a{
+      text-decoration: none;
+    }
+    a:hover, a:active, a:visited, a:link{
+      text-decoration: none;
+  }
+  </style>
 </head>
 
 <body style="overflow-x: hidden">
@@ -134,7 +146,7 @@
           </div> -->
         </div>
       </div>
-      <div class="container">
+      <div class="container" style=" background-color:#e6e1e1ba">
         <div class="hihi">
           {% block content %}
           {% endblock %}

@@ -10,6 +10,8 @@ app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 cctv_list = query.cctv_list()
+drone_list = query.drone_list()
+
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -18,15 +20,15 @@ cctv_list = query.cctv_list()
 
 # 영상 긁어오기
 def gen_frames(camera):
+    boundary = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'
     while True:
         success, frame = camera.read()
         if not success:
             break
         else:
             ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            frame_data = buffer.tobytes()
+            yield boundary + frame_data + b'\r\n--frame\r\n'
 
 # 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
@@ -152,7 +154,7 @@ def dashboard():
     place_per_eventlist = query.event_per_place()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('dashboard.html',cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist)
+        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -201,7 +203,7 @@ def takeoff():
     #@app.route("/")
     # def index():
     # # 다른 Flask 서버에 요청을 보냅니다.
-    drone_url = "http://192.168.10.2:3000/takeoff"
+    drone_url = "http://192.168.0.8:3000/takeoff"
     response = requests.get(drone_url)
 
   # 응답을 처리합니다.
