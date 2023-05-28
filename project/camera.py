@@ -16,7 +16,7 @@ def camera_start():
     # camera3 = cv2.VideoCapture('http://192.168.46.226:8000/stream.mjpg')
     # camera3 = cv2.VideoCapture('http://192.168.141.226:8000/stream.mjpg')
     camera1 = cv2.VideoCapture(1)
-    camera2 = cv2.VideoCapture(1)
+    camera2 = cv2.VideoCapture('http://orion.mokpo.ac.kr:7910/stream.mjpg')
     camera3 = cv2.VideoCapture(0)
     camera4 = cv2.VideoCapture(1)
     camera5 = cv2.VideoCapture(1)
