@@ -1,6 +1,407 @@
-<head></head>
+<head>  
+</head>
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<style>
+  a{
+    text-decoration: none;
+  }
+  a:hover, a:active, a:visited, a:link{
+    text-decoration: none;
+}
 
+</style>
+<div style="padding: 10px;">
+  <div class="row" style="height:97%;width:100%;">
+    <div class="col-5">
+      <!-- 지도 -->
+      <div class="card" style="width: 100%; height: 99%;">
+        <h5 class="card-title" style="margin-left: 5%; margin-top: 4%; text-align: left; font-weight: 700; font-size:20px;">금일 감지</h5>
+        <div id="map" style="width:95%;height:92%;border-radius: 10px; margin: 0 auto;"></div>
+      </div>
+    </div>
+    <div class="col-7">
+      <!-- 상단 -->
+      <div class="row" style="height:50%; margin-left:0.1%;">
+        <div class="card" style="width:50%; height:98%; padding:1%;">
+          <h5 class="card-title" style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700; font-size:20px;">CCTV별 누적 감지</h5>
+          <canvas id="DetRateByCCTV" style="height:100%; width:90%;padding:1%; margin-left:5%;"></canvas>
+        </div>
+        <div class="card" style="width:49%; height:98%; margin-left:1%; padding:1%;">
+          <h5 class="card-title" style="margin-top: 2%; font-weight: 700;">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#camera">카메라</a></li>
+              <li><a href="#drone">드론</a></li>
+              <p style="text-align: right; width:55%;margin-top:5%;">정상 작동<i class="fa fa-check-circle" style="color:dodgerblue; margin-right:5%;"></i>조치중<i class="fa fa-ban" style="color: gold;"></i> </p>
+            </ul>
+          </h5>
+          <div class="tab-content" style="overflow:auto;">
+            <div id="camera" class="tab-pane fade in active" style="margin-left:1%;">
+              <table id="table" data-page-size="5" data-toggle="table"  style="width:80%;">
+                <thead>
+                    <tr style="font-size: 20px; background-color:rgb(227, 227, 227);">
+                        <th data-field="cameraid">CCTV List</th>
+                        <th data-field="cameraoperation" data-halign="center">작동</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in cctv_list %}
+                    <tr>
+                        <td style="vertical-align: middle; font-size:15px; font-weight:800;">
+                            {{e}}
+                        </td>
+                        {% if e=='공대1,2호관' or e=='스포츠센터' %}
+                        <td style="text-align: center;">
+                          <i class="fa fa-ban fa-2x" style="color:gold;"></i>
+                        </td>
+                        {% else %}
+                        <td style="text-align: center;">
+                          <i class="fa fa-check-circle fa-2x" style="color:dodgerblue;"></i>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div id="drone" class="tab-pane fade" style="margin-left:1%;">
+              <table id="table2" data-page-size="5" data-toggle="table"  style="width:80%;">
+                <thead>
+                    <tr style="font-size: 20px; background-color:rgb(227, 227, 227);">
+                        <th data-field="droneid">Drone List</th>
+                        <th data-field="droneoperation" data-halign="center">작동</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in drone_list %}
+                    <tr>
+                        <td style="vertical-align: middle; font-size:15px; font-weight:800;">
+                            드론{{e[0]}}
+                        </td>
+                        {% if e[1]=='X' %}
+                        <td style="text-align: center;">
+                          <i class="fa fa-ban fa-2x" style="color:gold;"></i>
+                        </td>
+                        {% else %}
+                        <td style="text-align: center;">
+                          <i class="fa fa-check-circle fa-2x" style="color:dodgerblue;"></i>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 하단 -->
+      <div class="row" style="height:50%; margin-left:0.1%;">
+        <div class="card" style="width:100%; height:98%; padding:1%;">
+          <ul class="nav nav-tabs" style="font-weight: 700;">
+            <li class="active"><a href="#day">일별</a></li>
+            <li><a href="#mon">월별</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="day" class="tab-pane fade in active">
+              <canvas id="DayofWeek" style="height:100%; width:60%; margin-top:1%; margin-left:1%;"></canvas>
+            </div>
+            <div id="mon" class="tab-pane fade">
+              <canvas id="Monthly" style="height:110px; margin-top:1%;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- <div class="row" style="height: 47%;">
+    <div class="col-2">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 10%; margin-top: 5%; text-align: left; font-weight: 700;"><i
+            class="fa fa-video-camera" style="margin-right:5px;"></i>카메라 상태</h5>
+        <div class="coconut">
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>공대1,2호관</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>공대3호관</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:lime"></i></span>
+              <span>공대4호관</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>공대5호관</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:lime"></i></span>
+              <span>대외협력관</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>스포츠센터</span></a></li>
+        </div>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 10%; margin-top: 5%; text-align: left; font-weight: 700;"><i
+            class="fa fa-paper-plane" style="margin-right:5px;"></i>드론 상태</h5>
+        <div class="coconut">
+          <li><a><span><i class="fa fa-circle" style="color:lime"></i></span>
+              <span>드론1</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>드론2</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>드론3</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:crimson"></i></span>
+              <span>드론4</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:lime"></i></span>
+              <span>드론5</span></a></li>
+          <li><a><span><i class="fa fa-circle" style="color:lime"></i></span>
+              <span>드론6</span></a></li>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700;">CCTV별 금일 감지
+        </h5>
+        <div id="map" style="width:95%;height:85%;border-radius: 10px; margin: 0 auto;"></div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700;">CCTV별 누적 감지
+          비율</h5>
+        <canvas id="DetRateByCCTV" style="height: 100%; width: 90%; margin: 0 auto; padding: 10px;"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="height: 47%; margin-top: 1%;">
+    <div class="col-4">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700;">요일별 감지</h5>
+        <canvas id="DayofWeek" style="height: 100%; width: 90%; margin: 0 auto; padding: 10px;"></canvas>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700;">월별 감지</h5>
+        <canvas id="Monthly" style="height: 100%; width: 90%; margin: 0 auto; padding: 10px;"></canvas>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="card" style="width: 100%; height: 100%;">
+        <h5 class="card-title" style="margin-left: 10%; margin-top: 5%; text-align: left; font-weight: 700;">서버 용량</h5>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="row" style="height:48%;">
+        <div class="card" style="width: 95%; height: 100%;">
+          <h5 class="card-title" style="margin-left: 5%; margin-top: 5%; text-align: left; font-weight: 700;">시간</h5>
+        </div>
+      </div>
+      <div class="row" style="height:48%; margin-top:6%;">
+        <div class="card" style="width: 95%; height: 100%;">
+          <h5 class="card-title" style="margin-left: 5%; margin-top: 5%; text-align: left; font-weight: 700;">날씨</h5>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>
+
+<script>
+  var $table = $('#table')
+  var $table2 = $('#table2')
+  $(".nav-tabs a").click(function(){
+    // 해당 탭을 활성화
+    $(this).tab('show');
+  });
+</script>
+
+<!-- 차트 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+  const DoW = document.getElementById('DayofWeek');
+  const Month = document.getElementById('Monthly');
+  const DRBC = document.getElementById('DetRateByCCTV');
+
+  new Chart(DoW, {
+    type: 'line',
+    data: {
+      labels: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
+      datasets: [{
+        data: {{ day_per_eventlist }},
+    borderWidth: 3,
+    borderColor: '#8e00ff'
+  }]
+    },
+    options: {
+      responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          display: true
+        }
+      },
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+  });
+
+  new Chart(Month, {
+    type: 'bar',
+    data: {
+      labels: ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'],
+      datasets: [{
+        data: {{ month_per_eventlist }},
+    borderWidth: 3,
+    borderColor: '#0080ff',
+    borderRadius: 5,
+    backgroundColor: '#0080ff'
+  }]
+    },
+    options: {
+      responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          display: true
+        }
+      },
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+  });
+
+  new Chart(DRBC, {
+    type: 'doughnut',
+    data: {
+      labels: ['공대1,2호관', '공대3호관', '공대4호관', '공대5호관', '대외협력관', '스포츠센터'],
+      datasets: [{
+        data: {{ place_per_eventlist }},
+    borderWidth: 1
+  }]
+    },
+    options: {
+    responsive: false,
+    plugins: {
+      legend: {
+        position: 'right',
+      }
+    },
+    scales: {
+      x: {
+        display: false
+      },
+      y: {
+        display: false,
+        beginAtZero: true,
+      }
+    },
+    
+  }
+  });
+</script>
+
+<script>
+  var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+      center: new kakao.maps.LatLng(34.913392690803335,126.4377071300018), // 지도의 중심좌표
+      level: 3 // 지도의 확대 레벨
+    };
+
+  var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+  var circles = [
+  {
+    center: new kakao.maps.LatLng(34.912543818087656, 126.436394346095),
+    radius: 50,
+    strokeWeight: 5,
+    strokeOpacity: 0,
+    fillColor: '#F3E2A9',
+    fillOpacity: 0.7
+  },
+  {
+    center: new kakao.maps.LatLng(34.91305599869959, 126.43702004357176),
+    radius: 40,
+    strokeWeight: 5,
+    strokeOpacity: 0,
+    fillColor: '#F2F5A9',
+    fillOpacity: 0.7
+  },
+  {
+    center: new kakao.maps.LatLng(34.9130096158476, 126.43770974215572),
+    radius: 60,
+    strokeWeight: 5, 
+    strokeOpacity: 0,
+    fillColor: '#F5A9A9',
+    fillOpacity: 0.7
+  },
+  {
+    center: new kakao.maps.LatLng(34.91441487047608, 126.43897772651881),
+    radius: 20,
+    strokeWeight: 5,
+    strokeOpacity: 0,
+    fillColor: '#BCF5A9',
+    fillOpacity: 0.7  
+  },
+  {
+    center: new kakao.maps.LatLng(34.91401409169008, 126.43807494454806),
+    radius: 50,
+    strokeWeight: 5,
+    strokeOpacity: 0,
+    fillColor: '#F3E2A9',
+    fillOpacity: 0.7
+  },
+  {
+    center: new kakao.maps.LatLng(34.914668634757646, 126.43830028258716),
+    radius: 30,
+    strokeWeight: 5,
+    strokeOpacity: 0,
+    fillColor: '#E1F5A9',
+    fillOpacity: 0.7
+  }
+];
+var tooltip = new kakao.maps.CustomOverlay({
+  yAnchor: 1,
+  zIndex: 3
+});
+
+circles.forEach(function(circleInfo) {
+  var circle = new kakao.maps.Circle(circleInfo);
+  circle.setMap(map);
+
+  kakao.maps.event.addListener(circle, 'mouseover', function() {
+    var content =  '<div class="bg-black text-white" style="text-align:center; font-size:15px;font-weight:900;border-radius: 10px;">' +
+      '<div class="border border-dark p-2 position-relative" style="border-radius: 10px;"><div class="triangle"></div>'+
+      '<div class="content" style="margin-bottom: 1px;"><p style="margin-bottom:0;">공대4호관</p><p style="margin-bottom:0;">' + (circleInfo.radius/10).toString() + '회 발생</p></div></div></div>';
+    tooltip.setContent(content);
+    tooltip.setPosition(circle.getPosition());
+    tooltip.setMap(map);
+  });
+
+  kakao.maps.event.addListener(circle, 'mouseout', function() {
+    tooltip.setMap(null);
+  });
+});
+</script>
 {% endblock %}

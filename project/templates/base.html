@@ -4,18 +4,27 @@
 <head>
   <meta charset="UTF-8">
   <title> Vision Guard Monitoring System</title>
-  <link rel="stylesheet" href="../static/styles.css">
   <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
   <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- SideBar-Menu CSS -->
   <link rel="stylesheet" href="../static/css/styles.css">
 
   <!-- Demo CSS -->
   <link rel="stylesheet" href="../static/css/demo.css">
   <!-- bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
   <link rel="stylesheet" href="../static/css/bootstrap.min.css">
   <link rel="stylesheet" href="../static/js/bootstrap.min.js">
+  <!-- table -->
+  <link href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+  <!-- 카카오맵 -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=07a938b94c7bff9361f7a8a8e0b26bbd"></script>
 
   <script>
     $(document).ready(function () {
@@ -27,16 +36,33 @@
         $(".profile_dd").toggleClass("active");
       });
     })
-    $(document).ready(function () {
-      $(".hamburger .hamburger__inner").click();
-    });
-    function logout(){
+    
+    function logout() {
       window.location.href = '/logout'
-  } function profile(){
+    } function profile() {
       window.location.href = '/profile'
-}
+    }    // detail.html 하이퍼링크
+    function sec_get(obj) {
+      var section = '/detail?section=' + obj
+      window.location.href = section
+    }    
+    $(document).ready(function() {
+      $('.has-submenu > a').click(function(e) {
+        e.preventDefault();
+        $(this).parent().toggleClass('active');
+      });
+    });
   </script>
+  <style>
+    a{
+      text-decoration: none;
+    }
+    a:hover, a:active, a:visited, a:link{
+      text-decoration: none;
+  }
+  </style>
 </head>
+
 <body style="overflow-x: hidden">
 
   <div class="wrapper">
@@ -50,14 +76,14 @@
       </div>
       <div class="menu">
         <div class="logo">
-          <a href="/map"><img src="../static/banner.png " style="width:auto; height:60px;" alt="logo"></a>
+          <a href="/map"><img src="../static/banner.png " style="height:100%;" alt="logo"></a>
         </div>
         <div class="right_menu">
           <ul>
             <li><i class="fas fa-user"></i>
               <div class="profile_dd">
                 <div class="dd_item" onclick="profile()">Profile</div>
-                <div class="dd_item" onclick="logout()" >Logout</div>
+                <div class="dd_item" onclick="logout()">Logout</div>
               </div>
             </li>
           </ul>
@@ -72,31 +98,38 @@
             <li>
               <a href="/map">
                 <span class="icon">
-                  <i class="fa fa-home" aria-hidden="true"></i>
+                  <i class="fa fa-map" aria-hidden="true"></i>
                 </span>
-                <span class="title">Vision Guard</span>
+                <span class="title">맵</span>
               </a>
+            </li>
+            <li class="has-submenu">
+              <a><span class="icon"><i class="fa fa-video-camera"></i></span>
+                <span class="title">모니터링 &nbsp;<i class="fa fa-caret-down"></i></span></a>
+              <ul class="submenu">
+                <li><a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
+                  <span class="title">목포대학교 &nbsp;<i class="fa fa-caret-down"></i></span></a></li>
+                    <ul class="ssubmenu">
+                      <li><a href="/detail?section=공대1,2호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                        <span class="title">공대1,2호관</span></a></li>
+                      <li><a href="/detail?section=공대3호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                        <span class="title">공대3호관</span></a></li>
+                      <li><a href="/detail?section=공대4호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                          <span class="title">공대4호관</span></a></li>
+                      <li><a href="/detail?section=공대5호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                          <span class="title">공대5호관</span></a></li>
+                      <li><a href="/detail?section=대외협력관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                          <span class="title">대외협력관</span></a></li>
+                      <li><a href="/detail?section=스포츠센터"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                          <span class="title">스포츠센터</span></a></li>
+                    </ul>
+              </ul>
             </li>
             <li>
               <a href="/dashboard">
                 <span class="icon"><i class="fas fa-dice-d6"></i></span>
                 <span class="title">대시보드</span>
               </a>
-            </li>
-            <li class="has-submenu">
-              <a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
-                <span class="title">모니터링 &nbsp;<i class="fa fa-caret-down"></i></span></a>
-              <ul class="submenu">
-                <li><a href="/detail?section=공대1,2"><span class="icon"><i class="fa fa-map-marker"></i></span>
-                    <span class="title">공대1,2호관</span></a></li>
-                <li><a href="/detail?section=공대3"><span class="icon"><i class="fa fa-map-marker"></i></span>
-                    <span class="title">공대3호관</span></a></li>
-                <li><a href="/detail?section=공대4"><span class="icon"><i class="fa fa-map-marker"></i></span>
-                    <span class="title">공대4호관</span></a></li>
-                <li><a href="/detail?section=공대5"><span class="icon"><i class="fa fa-map-marker"></i></span>
-                    <span class="title">공대5호관</span></a></li>
-  
-              </ul>
             </li>
             <li>
               <a href="/eventlog">
@@ -105,15 +138,15 @@
               </a>
             </li>
           </ul>
-          <div class="profile">
+          <!-- <div class="profile">
             <div class="profile_info">
               <p>&nbsp;&nbsp;&nbsp;Welcome</p>
               <p class="profile_name">&nbsp;&nbsp;&nbsp;Admin</p>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
-      <div class="container">
+      <div class="container" style=" background-color:#e6e1e1ba">
         <div class="hihi">
           {% block content %}
           {% endblock %}
@@ -154,7 +187,7 @@
 
   </div>
   <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
-    href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
+      href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
   </footer>
 
 </body>

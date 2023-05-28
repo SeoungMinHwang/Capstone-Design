@@ -2,24 +2,21 @@
 {% extends 'base.html' %}
 {% block content %}
 <body>
-    <div class="row" style="height: 40%; float: none; margin:0 auto;">
+    <div class="row" style="height: 40%; float: none; margin:0 auto; margin-left:1%;">
         <!-- app.py에서 받은 지역 리스트를 for문으로 반복하여 카메라 화면 띄우기 -->
         {% for e in cctv_list %}
         <!-- background-image: url('static/nosignal.png');  -->
-        <div style="background-color: #333333; margin-top:30px; margin-right: 5px; margin-left:5px; width:49%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+        <div style="background-color: #000000; margin-top:2%; margin-right: 10px; margin-left:5px; border-radius: 10px;width:32%; background-repeat: no-repeat; background-size:20%; background-position:center;">
             <div class="ratio" style="width: 100%; height: 100%;">
-                <img onclick="sec_get('{{e}}');" src="{{ url_for('video_feed', cctv_section=e) }}" onerror="this.src='static/nosignal2.png'" width="50%"></img>
+                <img onclick="sec_get('{{e}}');" src="{{ url_for('video_feed', cctv_section=e) }}" onerror="this.src='static/nosignal4.png'" width="50%">
+                <div class="mask text-light" style="height: auto; margin-top:10px;">
+                    <h4>{{e}}</h4>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
     
-    <script>
-        // detail.html 하이퍼링크
-        function sec_get(obj) {
-            var section = '/detail?section=' + obj
-            window.location.href = section
-        }
-    </script>
+
 </body>
 {% endblock %}

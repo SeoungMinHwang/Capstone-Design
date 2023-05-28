@@ -1,131 +1,106 @@
-<head>
-    <title>CCTV 모니터링</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-</head>
+<head></head>
 {% extends 'base.html' %}
 {% block content %}
-<body class="container-fluid-maxwidth w-100 h-100 bg-dark text-white">
-    <div>
-        <div class="container-xxl p-5 w-75 h-100 ">
-            <div class="row" style="height: 100%;">
-                <div class="col-9">
-                <div class="row" style="height: 70%;" >
-                    <!-- CCTV 화면  원클릭 : 이전 페이지 / 더블클릭 : 전체화면으로 보기 -->
-                    <div class="col" style="background-image: url('static/nosignal.png'); background-repeat: no-repeat; background-size:20%; background-position:center;">
-                        <div class="ratio" style=" height: 100%; width: 80%; float: none; margin:0 auto; ">
-                            <img id="node" src="{{ url_for('video_feed',cctv_section=sec) }}" width="100%">{{sec}}</img>
-                            <div class="mask text-light" style="height: auto;">
-                                <h1>{{sec}}</h1>
+<!-- <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+    <div class="ratio" style="width: 100%; height: 100%;">
+        <img onclick="sec_get('{{sec}}');" src="{{ url_for('video_feed', cctv_section=sec) }}"
+            onerror="this.src='static/nosignal4.png'" width="50%">
+        <div class="mask text-light" style="height: auto;">
+            <h4>{{sec}}</h4>
+        </div>
+    </div>
+</div> -->
+<div class="row" style="height: 96%;">
+    <div class="col-9">
+        <div
+            style="background-color: #000000; margin-top:1%; margin-right: 10px;border-radius: 10px; margin-left:5px; width:100%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+            <div class="ratio" style="width: 100%; height: 100%;">
+                <img src="{{ url_for('video_feed', cctv_section=sec) }}" onerror="this.src='static/nosignal4.png'"
+                    width="50%" style="border-radius: 10px;">
+                <div class="mask text-light" style="height: auto;padding:10px;">
+                    <div class="row" style="height:100%;">
+                        <div class="col-10" style=" text-align:left;">
+                            <a style="font-size: 20; font-weight:800;">
+                                <p>전남 무안군 청계면 영산로 1666(도림리 61번지) {{sec}}</p>
+                            </a>
+                        </div>
+                        <div class="col-2" style=" text-align:right;">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="/all_cctv" class="btn btn-secondary" role="button" aria-hidden="true"><i
+                                        class="fa fa-th-large fa-1x" aria-hidden="true" style="color:aliceblue"></i></a>
+                                <a href="/map" class="btn btn-secondary" role="button" aria-hidden="true"><i
+                                        class="fa fa-map fa-1x" aria-hidden="true" style="color:aliceblue"></i></a>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- 날씨, 상세정보, 드론정보 -->
-                    <div class="row" style="height: 30%">
-                        <div class="col-3">
-                            <h1>기온 :  {{weather_list[0]}}</h1>
-                            <h1>날씨 정보 :  {{weather_list[1]}}</h1>
-                            <h1>풍속 :  {{weather_list[2]}}</h1>
-                            <h1>습도 :  {{weather_list[3]}}</h1>
-                            <h1>미세먼지 :  {{weather_list[4]}}</h1>
-                        </div>
-                        <div class="col-6" style="background-color:rgb(169, 99, 13)">
-                            클릭시 상세정보 출력
-                        </div>
-                        <div class="col-3">
-                            <div class = "hide-scroll" style="height: 100%">
-                                <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th>드론번호</th>
-                                            <th>드론상태</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for i in dronelist %}
-                                    <tr>
-                                        <td>{{ i[0] }}</td>
-                                        <td>{{ i[1] }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 처리경과 및 이벤트 테이블 -->
-                <div class="col-3">
-                    <div class="row" style="height: 50%">
-                        <div class = "hide-scroll" style="height: 100%">
-                            <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                                <thead>
-                                    <tr>
-                                        <th>이벤트 번호</th>
-                                        <th>처리경과</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for i in responselist %}
-                                <tr>
-                                    <td>{{ i[0] }}</td>
-                                    <td>{{ i[1] }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row" style="height: 50%">
-                        <div class = "table-responsive" style="height: 100%">
-                        <table class="table table-dark table-striped" style = "width: 100%; height: 100%">
-                            <thead>
-                                <tr>
-                                    <th>이벤트ID</th>
-                                    <th>CCTVID</th>
-                                    <th>이벤트발생시간</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in eventlist %}
-                            <tr>
-                                <td>{{ i[0] }}</td>
-                                <td>{{ i[1] }}</td>
-                                <td>{{ i[2] }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                    </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        var timer = 0
-        var delay = 200
-        var prevent = false
-        //원클릭
-        node.onclick = (evnt) => {
-            timer = setTimeout(() => {
-                if(!prevent){
-                    window.history.back();
-                }
-                prevent = false
-            }, delay)
-        }
-        //더블클릭
-        node.ondblclick = (evnt) => {
-            clearTimeout(timer)
-            prevent=true
-            sec_get("{{sec}}");
-        }
-        //big_screen.html 하이퍼링크
-        function sec_get(obj) {
-            var section = '/big_screen?section=' + obj
-            window.location.href = section
-        }
-    </script>
-</body>
+    <div class="col-3" style="margin-top:1%;">
+        <div class="row" style="height:58%;">
+            <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
+                <div style="margin-left:1%; margin-top:3%; height:95%; width:99%;">
+                    <table id="table" data-url="../static/eventtable.json">
+                        <thead>
+                            <tr>
+                                <th data-field="eventtime" data-sortable="true" data-width="20" data-width-unit="%">발생시간</th>
+                                <th data-field="state" data-sortable="true" data-width="10" data-width-unit="%">조치</th>
+                                <th data-field="sns" data-sortable="true" data-width="10" data-width-unit="%">SNS</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height:38%;">
+            <div class="col">
+                <div id="map" style="margin-top:10px; width:100%;height:100%; border-radius: 10px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 테이블 -->
+<script>
+    var $table = $('#table')
+
+    $(function () {
+        $table.bootstrapTable({
+            sortReset: true
+        })
+
+        $('#sortReset').change(function () {
+            $table.bootstrapTable('refreshOptions', {
+                sortReset: $('#sortReset').prop('checked')
+            })
+        })
+    })
+</script>
+<!-- 지도 -->
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+        mapOption = {
+            center: new kakao.maps.LatLng(37.54699, 127.09598), // 지도의 중심좌표
+            level: 4 // 지도의 확대 레벨
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    var imageSrc = '../static/marker.png', // 마커이미지의 주소입니다    
+        imageSize = new kakao.maps.Size(40, 50), // 마커이미지의 크기입니다
+        imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+    // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+        markerPosition = new kakao.maps.LatLng(37.54699, 127.09598); // 마커가 표시될 위치입니다
+
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+        position: markerPosition,
+        image: markerImage // 마커이미지 설정 
+    });
+
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker.setMap(map);  
+</script>
 {% endblock %}
