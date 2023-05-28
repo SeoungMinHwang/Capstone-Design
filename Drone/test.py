@@ -230,6 +230,10 @@ class FrontEnd(object):
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
             # request.post(server_url, data=frameRet)
+            ret, buffer = cv2.imencode('.jpg', frameRet)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             
                 
         cv2.destroyAllWindows()
@@ -288,22 +292,25 @@ class FrontEnd(object):
         battery_soc = battery_info
         print("Drone battery: soc {0}".format(battery_soc))
             
-def main():
-    frontend = FrontEnd()
+# def main():
     
-    # frontend.drone_move()
+    
+#     # frontend.drone_move()
 
-    # run frontend
-    frontend.run()
-
+#     frontend.run()
+frontend = FrontEnd()
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template("drone_popup.html")
 
 @app.route("/takeoff" , methods=['GET', 'POST'])
 def takeoff():
   # 드론을 이륙시킵니다.
 #   drone.takeoff()
 
-    main()
+    frontend.drone_move()
 #   return "드론 이륙"
 
 @app.route("/land")
@@ -312,7 +319,12 @@ def land():
 #   drone.land()
     print("Land")
 #   return "드론 착륙"
+
+@app.route("/take_video")
+def take_video():
+    
+    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame')
     
 if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
-    main()
+    app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
+    # main()

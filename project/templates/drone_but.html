@@ -1,20 +1,143 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/js/bootstrap.min.js">
-    <style>
-        .bottom-right {
-          position: absolute;
-          bottom: 4px;
-          right: 8px;
+<html>
+  <head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Modal Trigger Button -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open Modal</button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">OO지역 OO드론</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <div id="draggable">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-8 col-sm-12">
+                      <video id="videoPlayer" controls></video>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                      <div class="row justify-content-center">
+                        <div class="row">
+                          <div class="form-group text-center">
+                            <div class="row">
+                              <label for="recipient-name" class="control-label">드론 상태</label>
+                            </div>
+                            <div class="row" id="status_label">
+                              <label id="status" class="control-label" style="font-size:30px;">상태</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group text-center">
+                            <button onclick="location.href='/takeoff'" type="button" class="btn btn-primary btn-circle">출발</button>
+                            <button onclick="location.href='/land'" type="button" class="btn btn-primary btn-circle">귀환</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-10 col-sm-12">
+                    <div class="form-group text-left">
+                      <label for="recipient-name" class="control-label">이벤트 로그:</label>
+                      <input type="text" class="form-control" text="eventlog" />
+                    </div>
+                  </div>
+                  <div class="col-md-2 col-sm-12"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Make the modal draggable
+        $('#myModal').draggable()
+      
+        // 동영상을 로드하고 재생하는 함수
+        function loadVideo() {
+          var video = document.getElementById('videoPlayer')
+          var streamUrl = 'http://172.17.244.110:3000/take_video' // Flask 서버의 동영상 스트리밍 엔드포인트 경로
+      
+          if (Hls.isSupported()) {
+            var hls = new Hls()
+            hls.loadSource(streamUrl)
+            hls.attachMedia(video)
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = streamUrl
+          }
         }
+      
+        // 모달이 열릴 때 동영상을 로드합니다.
+        $('#myModal').on('shown.bs.modal', function () {
+          loadVideo()
+          statusda = setInterval(updateStatus, 3000)
+        })
+      
+        // 팝업창이 닫힐 때 clearInterval() 함수 호출
+        $('#myModal').on('hidden.bs.modal', function () {
+          clearInterval(statusda)
+        })
+      
+        // Function to update the status
+        function updateStatus() {
+          $.ajax({
+            url: '/droneStatus',
+            success: function (data) {
+              // 서버로부터 받아온 상태를 처리하는 코드
+              var status = JSON.parse(data)
+              if (status[0][1] == '대기') {
+                $('#status').css('color', 'green')
+              } else if (status[0][1] == '출동중') {
+                $('#status').css('color', 'blue')
+              } else {
+                $('#status').css('color', 'black')
+              }
+              console.log(status[0][1])
+              $('#status').text(status[0][1])
+            },
+            error: function (xhr, status, error) {
+              // 에러 처리하는 코드
+              console.error(error)
+            }
+          })
+        }
+      })
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+      .modal-dialog {
+        max-height: calc(100vh - 120px);
+      }
+      
+      .btn-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
     </style>
-</head>
-<body>
-    <button id="drone_go" >
-</body>
+  </body>
 </html>

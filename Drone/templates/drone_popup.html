@@ -1,115 +1,50 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Draggable Modal Popup in Bootstrap</title>
-    <!-- jQuery and jQuery UI libraries -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
-    <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-
-    <!-- Bootstrap libraries -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-<script>
-$(function() {
-  // 팝업창이 켜질 때 1초마다 getStatus() 함수 호출
-  $('#myModal').on('shown.bs.modal', function () {
-    intervalId = setInterval(getStatus, 1000)
-  })
-
-  // 팝업창이 닫힐 때 clearInterval() 함수 호출
-  $('#myModal').on('hidden.bs.modal', function () {
-    clearInterval(intervalId)
-  })
-
-  function getVideoFrame() {
-    $.ajax({
-        url: '/drone_video',
-        type: 'GET',
-        success: function(response) {
-            $('#videoPlayer').attr('src', 'data:image/jpeg;base64,' + response);
-        },
-        error: function() {
-            console.log('Failed to get frame status.');
-        }
-    });
-
-    function playVideo() {
-      var videoElement = document.getElementById('videoPlayer');
-      videoElement.play();
-  }
-}
-
-  function getStatus() {
-    // 서버로 AJAX 요청을 보내고 응답을 받아옴 상태: [대기 출동 출동중 고장 착륙중 착륙]
-    $.ajax({ 
-      url: '/droneStatus',
-      type: 'GET',
-      success: function (data) {
-        // 서버로부터 받아온 상태를 처리하는 코드
-        var status = JSON.parse(data);
-        if (status[0][1]=="대기") {
-          $('#status').css('color', 'green');
-        } else if (status[0][1]=="출동중"){
-          $('#status').css('color', 'blue');
-        } else {
-          $('#status').css('color', 'black');
-        }
-        console.log(status[0][1]);
-        $('#status').text(status[0][1]);
-        
-      },
-      error: function (xhr, status, error) {
-        // 에러 처리하는 코드
-        console.error(error);
-      }
-    });
-  }
-
-  // 팝업창을 마우스로 이동 가능하게 함
-  $('#myModal').draggable({
-    handle: '.modal-header'
-  });
-});
-</script>
-
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
   <body>
     <div class="container">
-      <h2>Draggable Modal Popup in Bootstrap</h2>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
+      <!-- Modal Trigger Button -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open Modal</button>
 
       <!-- Modal -->
       <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="myModalLabel">OO지역 OO드론</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-md-8 col-sm-12">
-                    <video id="videoPlayer" autoplay></video>
-                  </div>
-                  <div class="col-md-4 col-sm-12">
-                    <div class="row justify-content-center">
-                      <div class="row">
-                        <div class="form-group text-center">
-                          <div class="row">
-                            <label for="recipient-name" class="control-label">드론 상태</label>
-                          </div>
-                          <div class="row" id="status_label">
-                            <label id="status" class="control-label" style="font-size:30px;">상태</label>
+              <div id="draggable">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-8 col-sm-12">
+                      <video id="videoPlayer" controls></video>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                      <div class="row justify-content-center">
+                        <div class="row">
+                          <div class="form-group text-center">
+                            <div class="row">
+                              <label for="recipient-name" class="control-label">드론 상태</label>
+                            </div>
+                            <div class="row" id="status_label">
+                              <label id="status" class="control-label" style="font-size:30px;">상태</label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="row">
-                        <div class="form-group text-center">
-                          <button onclick="location.href='/takeoff'" type="button" class="btn btn-primary btn-circle">출발</button>
-                          <button onclick="location.href='/land'" type="button" class="btn btn-primary btn-circle">귀환</button>
+                        <div class="row">
+                          <div class="form-group text-center">
+                            <button onclick="location.href='/takeoff'" type="button" class="btn btn-primary btn-circle">출발</button>
+                            <button onclick="location.href='/land'" type="button" class="btn btn-primary btn-circle">귀환</button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -123,7 +58,7 @@ $(function() {
                   <div class="col-md-10 col-sm-12">
                     <div class="form-group text-left">
                       <label for="recipient-name" class="control-label">이벤트 로그:</label>
-                      <input type="text" class="form-control" text="eventlog">
+                      <input type="text" class="form-control" text="eventlog" />
                     </div>
                   </div>
                   <div class="col-md-2 col-sm-12"></div>
@@ -135,6 +70,64 @@ $(function() {
       </div>
     </div>
 
+    <script>
+      $(document).ready(function () {
+        // Make the modal draggable
+        $('#myModal').draggable()
+      
+        // 동영상을 로드하고 재생하는 함수
+        function loadVideo() {
+          var video = document.getElementById('videoPlayer')
+          var streamUrl = 'http://192.168.10.2:3000/take_video' // Flask 서버의 동영상 스트리밍 엔드포인트 경로
+      
+          if (Hls.isSupported()) {
+            var hls = new Hls()
+            hls.loadSource(streamUrl)
+            hls.attachMedia(video)
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = streamUrl
+          }
+        }
+      
+        // 모달이 열릴 때 동영상을 로드합니다.
+        $('#myModal').on('shown.bs.modal', function () {
+          loadVideo()
+          statusda = setInterval(updateStatus, 3000)
+        })
+      
+        // 팝업창이 닫힐 때 clearInterval() 함수 호출
+        $('#myModal').on('hidden.bs.modal', function () {
+          clearInterval(statusda)
+        })
+      
+        // Function to update the status
+        function updateStatus() {
+          $.ajax({
+            url: '/droneStatus',
+            success: function (data) {
+              // 서버로부터 받아온 상태를 처리하는 코드
+              var status = JSON.parse(data)
+              if (status[0][1] == '대기') {
+                $('#status').css('color', 'green')
+              } else if (status[0][1] == '출동중') {
+                $('#status').css('color', 'blue')
+              } else {
+                $('#status').css('color', 'black')
+              }
+              console.log(status[0][1])
+              $('#status').text(status[0][1])
+            },
+            error: function (xhr, status, error) {
+              // 에러 처리하는 코드
+              console.error(error)
+            }
+          })
+        }
+      })
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
       .modal-dialog {
         max-height: calc(100vh - 120px);

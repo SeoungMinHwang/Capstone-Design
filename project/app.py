@@ -176,7 +176,7 @@ def profile():
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
 def drone_popup():
     #창을 켰을 때 만 상태를 받아옴
-    return render_template('drone_popup.html')
+    return render_template('drone_but.html')
 
 def frame_generator(frame_base64):
     while True:
