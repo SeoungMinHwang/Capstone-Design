@@ -185,14 +185,17 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    encoded_frame = request.data
-    frame = cv2.imdecode(encoded_frame, cv2.IMREAD_COLOR)
+    response = requests.get('http://172.17.244.110:3000/take_video', stream=True)
 
-    # 프레임을 비디오 태그에 인코딩합니다.
-    encoded_frame = cv2.imencode('.jpg', frame)[1]
+  # 동영상 스트림을 읽습니다.
+    while True:
+        chunk = response.raw.read(1024)
+        if not chunk:
+            break
 
-    # 프레임을 반환합니다.
-    return encoded_frame
+    # 동영상 스트림을 HTML에서 사용할 수 있게 리턴합니다.
+    return chunk
+
 
 @app.route("/takeoff")
 def takeoff():
@@ -233,6 +236,18 @@ def droneStatus():
     conn.close()
 
     return status_result
+
+@app.route("/droneStatuslog", methods=["GET"])
+def droneStatuslog():
+    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
+    cursor = conn.cursor()
+    sql = '''select dronestate, droneplace, working
+            from DRONE;'''
+    cursor.execute(sql)
+    statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    conn.close()
+    
+    return statuslog_result
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
