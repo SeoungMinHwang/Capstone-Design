@@ -9,6 +9,7 @@ import argparse
 import math
 import os
 from flask import Flask, render_template, Response, request, redirect, url_for,session
+import threading
 
 robomaster.config.LOCAL_IP_STR = "192.168.10.2"
 
@@ -70,6 +71,10 @@ class FrontEnd(object):
         
         #드론이 이동했는지
         self.drone_Finished = False
+        
+        self._thread = threading.Thread(target=self.run)
+        self._thread.daemon = True
+        self._thread.start()
         
         
     def run(self):
@@ -208,6 +213,8 @@ class FrontEnd(object):
                     # Draw the estimated drone vector position in relation to face bounding box
                     cv2.putText(frameRet,str(vDistance),(0,64),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                     
+                    
+                    
                 if noFaces:
                     self.yaw_velocity = 0
                     self.up_down_velocity = 0
@@ -242,13 +249,15 @@ class FrontEnd(object):
         self.tl_drone.close()
         
     def drone_move(self):
+        print("asdfsdf")
         #이동 시작시 스레드 시작 이후 이동이 끝나면 스레드 종료(메인에서)
-        if self.drone_Finished == False:
+        if not self.drone_Finished == False:
             self.drone_Finished == True
             tl_flight = self.tl_drone.flight
             tl_flight.takeoff().wait_for_completed() 
             # tl_flight.forward(distance=50).wait_for_completed()  #앞뒤 좌우 50이동
             tl_flight.go(x=50, y=30, z=30, speed=30).wait_for_completed()
+            
             tl_flight.land().wait_for_completed()  #착륙
         # tl_flight.rotate(angle=180).wait_for_completed() #+-180도회전
         # tl_flight.rotate(angle=-180).wait_for_completed()
@@ -306,11 +315,10 @@ def index():
     return render_template("drone_popup.html")
 
 @app.route("/takeoff" , methods=['GET', 'POST'])
-def takeoff():
-  # 드론을 이륙시킵니다.
-#   drone.takeoff()
+def takeoff(redirect_url="/take_video"):
 
     frontend.drone_move()
+    return redirect(redirect_url)
 #   return "드론 이륙"
 
 @app.route("/land")
@@ -322,8 +330,9 @@ def land():
 
 @app.route("/take_video")
 def take_video():
-    
-    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    thread = threading.Thread(target=frontend.run)
+    thread.start()
+    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
     
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
