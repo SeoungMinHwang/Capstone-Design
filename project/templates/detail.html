@@ -10,13 +10,13 @@
         </div>
     </div>
 </div> -->
-<div class="row" style="height: 98%;">
+<div class="row" style="height: 96%;">
     <div class="col-9">
         <div
-            style="background-color: #000000; margin-top:5px; margin-right: 10px; margin-left:5px; width:100%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+            style="background-color: #000000; margin-top:1%; margin-right: 10px;border-radius: 10px; margin-left:5px; width:100%; background-repeat: no-repeat; background-size:20%; background-position:center;">
             <div class="ratio" style="width: 100%; height: 100%;">
                 <img src="{{ url_for('video_feed', cctv_section=sec) }}" onerror="this.src='static/nosignal4.png'"
-                    width="50%">
+                    width="50%" style="border-radius: 10px;">
                 <div class="mask text-light" style="height: auto;padding:10px;">
                     <div class="row" style="height:100%;">
                         <div class="col-10" style=" text-align:left;">
@@ -37,27 +37,25 @@
             </div>
         </div>
     </div>
-    <div class="col-3" style="margin-top:5px;">
-        <div class="row" style="height:70%;">
-            <div class="col" style="height:90%; width:90%;">
-                <table id="table" data-url="../static/eventtable.json">
-                    <thead>
-                        <tr>
-                            <th data-field="eventtime" data-sortable="true" data-width="20"
-                                data-width-unit="%">발생시간</th>
-                            <th data-field="state" data-sortable="true" data-width="10"
-                                data-width-unit="%">조치</th>
-                            <th data-field="sns" data-sortable="true" data-width="10"
-                                data-width-unit="%">SNS</th>
-                        </tr>
-                    </thead>
-                </table>
+    <div class="col-3" style="margin-top:1%;">
+        <div class="row" style="height:58%;">
+            <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
+                <div style="margin-left:1%; margin-top:3%; height:95%; width:99%;">
+                    <table id="table" data-url="../static/eventtable.json">
+                        <thead>
+                            <tr>
+                                <th data-field="eventtime" data-sortable="true" data-width="20" data-width-unit="%">발생시간</th>
+                                <th data-field="state" data-sortable="true" data-width="10" data-width-unit="%">조치</th>
+                                <th data-field="sns" data-sortable="true" data-width="10" data-width-unit="%">SNS</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="row" style="height:28%;">
+        <div class="row" style="height:38%;">
             <div class="col">
-                <div id="map" style="margin-top:10px; width:98%;height:100%; border-radius: 10px;"></div>
-
+                <div id="map" style="margin-top:10px; width:100%;height:100%; border-radius: 10px;"></div>
             </div>
         </div>
     </div>
@@ -65,17 +63,17 @@
 <!-- 테이블 -->
 <script>
     var $table = $('#table')
-  
-    $(function() {
-      $table.bootstrapTable({
-        sortReset: true
-      })
-  
-      $('#sortReset').change(function () {
-        $table.bootstrapTable('refreshOptions', {
-          sortReset: $('#sortReset').prop('checked')
+
+    $(function () {
+        $table.bootstrapTable({
+            sortReset: true
         })
-      })
+
+        $('#sortReset').change(function () {
+            $table.bootstrapTable('refreshOptions', {
+                sortReset: $('#sortReset').prop('checked')
+            })
+        })
     })
 </script>
 <!-- 지도 -->

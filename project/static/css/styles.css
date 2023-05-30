@@ -190,16 +190,16 @@
 .main_container .container{
   margin-top: 50px;
   max-width: 100%;
-  /* width: calc(100% - 190px); */
+  width: calc(100% - 190px);
   margin-left: 190px;
-  padding: 10px;
   margin-bottom:20px;
   transition: all 0.3s ease;
 }
 
 .main_container .container .hihi{
-  height: calc(100% - 19px);
+  height: 100%;
   position: relative;
+  width:100%;
 }
 
 .main_container .sidebar ul li a{
@@ -256,5 +256,46 @@
 
 .wrapper.active .main_container .container{
   width: calc(100% - 60px);
-  margin-left: 70px;
+  margin-left: 60px;
+}
+
+.cameramenu{
+  font-size: 18px;
+  font-weight: 500;
+  color:#333333;
+  overflow: auto;
+}
+
+.cameramenu .camerasub {
+  font-size: 16px;
+  display: none;
+  font-weight: 900;
+  margin-left: 10%;
+}
+
+.coconut {
+  margin-left:10%;
+  font-size:18px;
+  font-weight:600;
+  margin-top:5px;
+}
+
+.coconut li{
+  margin-bottom: 10px;
+}
+
+.coconut li i{
+  margin-left: 5px;
+}
+
+.triangle {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid black;
 }

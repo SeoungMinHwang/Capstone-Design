@@ -134,4 +134,12 @@ def event_list(cursor, placename):
         result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'), i[1]])
     return result
 
-print(event_log())
+@auto_conn_disconn
+def drone_list(cursor):
+    result = []
+    cursor.execute(f"""select droneid, working from DRONE """)
+    for i in cursor.fetchall():
+        result.append([i[0],i[1]])
+    return result
+
+# print(get_idlist())
