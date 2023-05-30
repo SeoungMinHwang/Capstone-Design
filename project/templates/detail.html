@@ -41,7 +41,7 @@
         <div class="row" style="height:58%;">
             <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
                 <div style="margin-left:1%; margin-top:3%; height:95%; width:99%;">
-                    <table id="table" data-url="../static/eventtable.json">
+                    <table id="table" data-ajax="get_detail">
                         <thead>
                             <tr>
                                 <th data-field="eventtime" data-sortable="true" data-width="20" data-width-unit="%">발생시간</th>
@@ -60,6 +60,31 @@
         </div>
     </div>
 </div>
+<script>
+    function get_detail() {
+        var sec = "공대3호관"; // 동적 데이터 변수
+    
+        $.ajax({
+            type: 'get',
+            url: '/detail_get',
+            async: true,
+            headers: {
+                "Content-Type": "application/json",
+                "X-HTTP-Method-Override": "POST"
+            },
+            dataType: 'json',
+            data: JSON.stringify({
+                "placename": sec // 동적 데이터 변수 사용
+            }),
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (request, status, error) {
+                console.log(error)
+            }
+        });
+    }
+</script>
 <!-- 테이블 -->
 <script>
     var $table = $('#table')

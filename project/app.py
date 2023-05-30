@@ -54,6 +54,13 @@ def detail():
         return render_template('detail.html',sec=sec)
     else:
         return redirect(url_for('login'))
+    
+@app.route('/detail_get', methods = ['GET'])    
+def detail_get():
+    placename = request.args.get('placename')
+    detail_list = query.detail_list(placename)
+    result = json.dumps(detail_list)
+    return result
 
 # 로그인페이지
 @app.route('/login')
@@ -143,7 +150,6 @@ def map_get():
     placename = request.args.get('placename')
     eventlist = query.event_list(placename)
     result = json.dumps(eventlist)
-    print(result)
     return result
 
 # 대시보드

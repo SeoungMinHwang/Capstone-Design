@@ -37,13 +37,6 @@ def cctv_list(cursor):
     
     return output
 
-@auto_conn_disconn
-def show_users(cursor):
-    cursor.execute(f"""SELECT * FROM USERS""")
-    
-    print(cursor.fetchall())
-    return cursor.fetchall()
-
 # 이벤트번호, 장소, 발생시간 나오는 쿼리문
 @auto_conn_disconn
 def show_event(cursor):
@@ -142,4 +135,13 @@ def drone_list(cursor):
         result.append([i[0],i[1]])
     return result
 
-# print(get_idlist())
+@auto_conn_disconn
+def detail_list(cursor, placename):
+    result = []
+    cursor.execute(f"""select eventtime,responsestate,sns from (FALLEVENT natural join CCTV) natural join RESPONSE WHERE placename="{placename}";
+ """)
+    for i in cursor.fetchall():
+        result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'),i[1],i[2]])
+    return result
+
+# print(detail_list("공대1,2호관"))
