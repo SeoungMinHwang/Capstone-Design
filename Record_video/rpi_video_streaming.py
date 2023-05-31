@@ -60,8 +60,7 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                 while True:
                     start = dt.datetime.now()
                     
-                    camera.annotate_text = 'Mokpo| ' + dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    camera.annotate_text_size = 15
+
                     with output.condition:
                         output.condition.wait()
                         frame = output.frame
@@ -101,8 +100,6 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     
-    
-    camera.annotate_background = picamera.Color('black')
     
     
 
