@@ -1,24 +1,17 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import requests
-import cv2, camera, kakao, pymysql
+import cv2, camera, kakao, query, go_login, json
 from weather_search import get_weather_daum, job
+import pymysql, json
 import requests
-from bs4 import BeautifulSoup
-import jsonify
-import json
-
-conn = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='capstone', charset='utf8')
-cur = conn.cursor()
-cur.execute('SELECT * FROM eventt')
-eventlist = cur.fetchall()
-cur.execute('SELECT * FROM Response')
-responselist = cur.fetchall()
-cur.execute('select * from drone')
-dronelist = cur.fetchall()
+# from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
+
+cctv_list = query.cctv_list()
+drone_list = query.drone_list()
+
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -27,30 +20,30 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 # 영상 긁어오기
 def gen_frames(camera):
+    boundary = b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'
     while True:
         success, frame = camera.read()
         if not success:
             break
         else:
             ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            frame_data = buffer.tobytes()
+            yield boundary + frame_data + b'\r\n--frame\r\n'
 
 # 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
-    if cctv_section=='남악1':
-        return Response(gen_frames(cv2.VideoCapture(camera1)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='남악2':
-        return Response(gen_frames(cv2.VideoCapture(camera2)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='목포대1':
-        return Response(gen_frames(cv2.VideoCapture(camera3)), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='목포대2':
+    if cctv_section==cctv_list[0]:
+        return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section==cctv_list[1]:
+        return Response(gen_frames(camera2), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section==cctv_list[2]:
+        return Response(gen_frames(camera3), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif cctv_section==cctv_list[3]:
         return Response(gen_frames(camera4), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='하당1':
+    elif cctv_section==cctv_list[4]:
         return Response(gen_frames(camera5), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif cctv_section=='하당2':
+    elif cctv_section==cctv_list[5]:
         return Response(gen_frames(camera6), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # CCTV상세정보
@@ -58,8 +51,7 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        weather_list = get_weather_daum('전라남도 무안군 청계면')
-        return render_template('detail.html', eventlist = eventlist, responselist = responselist, dronelist = dronelist, sec=sec, weather_list=weather_list )
+        return render_template('detail.html',sec=sec)
     else:
         return redirect(url_for('login'))
 
@@ -69,12 +61,12 @@ def detail():
 def login():
     return render_template('login.html')
 
+
 # 전체CCTV
 @app.route('/all_cctv')
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
         return render_template('all_cctv.html',cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
@@ -104,10 +96,14 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
-    cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
-    if (inputId=='admin'and inputPassword=='123'):
-        session['username'] = inputId
-        return render_template('map.html',cctv_list=cctv_list)
+    idlist = query.get_idlist()
+    if inputId in idlist:
+        if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
+            map_list = query.map_list()
+            session['username'] = inputId
+            return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+        else:
+            return redirect(url_for('login'))
     else:
         return redirect(url_for('login'))
 
@@ -135,20 +131,30 @@ def weather():
 # 메인 페이지(지도)
 @app.route('/map')
 def map():
+    map_list = query.map_list()
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
-        return render_template('map.html',cctv_list=cctv_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
+
+@app.route('/map_get', methods = ['GET'])    
+def map_get():
+    placename = request.args.get('placename')
+    eventlist = query.event_list(placename)
+    result = json.dumps(eventlist)
+    print(result)
+    return result
 
 # 대시보드
 @app.route("/dashboard")
 def dashboard():
+    day_per_eventlist = query.event_per_day()
+    month_per_eventlist = query.event_per_month()
+    place_per_eventlist = query.event_per_place()
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
-        return render_template('dashboard.html',cctv_list=cctv_list)
+        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -157,8 +163,9 @@ def dashboard():
 def eventlog():
     if 'username' in session:
     # CCTV 지역 리스트
-        cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관']
-        return render_template('eventlog.html',cctv_list=cctv_list)
+        # cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
+        eventlist = query.show_event()
+        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -170,13 +177,11 @@ def profile():
     else:
         return redirect(url_for('login'))
     
-
-
 #이벤트 발생시 드론화면
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
 def drone_popup():
     #창을 켰을 때 만 상태를 받아옴
-    return render_template('drone_but.html')
+    return render_template('drone_popup.html')
 
 def frame_generator(frame_base64):
     while True:
@@ -185,7 +190,7 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    response = requests.get('http://172.17.244.110:3000/take_video', stream=True)
+    response = requests.get('http://192.168.0.8:3000/take_video', stream=True)
 
   # 동영상 스트림을 읽습니다.
     while True:
@@ -199,19 +204,15 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
-  # 드론을 이륙시킵니다.
-#   drone.takeoff()
-    #@app.route("/")
-    # def index():
-    # # 다른 Flask 서버에 요청을 보냅니다.
-    drone_url = "http://192.168.0.8:3000/takeoff"
-    response = requests.get(drone_url)
+  print("dfdff")
+#     drone_url = "http://192.168.0.8:3000/takeoff"
+#     response = requests.get(drone_url)
 
-  # 응답을 처리합니다.
-    if response.status_code == 200:
-        return "The other Flask server took off!"
-    else:
-        return "The other Flask server could not take off."
+#   # 응답을 처리합니다.
+#     if response.status_code == 200:
+#         return "The other Flask server took off!"
+#     else:
+#         return "The other Flask server could not take off."
 
 #   return "드론 이륙"
 
@@ -224,31 +225,16 @@ def land():
 
 @app.route("/droneStatus", methods=["GET"])
 def droneStatus():
-    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
-    cursor = conn.cursor()
-    sql = '''select droneid, dronestate 
-            from DRONE 
-            WHERE droneid = 2 
-            group by droneid, dronestate desc 
-            limit 1;'''
-    cursor.execute(sql)
-    status_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
-    conn.close()
+
+    status_result = query.drone_state()
 
     return status_result
 
 @app.route("/droneStatuslog", methods=["GET"])
 def droneStatuslog():
-    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
-    cursor = conn.cursor()
-    sql = '''select dronestate, droneplace, working
-            from DRONE;'''
-    cursor.execute(sql)
-    statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
-    conn.close()
+    statuslog_result = query.droneStatus_log()
     
     return statuslog_result
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
-    

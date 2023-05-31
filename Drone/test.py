@@ -18,6 +18,8 @@ recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 dimensions = (960, 720)
 
+S = 20
+S2 = 5
 UDOffset = 150
 
 
@@ -132,6 +134,11 @@ class FrontEnd(object):
         
         
         while not should_stop:
+            if self.drone_Finished == False:
+                self.update()
+            else:
+                print("이동중")
+                
             frame_read = tl_camera.read_cv2_image(strategy="newest")
             # print(self.tl_drones.get_status("pitch"))
             # adc = ep_sensor_adaptor.get_adc(id=1, port=1)
@@ -201,7 +208,38 @@ class FrontEnd(object):
                     vTrue = np.array((cWidth,cHeight,tSize))
                     vTarget = np.array((targ_cord_x,targ_cord_y,end_size))
                     vDistance = vTrue-vTarget
-                    
+                    #얼굴 따라가기
+                    if not args.debug:
+                        # for turning
+                        if vDistance[0] < -szX:
+                            self.yaw_velocity = S
+                            # self.left_right_velocity = S2
+                        elif vDistance[0] > szX:
+                            self.yaw_velocity = -S
+                            # self.left_right_velocity = -S2
+                        else:
+                            self.yaw_velocity = 0
+                        
+                        # for up & down
+                        if vDistance[1] > szY:
+                            self.up_down_velocity = S
+                        elif vDistance[1] < -szY:
+                            self.up_down_velocity = -S
+                        else:
+                            self.up_down_velocity = 0
+
+                        F = 0
+                        if abs(vDistance[2]) > acc[tDistance]:
+                            F = S
+
+                        # for forward back
+                        if vDistance[2] > 0:
+                            self.for_back_velocity = S + F
+                        elif vDistance[2] < 0:
+                            self.for_back_velocity = -S - F
+                        else:
+                            self.for_back_velocity = 0
+                            
                     cv2.rectangle(frameRet, (x, y), (end_cord_x, end_cord_y), fbCol, fbStroke)
 
                     # Draw the target as a circle
@@ -212,7 +250,6 @@ class FrontEnd(object):
 
                     # Draw the estimated drone vector position in relation to face bounding box
                     cv2.putText(frameRet,str(vDistance),(0,64),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                    
                     
                     
                 if noFaces:
@@ -286,8 +323,12 @@ class FrontEnd(object):
         # tl_flight.mission_pad_on()
         # tl_flight.mission_pad_off()
         
-       
-        
+    def update(self):
+        """ Update routine. Send velocities to Tello."""
+        if self.send_rc_control:
+            self.tello.send_rc_control(self.left_right_velocity, self.for_back_velocity, self.up_down_velocity,
+                                        self.yaw_velocity)
+            
     #드론 정보 및 높이
     def sub_tof_info_handler(tof_info):
         tof = tof_info
