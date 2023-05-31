@@ -204,17 +204,15 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
-  print("dfdff")
-#     drone_url = "http://192.168.0.8:3000/takeoff"
-#     response = requests.get(drone_url)
+    drone_url = "http://192.168.0.8:3000/takeoff"
+    response = requests.get(drone_url)
 
-#   # 응답을 처리합니다.
-#     if response.status_code == 200:
-#         return "The other Flask server took off!"
-#     else:
-#         return "The other Flask server could not take off."
+  # 응답을 처리합니다.
+    if response.status_code == 200:
+        return "The other Flask server took off!"
+    else:
+        return "The other Flask server could not take off."
 
-#   return "드론 이륙"
 
 @app.route("/land")
 def land():

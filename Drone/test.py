@@ -45,7 +45,7 @@ parser.add_argument('-D', "--debug", action='store_true',
 
 args = parser.parse_args()
 
-server_url = "http://192.168.0.5:3000/drone_video"
+server_url = "http://orion.mokpo.ac.kr:8491/drone_video"
 
 if args.save_session:
     ddir = "Sessions"
