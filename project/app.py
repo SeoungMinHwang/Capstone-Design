@@ -190,7 +190,7 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    response = requests.get('http://192.168.0.8:3000/take_video', stream=True)
+    response = requests.get('http://192.168.0.23:3000/take_video', stream=True)
 
   # 동영상 스트림을 읽습니다.
     while True:
