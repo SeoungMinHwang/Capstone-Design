@@ -204,7 +204,7 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
-    drone_url = "http://192.168.0.8:3000/takeoff"
+    drone_url = "http://192.168.0.23:3000/takeoff"
     response = requests.get(drone_url)
 
   # 응답을 처리합니다.
