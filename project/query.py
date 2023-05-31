@@ -111,6 +111,17 @@ def map_list(cursor):
         result.append([i[0],float(i[1]), float(i[2])])
     return result
 
+# 이벤트로그 쿼리문
+@auto_conn_disconn
+def event_log(cursor):
+    result = []
+    cursor.execute(f"""select A.placename, B.eventtime, C.response, C.responsestate, C.droneid, B.sns
+                   from (CCTV A natural join FALLEVENT B) left join RESPONSE C on B.eventid = C.eventid""")
+    for i in cursor.fetchall():
+        result.append([i[0], i[1].strftime('%Y-%m-%d %H:%M:%S'), i[2], i[3], i[4], i[5]])
+    return result
+                      
+
 @auto_conn_disconn
 def event_list(cursor, placename):
     result = []
