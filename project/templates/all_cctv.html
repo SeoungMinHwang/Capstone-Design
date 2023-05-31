@@ -10,7 +10,7 @@
             <div class="ratio" style="width: 100%; height: 100%;">
                 <img onclick="sec_get('{{e}}');" src="{{ url_for('video_feed', cctv_section=e) }}" onerror="this.src='static/nosignal4.png'" width="50%">
                 <div class="mask text-light" style="height: auto; margin-top:10px;">
-                    <h4>{{e}}</h4>
+                    <h4 style="width:fit-content;background-color:black;">{{e}}</h4>
                 </div>
             </div>
         </div>
