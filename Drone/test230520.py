@@ -9,7 +9,6 @@ import argparse
 import math
 import os
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import threading
 
 robomaster.config.LOCAL_IP_STR = "192.168.10.2"
 
@@ -18,8 +17,6 @@ recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 dimensions = (960, 720)
 
-S = 20
-S2 = 5
 UDOffset = 150
 
 
@@ -45,8 +42,6 @@ parser.add_argument('-D', "--debug", action='store_true',
 
 args = parser.parse_args()
 
-server_url = "http://orion.mokpo.ac.kr:8491/drone_video"
-
 if args.save_session:
     ddir = "Sessions"
 
@@ -71,12 +66,8 @@ class FrontEnd(object):
 
         self.send_rc_control = False
         
-        #드론이 이동했는지
-        self.drone_Finished = False
+        self.drone_fin=False
         
-        self._thread = threading.Thread(target=self.run)
-        self._thread.daemon = True
-        self._thread.start()
         
         
     def run(self):
@@ -95,11 +86,7 @@ class FrontEnd(object):
         self.tl_led.set_led(r=255, g=0, b=0)
         
         #거리 센서
-        # ep_sensor_adaptor = self.tl_drone.get_status()
-        # print(ep_sensor_adaptor)
-        
-        
-        
+        # t1_sensor = self.t1_drone.sensor
         
         
         #카메라
@@ -130,27 +117,19 @@ class FrontEnd(object):
         # drone_con = self.tl_drone.is_connected()
         #키입력
         
-        # self.drone_move()
         
         
         while not should_stop:
-            if self.drone_Finished == False:
-                self.update()
-            else:
-                print("이동중")
-                
             frame_read = tl_camera.read_cv2_image(strategy="newest")
-            # print(self.tl_drones.get_status("pitch"))
-            # adc = ep_sensor_adaptor.get_adc(id=1, port=1)
-            # print("높이: {0}".format(adc))
-            
-            # fff = ep_sensor_adaptor.get_adc(id=2, port=1)
-            # print("정면: {0}".format(fff))
-            
             if frame_read is None:
                 frame_read.stop()
                 break
             
+            if not self.drone_fin:
+                self.droneMove()
+                
+                
+            # print(t1_sensor.sub_distance())
             theTime = str(datetime.datetime.now()).replace(':','-').replace('.','_')
 
             frame = cv2.cvtColor(frame_read, cv2.COLOR_BGR2RGB)
@@ -208,38 +187,7 @@ class FrontEnd(object):
                     vTrue = np.array((cWidth,cHeight,tSize))
                     vTarget = np.array((targ_cord_x,targ_cord_y,end_size))
                     vDistance = vTrue-vTarget
-                    #얼굴 따라가기
-                    if not args.debug:
-                        # for turning
-                        if vDistance[0] < -szX:
-                            self.yaw_velocity = S
-                            # self.left_right_velocity = S2
-                        elif vDistance[0] > szX:
-                            self.yaw_velocity = -S
-                            # self.left_right_velocity = -S2
-                        else:
-                            self.yaw_velocity = 0
-                        
-                        # for up & down
-                        if vDistance[1] > szY:
-                            self.up_down_velocity = S
-                        elif vDistance[1] < -szY:
-                            self.up_down_velocity = -S
-                        else:
-                            self.up_down_velocity = 0
-
-                        F = 0
-                        if abs(vDistance[2]) > acc[tDistance]:
-                            F = S
-
-                        # for forward back
-                        if vDistance[2] > 0:
-                            self.for_back_velocity = S + F
-                        elif vDistance[2] < 0:
-                            self.for_back_velocity = -S - F
-                        else:
-                            self.for_back_velocity = 0
-                            
+                    
                     cv2.rectangle(frameRet, (x, y), (end_cord_x, end_cord_y), fbCol, fbStroke)
 
                     # Draw the target as a circle
@@ -250,7 +198,6 @@ class FrontEnd(object):
 
                     # Draw the estimated drone vector position in relation to face bounding box
                     cv2.putText(frameRet,str(vDistance),(0,64),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                    
                     
                 if noFaces:
                     self.yaw_velocity = 0
@@ -273,29 +220,20 @@ class FrontEnd(object):
 
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
-            # request.post(server_url, data=frameRet)
-            ret, buffer = cv2.imencode('.jpg', frameRet)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            
                 
         cv2.destroyAllWindows()
         tl_camera.stop_video_stream()
 
         self.tl_drone.close()
         
-    def drone_move(self):
-        print("asdfsdf")
-        #이동 시작시 스레드 시작 이후 이동이 끝나면 스레드 종료(메인에서)
-        if not self.drone_Finished == False:
-            self.drone_Finished == True
-            tl_flight = self.tl_drone.flight
-            tl_flight.takeoff().wait_for_completed() 
-            # tl_flight.forward(distance=50).wait_for_completed()  #앞뒤 좌우 50이동
-            tl_flight.go(x=50, y=30, z=30, speed=30).wait_for_completed()
-            
-            tl_flight.land().wait_for_completed()  #착륙
+    def droneMove(self):
+        #이동
+        tl_flight = self.tl_drone.flight
+        tl_flight.takeoff().wait_for_completed() #이륙
+        tl_flight.forward(distance=100).wait_for_completed() #앞뒤 좌우 50이동
+        tl_flight.land().wait_for_completed() #착륙
+        
+        self.drone_fin=True
         # tl_flight.rotate(angle=180).wait_for_completed() #+-180도회전
         # tl_flight.rotate(angle=-180).wait_for_completed()
         
@@ -323,12 +261,8 @@ class FrontEnd(object):
         # tl_flight.mission_pad_on()
         # tl_flight.mission_pad_off()
         
-    def update(self):
-        """ Update routine. Send velocities to Tello."""
-        if self.send_rc_control:
-            self.tello.send_rc_control(self.left_right_velocity, self.for_back_velocity, self.up_down_velocity,
-                                        self.yaw_velocity)
-            
+       
+        
     #드론 정보 및 높이
     def sub_tof_info_handler(tof_info):
         tof = tof_info
@@ -342,24 +276,20 @@ class FrontEnd(object):
         battery_soc = battery_info
         print("Drone battery: soc {0}".format(battery_soc))
             
-# def main():
-    
-    
-#     # frontend.drone_move()
+def main():
+    frontend = FrontEnd()
 
-#     frontend.run()
-frontend = FrontEnd()
+    # run frontend
+    frontend.run()
+
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template("drone_popup.html")
+@app.route("/takeoff")
+def takeoff():
+  # 드론을 이륙시킵니다.
+#   drone.takeoff()
 
-@app.route("/takeoff" , methods=['GET', 'POST'])
-def takeoff(redirect_url="/take_video"):
-
-    frontend.drone_move()
-    return redirect(redirect_url)
+    main()
 #   return "드론 이륙"
 
 @app.route("/land")
@@ -368,13 +298,7 @@ def land():
 #   drone.land()
     print("Land")
 #   return "드론 착륙"
-
-@app.route("/take_video")
-def take_video():
-    thread = threading.Thread(target=frontend.run)
-    thread.start()
-    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
     
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
-    # main()
+    main()
+    # app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)

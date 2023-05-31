@@ -2,6 +2,8 @@ import functools
 import pymysql
 import locale
 import time
+import json
+
 
 
 # 데코레이터 정의 부분 
@@ -141,5 +143,25 @@ def drone_list(cursor):
     for i in cursor.fetchall():
         result.append([i[0],i[1],i[2]])
     return result
+
+@auto_conn_disconn
+def drone_state(cursor):
+    sql = '''select droneid, dronestate 
+            from DRONE 
+            WHERE droneid = 2 
+            group by droneid, dronestate desc 
+            limit 1;'''
+    cursor.execute(sql)
+    status_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    return status_result
+
+@auto_conn_disconn
+def droneStatus_log(cursor):
+    sql = '''select dronestate, droneplace, working
+            from DRONE;'''
+    cursor.execute(sql)
+    statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    return statuslog_result
+
 
 # print(get_idlist())
