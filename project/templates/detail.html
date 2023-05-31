@@ -21,11 +21,14 @@
                     <div class="row" style="height:100%;">
                         <div class="col-10" style=" text-align:left;">
                             <a style="font-size: 20; font-weight:800;">
-                                <p>전남 무안군 청계면 영산로 1666(도림리 61번지) {{sec}}</p>
+                                <div style="display: flex; flex-direction: row; background-color: black; width:fit-content;">
+                                    <div style="white-space: nowrap;">전남 무안군 청계면 영산로 1666(도림리 61번지) {{sec}} &nbsp;</div>
+                                    <div id="time"></div>
+                                </div>
                             </a>
                         </div>
                         <div class="col-2" style=" text-align:right;">
-                            <div class="btn-group" role="group" aria-label="Basic example">
+                            <div class="btn-group" role="group">
                                 <a href="/all_cctv" class="btn btn-secondary" role="button" aria-hidden="true"><i
                                         class="fa fa-th-large fa-1x" aria-hidden="true" style="color:aliceblue"></i></a>
                                 <a href="/map" class="btn btn-secondary" role="button" aria-hidden="true"><i
@@ -37,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" style="margin-top:1%;">
+    <div class="col-3" style="margin-top:0.5%;">
         <div class="row" style="height:58%;">
             <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
                 <div style="margin-left:1%; margin-top:3%; height:95%; width:99%;">
@@ -75,6 +78,21 @@
             })
         })
     })
+</script>
+<!-- 시간 -->
+<script>
+  // 1초마다 내용 업데이트
+  setInterval(updateContent, 1000);
+
+  function updateContent() {
+    // 업데이트할 내용 생성
+    var currentTime = new Date().toLocaleTimeString();
+    var newContent = currentTime;
+
+    // 요소의 내용 업데이트
+    var dynamicElement = document.getElementById("time");
+    dynamicElement.innerHTML = newContent;
+  }
 </script>
 <!-- 지도 -->
 <script>

@@ -137,9 +137,9 @@ def event_list(cursor, placename):
 @auto_conn_disconn
 def drone_list(cursor):
     result = []
-    cursor.execute(f"""select droneid, working from DRONE """)
+    cursor.execute(f"""select droneid, working, dronestate from DRONE """)
     for i in cursor.fetchall():
-        result.append([i[0],i[1]])
+        result.append([i[0],i[1],i[2]])
     return result
 
 # print(get_idlist())
