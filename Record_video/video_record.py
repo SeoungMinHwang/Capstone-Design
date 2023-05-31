@@ -12,7 +12,7 @@ def writeVideo():
     
     
     #RTSP를 불러오는 곳
-    video_capture = cv2.VideoCapture('http://192.168.141.226:8000/stream.mjpg')
+    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7910/stream.mjpg')
     
     # 웹캠 설정
     video_capture.set(3, 800)  # 영상 가로길이 설정
