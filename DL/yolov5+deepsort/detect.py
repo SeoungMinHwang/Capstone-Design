@@ -79,7 +79,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 from deep_sort_realtime.deepsort_tracker import DeepSort
 
 object_tracker = DeepSort(max_age=10,                    # 객체가 추적 리스트에서 유지되는 최대 시간. 기본값 70
-                          n_init=5,                     # 새로운 객체를 추적하기 위해 필요한 최소 측정값. 기본값 3
+                          n_init=3,                     # 새로운 객체를 추적하기 위해 필요한 최소 측정값. 기본값 3
                           nms_max_overlap=1.0,          # Non-maxima suppression(NMS)에서 중복 검출을 위한 최대 겹침 비율. 기본값 1.0
                           max_cosine_distance=0.3,      
                           nn_budget=None,               # Nearest Neighbor 버퍼의 크기, 기본값 None
@@ -109,10 +109,11 @@ while True:
         break
     
     results = detector.score_frame(img)
-    print(results) # (tensor([0.]), tensor([[0.21100, 0.34878, 0.73225, 1.00000, 0.89594]])) -> (labels, cord(좌표, 신뢰도))
+    print(results) 
+    # (tensor([0.]), tensor([[0.21100, 0.34878, 0.73225, 1.00000, 0.89594]])) -> (labels, cord(좌표, 신뢰도))
     
     img, detections = detector.plot_boxes(results, img, height=img.shape[0], width=img.shape[1], confidence=0.4)
-    # print(img, detections)
+    print(img, detections)
 
     
     tracks = object_tracker.update_tracks(detections, frame=img)
@@ -124,9 +125,10 @@ while True:
         
         track_id = track.track_id
         print(track_id)
-        ltrb = track.to_ltrb()
         
+        ltrb = track.to_ltrb()
         bbox = ltrb
+        print(bbox)
         
         cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (0, 0, 255), 2)
         cv2.putText(img, "ID: " + str(track_id), (int(bbox[0]), int(bbox[1]) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
