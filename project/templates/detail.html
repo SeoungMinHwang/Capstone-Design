@@ -2,7 +2,7 @@
 
 {% extends 'base.html' %}
 {% block content %}
-  <!--            <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+  <!--             <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
     <div class="ratio" style="width: 100%; height: 100%;">
         <img onclick="sec_get('{{sec}}');" src="{{ url_for('video_feed', cctv_section=sec) }}"
             onerror="this.src='static/nosignal4.png'" width="50%">
@@ -10,7 +10,7 @@
             <h4>{{sec}}</h4>
         </div>
     </div>
-</div>            -->
+</div>             -->
   <!-- Modal -->
   <!-- Bootstrap CSS -->
   <!-- jQuery UI -->
@@ -56,18 +56,20 @@
         <div class="modal-footer">
           <div class="container-fluid">
             <div class="row text-left">
-              <label for="recipient-name" class="control-label" style="font-size:20px;">Drone Log...</label>
+              <label for="recipient-name" class="control-label" style="font-size:20px;">Drone List</label>
             </div>
             <div class="row">
               <div class="form-group text-left">
                 <div class="table-responsive">
                   <div id="eventlog-scrollbar" class="table-scrollbar">
-                    <table class="table table-condensed">
+                    <table class="table table-condensed" style="text-align: center;">
                       <thead class="sticky-top">
                         <tr>
+                          <th>드론 번호</th>
                           <th>드론 상태</th>
                           <th>드론 위치</th>
-                          <th>작동 여부</th>
+                          <th>사용 가능</th>
+                          <th>드론 선택</th>
                         </tr>
                       </thead>
                       <tbody id="eventlog-body">
@@ -265,15 +267,37 @@
           var eventlogBody = document.getElementById('eventlog-body')
           data.forEach(function (log) {
             var row = document.createElement('tr')
+            var dronenumCell = document.createElement('td')
+            dronenumCell.textContent = log[0]
+            row.appendChild(dronenumCell)
             var stateCell = document.createElement('td')
-            stateCell.textContent = log[0]
+            stateCell.textContent = log[1]
             row.appendChild(stateCell)
             var locationCell = document.createElement('td')
-            locationCell.textContent = log[1]
+            locationCell.textContent = log[2]
             row.appendChild(locationCell)
             var workingCell = document.createElement('td')
-            workingCell.textContent = log[2]
+            workingCell.textContent = log[3]
             row.appendChild(workingCell)
+    
+            var buttonCell = document.createElement('td')
+            var selectButton = document.createElement('button')
+            
+            if (log[3] == 'X') {
+              selectButton.textContent = '고장'
+              selectButton.style.backgroundColor = 'red'
+              selectButton.disabled = 'disabled'
+            }else{
+              selectButton.textContent = '작동'
+              selectButton.style.backgroundColor = 'green'
+            }
+            selectButton.addEventListener('click', function () {
+              // 버튼 클릭 시 알림 표시
+              alert(log[0]+'번 드론이 선택되었습니다.')
+            })
+            buttonCell.appendChild(selectButton)
+            row.appendChild(buttonCell)
+    
             eventlogBody.appendChild(row)
           })
         })

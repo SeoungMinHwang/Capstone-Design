@@ -73,7 +73,7 @@ class FrontEnd(object):
         
         #드론이 이동했는지
         self.drone_Finished = False
-        # self.tl_drone.initialize()
+        self.tl_drone.initialize()
         self._thread = threading.Thread(target=self.run)
         self._thread.daemon = True
         self._thread.start()
@@ -81,7 +81,7 @@ class FrontEnd(object):
         
         
     def run(self):
-        self.tl_drone.initialize()
+        # self.tl_drone.initialize()
         #버전확인
         version = self.tl_drone.get_sdk_version()
         print("Drone SDK Version: {0}".format(version))

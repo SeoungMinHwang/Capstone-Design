@@ -148,7 +148,7 @@ def drone_list(cursor):
 def drone_state(cursor):
     sql = '''select droneid, dronestate 
             from DRONE 
-            WHERE droneid = 2 
+            WHERE droneid = 1 
             group by droneid, dronestate desc 
             limit 1;'''
     cursor.execute(sql)
@@ -157,7 +157,7 @@ def drone_state(cursor):
 
 @auto_conn_disconn
 def droneStatus_log(cursor):
-    sql = '''select dronestate, droneplace, working
+    sql = '''select droneid, dronestate, droneplace, working
             from DRONE;'''
     cursor.execute(sql)
     statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
