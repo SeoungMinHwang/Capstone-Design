@@ -95,7 +95,10 @@
           <div class="mask text-light" style="height: auto;padding:10px;">
             <div class="row" style="height:100%;">
               <div class="col-10" style=" text-align:left;">
-                <a style="font-size: 20; font-weight:800;"><p>전남 무안군 청계면 영산로 1666(도림리 61번지) {{ sec }}</p></a>
+                <a style="font-size: 20; font-weight:800;">
+                  <p style="background-color: black; width:fit-content; margin-bottom:0;">전남 무안군 청계면 영산로 1666(도림리 61번지) {{ sec }}</p>
+                  <div id="realtime-content" style="background-color: black; width:fit-content;"></div>
+                </a>
               </div>
               <div class="col-2" style=" text-align:right;">
                 <div class="btn-group" role="group" aria-label="Basic example">
@@ -108,7 +111,7 @@
         </div>
       </div>
     </div>
-    <div class="col-3" style="margin-top:1%;">
+    <div class="col-3" style="margin-top:0.5%;">
       <div class="row" style="height:58%;">
         <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
           <div style="margin-left:1%; margin-top:3%; height:95%; width:99%;">
@@ -135,6 +138,21 @@
     </div>
   </div>
 
+  <script>
+    function updateContent() {
+        // 현재 시간과 날짜를 가져오는 코드 작성
+        var currentTime = new Date();
+        var currentDate = currentTime.toLocaleDateString();
+        var currentTimeString = currentTime.toLocaleTimeString();
+        
+        // 업데이트된 내용을 화면에 표시
+        var content = currentDate + currentTimeString;
+        document.getElementById("realtime-content").innerHTML = content;
+    }
+    
+    // 1초마다 updateContent 함수 호출
+    setInterval(updateContent, 1000);
+</script>
   <!-- 테이블 -->
   <script>
     // Function to update the status
