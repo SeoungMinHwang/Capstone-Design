@@ -90,4 +90,4 @@ def sendToMeMessage(text):
     return requests.post(url, headers=header, data=uuidsData).status_code
 
 
-sendToMeMessage("시발 이거 왜 안돼")
+sendToMeMessage("공대 4호관에 응급상활 발생 주변 응급대원들은 신속하게 출동해주시기 바랍니다.\n CCTV 보기 : http://orion.mokpo.ac.kr:7910")
