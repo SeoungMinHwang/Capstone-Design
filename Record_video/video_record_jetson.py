@@ -1,9 +1,11 @@
 import cv2
 import datetime
 import os
+import shutil
 
+basic_path = '/root/Capstone-Design/Record_video/video_data_jetson'
 
-os.makedirs(f'./Video_data', exist_ok=True)
+os.makedirs(f'{basic_path}', exist_ok=True)
 
 def writeVideo():
     '''웹캠에서 스트리밍되는 영상을 ./Video_data/년/월/일/00시.avi로 한시간 단위로 저장하고 
@@ -12,7 +14,7 @@ def writeVideo():
     
     
     #RTSP를 불러오는 곳
-    video_capture = cv2.VideoCapture('http://192.168.141.226:8000/stream.mjpg')
+    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7911')
     
     # 웹캠 설정
     video_capture.set(3, 800)  # 영상 가로길이 설정
@@ -36,7 +38,7 @@ def writeVideo():
         fileName = currentTime.strftime(f'%H시%M분')  
 
         #파일 저장하기 위한 변수 선언
-        dir_path = f'./Video_data/{currentTime.strftime("%Y년%m월%d일")}'
+        dir_path = f'{basic_path}/{currentTime.strftime("%Y년%m월%d일")}'
         
         #비디오 저장 위치 폴더 생성 
         os.makedirs(dir_path, exist_ok=True)
@@ -45,7 +47,7 @@ def writeVideo():
         out = cv2.VideoWriter(f'{dir_path}/{fileName}.avi', fourcc, fps, (streaming_window_width, streaming_window_height))
         
 
-        while  (datetime.datetime.now() - currentTime).microseconds < int(3e+8) and int(datetime.datetime.now().strftime('%M') )% 5 != 0:
+        while  int(datetime.datetime.now().strftime('%M') )% 5 != 0 or int(datetime.datetime.now().strftime('%S')) != 0:
             ret, frame = video_capture.read()
 
             # 영상을 저장한다.
@@ -54,11 +56,11 @@ def writeVideo():
         
         
         # 시간이 지난 폴더 삭제하는 기능 추가 해야함 
-        arr = os.listdir('./Video_data/')
+        arr = os.listdir(basic_path)
         for i in arr:
             try:
                 if (datetime.date.today() - datetime.date(int(i[:4]), int(i[5:7]), int(i[8:10]))).days > 2:
-                    shutil.rmtree(f"./Video_data/{i}/")
+                    shutil.rmtree(f"{basic_path}/{i}/")
             except:
                 pass
 

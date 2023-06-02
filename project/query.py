@@ -2,6 +2,8 @@ import functools
 import pymysql
 import locale
 import time
+import json
+
 
 
 # 데코레이터 정의 부분 
@@ -130,10 +132,30 @@ def event_list(cursor, placename):
 @auto_conn_disconn
 def drone_list(cursor):
     result = []
-    cursor.execute(f"""select droneid, working from DRONE """)
+    cursor.execute(f"""select droneid, working, dronestate from DRONE """)
     for i in cursor.fetchall():
-        result.append([i[0],i[1]])
+        result.append([i[0],i[1],i[2]])
     return result
+
+@auto_conn_disconn
+def drone_state(cursor):
+    sql = '''select droneid, dronestate 
+            from DRONE 
+            WHERE droneid = 1 
+            group by droneid, dronestate desc 
+            limit 1;'''
+    cursor.execute(sql)
+    status_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    return status_result
+
+@auto_conn_disconn
+def droneStatus_log(cursor):
+    sql = '''select droneid, dronestate, droneplace, working
+            from DRONE;'''
+    cursor.execute(sql)
+    statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
+    return statuslog_result
+
 
 @auto_conn_disconn
 def detail_list(cursor, placename):

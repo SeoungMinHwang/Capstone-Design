@@ -183,8 +183,6 @@ def profile():
     else:
         return redirect(url_for('login'))
     
-
-
 #이벤트 발생시 드론화면
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
 def drone_popup():
@@ -198,24 +196,29 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    frame_data = request.form.get('data')
+    response = requests.get('http://192.168.0.23:3000/take_video', stream=True)
 
-    return Response(frame_generator(frame_data), mimetype='multipart/x-mixed-replace; boundary=frame')
+  # 동영상 스트림을 읽습니다.
+    while True:
+        chunk = response.raw.read(1024)
+        if not chunk:
+            break
+
+    # 동영상 스트림을 HTML에서 사용할 수 있게 리턴합니다.
+    return chunk
+
 
 @app.route("/takeoff")
 def takeoff():
-  # 드론을 이륙시킵니다.
-#   drone.takeoff()
-    #@app.route("/")
-    # def index():
-    # # 다른 Flask 서버에 요청을 보냅니다.
-    drone_url = "http://192.168.0.8:3000/takeoff"
+    drone_url = "http://192.168.0.23:3000/takeoff"
     response = requests.get(drone_url)
 
   # 응답을 처리합니다.
-    return "The other Flask server took off!"
+    if response.status_code == 200:
+        return "The other Flask server took off!"
+    else:
+        return "The other Flask server could not take off."
 
-#   return "드론 이륙"
 
 @app.route("/land")
 def land():
@@ -226,19 +229,16 @@ def land():
 
 @app.route("/droneStatus", methods=["GET"])
 def droneStatus():
-    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
-    cursor = conn.cursor()
-    sql = '''select droneid, dronestate 
-            from DRONE 
-            WHERE droneid = 2 
-            group by droneid, dronestate desc 
-            limit 1;'''
-    cursor.execute(sql)
-    status_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
-    conn.close()
+
+    status_result = query.drone_state()
 
     return status_result
 
+@app.route("/droneStatuslog", methods=["GET"])
+def droneStatuslog():
+    statuslog_result = query.droneStatus_log()
+    
+    return statuslog_result
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
-    
