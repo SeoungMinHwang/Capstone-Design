@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao, query, go_login, json
+import cv2, camera, query, go_login, json
 from weather_search import get_weather_daum, job
-import pymysql, json
+import json
 import requests
 # from bs4 import BeautifulSoup
 
@@ -87,12 +87,6 @@ def big_screen():
     else:
         return redirect(url_for('login'))
 
-#카카오톡 보내기페이지
-@app.route('/kakaosend')
-def kakaosend():
-    return render_template('kakao.html')
-
-
 @app.route('/drone_but')
 def drone_but():
     return render_template('drone_but.html')
@@ -119,15 +113,6 @@ def login_confirm():
 def logout():
     session.pop('username',None)
     return redirect(url_for('login'))
-
-
-# 카카오 토큰 및 텍스트 input
-@app.route("/kakaotalk",methods=['POST'])
-def kakaotalk():
-    token = request.form['inputToken']
-    text = request.form['inputText']
-    kakao.sendToMeMessage(token, text)
-    return redirect('kakaosend')
 
 # 날씨 정보 불러오기
 @app.route("/get_weather")
