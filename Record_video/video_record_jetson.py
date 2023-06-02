@@ -3,7 +3,7 @@ import datetime
 import os
 import shutil
 
-basic_path = '/root/Capstone-Design/Record_video/video_data'
+basic_path = '/root/Capstone-Design/Record_video/video_data_jetson'
 
 os.makedirs(f'{basic_path}', exist_ok=True)
 
@@ -14,7 +14,7 @@ def writeVideo():
     
     
     #RTSP를 불러오는 곳
-    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7910/stream.mjpg')
+    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7911')
     
     # 웹캠 설정
     video_capture.set(3, 800)  # 영상 가로길이 설정
@@ -47,7 +47,7 @@ def writeVideo():
         out = cv2.VideoWriter(f'{dir_path}/{fileName}.avi', fourcc, fps, (streaming_window_width, streaming_window_height))
         
 
-        while  int(datetime.datetime.now().strftime('%M') )% 5 != 0 and int(datetime.datetime.now().strftime('%S')) != 0:
+        while  int(datetime.datetime.now().strftime('%M') )% 5 != 0 or int(datetime.datetime.now().strftime('%S')) != 0:
             ret, frame = video_capture.read()
 
             # 영상을 저장한다.
