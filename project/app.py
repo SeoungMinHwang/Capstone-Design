@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Response, request, redirect, url_for,session
-import cv2, camera, kakao, query, go_login, json
+import cv2, camera, query, go_login, json
 from weather_search import get_weather_daum, job
-import pymysql, json
+import json
 import requests
 # from bs4 import BeautifulSoup
 
@@ -51,9 +51,17 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        return render_template('detail.html',sec=sec)
+        place = query.detail_place(sec)
+        return render_template('detail.html',sec=sec, place = place)
     else:
         return redirect(url_for('login'))
+    
+@app.route('/detail_get', methods = ['GET'])    
+def detail_get():
+    placename = request.args.get('placename')
+    detail_list = query.detail_list(placename)
+    result = json.dumps(detail_list)
+    return result
 
 # 로그인페이지
 @app.route('/login')
@@ -79,12 +87,6 @@ def big_screen():
         return render_template('big_screen.html', sec=sec)
     else:
         return redirect(url_for('login'))
-
-#카카오톡 보내기페이지
-@app.route('/kakaosend')
-def kakaosend():
-    return render_template('kakao.html')
-
 
 @app.route('/drone_but')
 def drone_but():
@@ -113,15 +115,6 @@ def logout():
     session.pop('username',None)
     return redirect(url_for('login'))
 
-
-# 카카오 토큰 및 텍스트 input
-@app.route("/kakaotalk",methods=['POST'])
-def kakaotalk():
-    token = request.form['inputToken']
-    text = request.form['inputText']
-    kakao.sendToMeMessage(token, text)
-    return redirect('kakaosend')
-
 # 날씨 정보 불러오기
 @app.route("/get_weather")
 def weather():
@@ -143,7 +136,6 @@ def map_get():
     placename = request.args.get('placename')
     eventlist = query.event_list(placename)
     result = json.dumps(eventlist)
-    print(result)
     return result
 
 # 대시보드

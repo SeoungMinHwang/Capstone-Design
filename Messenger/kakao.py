@@ -51,5 +51,5 @@ class kakaoInfo:
         return requests.post(url, headers=header, data=uuidsData).status_code
 
 
-kakao = kakaoInfo("2MsSpTmzIL9RBjwqN8VAbr2HaaWA-FAoixQFXFBrCilw0QAAAYTHWGdK")
+kakao = kakaoInfo("44COdseQi_nLqWxWLiILJ1WWzmfYYnmkBj4_PRcyCinJXgAAAYhHkN9s")
 kakao.sendToMeMessage("hihi")
