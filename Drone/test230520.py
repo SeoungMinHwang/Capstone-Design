@@ -1,3 +1,4 @@
+import threading
 import robomaster
 from robomaster import robot
 from robomaster import flight
@@ -54,6 +55,7 @@ if args.save_session:
 class FrontEnd(object):
     #초기
     def __init__(self):
+        print("Starting")
         self.tl_drone = robot.Drone()
         
         self.for_back_velocity = 0
@@ -68,9 +70,8 @@ class FrontEnd(object):
         
         self.drone_fin=False
         
-        
-        
     def run(self):
+        print("Running")
         self.tl_drone.initialize()
         #버전확인
         version = self.tl_drone.get_sdk_version()
@@ -117,16 +118,12 @@ class FrontEnd(object):
         # drone_con = self.tl_drone.is_connected()
         #키입력
         
-        
-        
         while not should_stop:
             frame_read = tl_camera.read_cv2_image(strategy="newest")
             if frame_read is None:
                 frame_read.stop()
                 break
             
-            if not self.drone_fin:
-                self.droneMove()
                 
                 
             # print(t1_sensor.sub_distance())
@@ -220,6 +217,11 @@ class FrontEnd(object):
 
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
+            
+            ret, buffer = cv2.imencode('.jpg', frameRet)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 
         cv2.destroyAllWindows()
         tl_camera.stop_video_stream()
@@ -228,12 +230,14 @@ class FrontEnd(object):
         
     def droneMove(self):
         #이동
-        tl_flight = self.tl_drone.flight
-        tl_flight.takeoff().wait_for_completed() #이륙
-        tl_flight.forward(distance=100).wait_for_completed() #앞뒤 좌우 50이동
-        tl_flight.land().wait_for_completed() #착륙
-        
-        self.drone_fin=True
+        if self.drone_fin == False :
+            self.drone_fin=True
+            tl_flight = self.tl_drone.flight
+            tl_flight.takeoff().wait_for_completed() #이륙
+            # tl_flight.forward(distance=100).wait_for_completed() #앞뒤 좌우 50이동
+            tl_flight.land().wait_for_completed() #착륙
+            
+            
         # tl_flight.rotate(angle=180).wait_for_completed() #+-180도회전
         # tl_flight.rotate(angle=-180).wait_for_completed()
         
@@ -275,12 +279,24 @@ class FrontEnd(object):
     def sub_battery_info_handler(battery_info):
         battery_soc = battery_info
         print("Drone battery: soc {0}".format(battery_soc))
-            
+
+
+frontend = FrontEnd()        
 def main():
-    frontend = FrontEnd()
+    # 스레드 객체 생성
+    run_thread = threading.Thread(target=frontend.run)
+    drone_move_thread = threading.Thread(target=frontend.droneMove)
+
+    # 스레드 실행
+    run_thread.start()
+    drone_move_thread.start()
+
+    # 스레드가 종료될 때까지 대기
+    run_thread.join()
+    drone_move_thread.join()
 
     # run frontend
-    frontend.run()
+    # frontend.run()
 
 app = Flask(__name__)
 
@@ -298,6 +314,13 @@ def land():
 #   drone.land()
     print("Land")
 #   return "드론 착륙"
+
+@app.route("/take_video")
+def take_video():
+    thread = threading.Thread(target=frontend.run)
+    thread.start()
+    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
+    
     
 if __name__ == "__main__":
     main()
