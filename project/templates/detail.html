@@ -187,19 +187,8 @@
     window.onclick = function (event) {
       if (event.target == modal) {
         modal.style.display = 'none'
-        // 팝업창이 켜지면 스트리밍재생
-        var videoElement = document.createElement('video')
-        videoElement.width = '100%'
-        videoElement.controls = true
-        videoElement.style.maxWidth = '100%'
-        videoElement.style.height = 'auto'
-    
-        var sourceElement = document.createElement('source')
-        sourceElement.src = 'http://192.168.0.23:3000/take_video'
-        sourceElement.type = 'video/mp4'
-    
-        videoElement.appendChild(sourceElement)
-        videoContainer.appendChild(videoElement)
+        videoContainer.removeChild(videoElement)
+        videoElement = null
         clearInterval(statusda)
       }
     }
@@ -223,6 +212,19 @@
       $('#table').on('dblclick', 'tr', function () {
         $('#myModal').show()
         statusda = setInterval(updateStatus, 3000)
+        // 팝업창이 켜지면 스트리밍재생
+        var videoElement = document.createElement('video')
+        videoElement.width = '100%'
+        videoElement.controls = true
+        videoElement.style.maxWidth = '100%'
+        videoElement.style.height = 'auto'
+    
+        var sourceElement = document.createElement('source')
+        sourceElement.src = 'http://192.168.0.23:3000/take_video'
+        sourceElement.type = 'video/mp4'
+    
+        videoElement.appendChild(sourceElement)
+        videoContainer.appendChild(videoElement)
       })
     })
   </script>
