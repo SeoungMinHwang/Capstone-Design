@@ -39,13 +39,6 @@ def cctv_list(cursor):
     
     return output
 
-@auto_conn_disconn
-def show_users(cursor):
-    cursor.execute(f"""SELECT * FROM USERS""")
-    
-    print(cursor.fetchall())
-    return cursor.fetchall()
-
 # 이벤트번호, 장소, 발생시간 나오는 쿼리문
 @auto_conn_disconn
 def show_event(cursor):
@@ -148,7 +141,7 @@ def drone_list(cursor):
 def drone_state(cursor):
     sql = '''select droneid, dronestate 
             from DRONE 
-            WHERE droneid = 2 
+            WHERE droneid = 1 
             group by droneid, dronestate desc 
             limit 1;'''
     cursor.execute(sql)
@@ -157,11 +150,25 @@ def drone_state(cursor):
 
 @auto_conn_disconn
 def droneStatus_log(cursor):
-    sql = '''select dronestate, droneplace, working
+    sql = '''select droneid, dronestate, droneplace, working
             from DRONE;'''
     cursor.execute(sql)
     statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
     return statuslog_result
 
 
-# print(get_idlist())
+@auto_conn_disconn
+def detail_list(cursor, placename):
+    result = []
+    cursor.execute(f"""select eventtime,responsestate,sns from (FALLEVENT natural join CCTV) natural join RESPONSE WHERE placename="{placename}";
+ """)
+    for i in cursor.fetchall():
+        result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'),i[1],i[2]])
+    return result
+
+@auto_conn_disconn
+def detail_place(cursor, placename):
+    cursor.execute(f"""select latitude, longitude from CCTV where placename="{placename}" """)
+    return cursor.fetchall()[0]
+
+# print(detail_list("공대1호관"))

@@ -121,6 +121,7 @@
 
       kakao.maps.event.addListener(marker, "click", function() {
           sendData(marker);
+          window.setInterval("sendData(marker)", 500);
           infowindow.setContent(content);
           infowindow.open(map, marker);
       });
