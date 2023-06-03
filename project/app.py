@@ -165,7 +165,9 @@ def eventlog():
 @app.route("/profile")
 def profile():
     if 'username' in session:
-        return render_template('profile.html')
+        userinfo = query.user_info(session['username'])
+        print(userinfo)
+        return render_template('profile.html', userinfo = userinfo)
     else:
         return redirect(url_for('login'))
     

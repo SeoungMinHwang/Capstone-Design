@@ -157,6 +157,7 @@ def droneStatus_log(cursor):
     return statuslog_result
 
 
+# detail화면 테이블을 위한 쿼리문
 @auto_conn_disconn
 def detail_list(cursor, placename):
     result = []
@@ -166,9 +167,16 @@ def detail_list(cursor, placename):
         result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'),i[1],i[2]])
     return result
 
+# detail 화면 지도를 위한 쿼리문
 @auto_conn_disconn
 def detail_place(cursor, placename):
     cursor.execute(f"""select latitude, longitude from CCTV where placename="{placename}" """)
     return cursor.fetchall()[0]
 
-# print(detail_list("공대1호관"))
+# 프로필을 위한 쿼리문
+@auto_conn_disconn
+def user_info(cursor, id):
+    cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
+    return cursor.fetchall()[0]
+
+# print(user_info("admin"))
