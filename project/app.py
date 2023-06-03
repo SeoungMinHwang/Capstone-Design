@@ -51,7 +51,8 @@ def video_feed(cctv_section):
 def detail():
     if 'username' in session:
         sec = request.args.get('section')
-        return render_template('detail.html',sec=sec)
+        place = query.detail_place(sec)
+        return render_template('detail.html',sec=sec, place = place)
     else:
         return redirect(url_for('login'))
     
