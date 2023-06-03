@@ -33,7 +33,7 @@ def save_video(cursor, cctv_id, video_start, video_end, camera_quality, video_pa
     
     cursor.execute(sql)
 
-
+@auto_conn_disconn
 def del_video(cursor):
     sql = '''DELETE FROM VIDEOLINK
         WHERE videostart < CURDATE() - INTERVAL 2 DAY;'''
