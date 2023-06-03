@@ -63,7 +63,7 @@
   </style>
 </head>
 
-<body style="overflow-x: hidden">
+<body style="overflow-x: hidden; background-color:#e6e1e1ba ">
 
   <div class="wrapper">
     <div class="top_navbar">
@@ -92,7 +92,8 @@
     </div>
 
     <div class="main_container">
-      <div class="sidebar">
+      <!-- 사이드바 -->
+      <div class="sidebar" style="overflow:auto;">
         <div class="sidebar__inner">
           <ul>
             <li>
@@ -110,18 +111,11 @@
                 <li><a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
                   <span class="title">목포대학교 &nbsp;<i class="fa fa-caret-down"></i></span></a></li>
                     <ul class="ssubmenu">
-                      <li><a href="/detail?section=공대1,2호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                        <span class="title">공대1,2호관</span></a></li>
-                      <li><a href="/detail?section=공대3호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                        <span class="title">공대3호관</span></a></li>
-                      <li><a href="/detail?section=공대4호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                          <span class="title">공대4호관</span></a></li>
-                      <li><a href="/detail?section=공대5호관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                          <span class="title">공대5호관</span></a></li>
-                      <li><a href="/detail?section=대외협력관"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                          <span class="title">대외협력관</span></a></li>
-                      <li><a href="/detail?section=스포츠센터"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                          <span class="title">스포츠센터</span></a></li>
+                      {% for e in cctv_list %}
+                      <li><a href="/detail?section={{e}}"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
+                        <span class="title">{{e}}</span></a></li>
+                      {% endfor %}
+
                     </ul>
               </ul>
             </li>
@@ -146,7 +140,8 @@
           </div> -->
         </div>
       </div>
-      <div class="container" style=" background-color:#e6e1e1ba">
+      <!-- 메인화면 -->
+      <div class="container">
         <div class="hihi">
           {% block content %}
           {% endblock %}
@@ -186,9 +181,9 @@
     </div>
 
   </div>
-  <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
+  <!-- <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
       href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
-  </footer>
+  </footer> -->
 
 </body>
 
