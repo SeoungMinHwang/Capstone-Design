@@ -96,7 +96,7 @@ def event_per_month(cursor):
 # 장소별 이벤트 비율
 @auto_conn_disconn
 def event_per_place(cursor):
-    result = [0, 0, 0, 0, 0, 0]
+    result = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     cursor.execute(f"""select CCTVid, count(*)
                    from FALLEVENT
                    group by CCTVid
