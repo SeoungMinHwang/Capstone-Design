@@ -127,7 +127,7 @@ def writeVideo():
     이틀(현재 설정해둔 값 2)이상된 영상들은 자동적으로 삭제하는 함수입니다.'''
     
     #RTSP를 불러오는 곳
-    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7910')
+    video_capture = cv2.VideoCapture('http://orion.mokpo.ac.kr:7910/stream.mjpg')
     
     # 웹캠 설정
     video_capture.set(3, 800)  # 영상 가로길이 설정
