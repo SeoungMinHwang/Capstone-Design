@@ -98,7 +98,7 @@ def writeVideo():
         out.release()  # out 객체 해제
 
         print('영상 저장')  
-        save_video(CCTV_ID, currentTime.strftime('%Y-%m-%d %H:%M:%S'), (datetime.datetime.now() + datetime.timedelta(hours=-3)).strftime('%Y-%m-%d %H:%M:%S'), "퀄리티 좋음", f'{dir_path}/{fileName}.avi')
+        save_video(CCTV_ID, currentTime.strftime('%Y-%m-%d %H:%M:%S'), (datetime.datetime.now() + datetime.timedelta(hours=-3)).strftime('%Y-%m-%d %H:%M:%S'), "800x600", f'{dir_path}/{fileName}.avi')
         time.sleep(1)    
 
         # 시간이 지난 폴더 삭제하는 기능 추가 해야함 
@@ -111,6 +111,7 @@ def writeVideo():
                 pass
             
         # 삭제 쿼리 파이와 젯슨 둘 중 하나에서만 작성하면 됨
+        
         del_video()
 
 if __name__ == "__main__":
