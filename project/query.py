@@ -110,7 +110,7 @@ def map_list(cursor):
 @auto_conn_disconn
 def event_log(cursor):
     result = []
-    cursor.execute(f"""select A.placename, B.eventtime, C.response, C.responsestate, C.droneid, B.sns
+    cursor.execute(f"""select A.placename, B.eventtime, C.response, B.responsestate, C.droneid, B.sns
                    from (CCTV A natural join FALLEVENT B) left join RESPONSE C on B.eventid = C.eventid""")
     for i in cursor.fetchall():
         result.append([i[0], i[1].strftime('%Y-%m-%d %H:%M:%S'), i[2], i[3], i[4], i[5]])
@@ -179,4 +179,4 @@ def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
-# print(user_info("admin"))
+# print(len(event_log()))

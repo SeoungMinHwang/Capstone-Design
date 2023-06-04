@@ -56,6 +56,7 @@ def detail():
     else:
         return redirect(url_for('login'))
     
+    # Detail Ajax
 @app.route('/detail_get', methods = ['GET'])    
 def detail_get():
     placename = request.args.get('placename')
@@ -131,6 +132,7 @@ def map():
     else:
         return redirect(url_for('login'))
 
+# AJAX용 map 테이블
 @app.route('/map_get', methods = ['GET'])    
 def map_get():
     placename = request.args.get('placename')
@@ -161,6 +163,13 @@ def eventlog():
     else:
         return redirect(url_for('login'))
     
+    # 이벤트로그용 AJAX
+@app.route("/eventlog_get")
+def eventlog_get():
+    eventlog_list = query.event_log()
+    result = json.dumps(eventlog_list)
+    return result
+
 # 프로파일
 @app.route("/profile")
 def profile():

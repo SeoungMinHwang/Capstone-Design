@@ -3,10 +3,50 @@
 {% block content %}
 <div class="row" style="height: 100%;">
   <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
-    <div style="margin-left:1%; margin-top:1%; height:85%; width:99%;">    
+    <div style="margin-left:1%; margin-top:1%; height:85%; width:99%;">   
+      <script>
+        function get_eventlog() {
+          $.ajax({
+            url: '/eventlog_get',
+            async: true,
+            headers: {
+              "Content-Type": "application/json",
+              "X-HTTP-Method-Override": "GET"
+            },
+            dataType: 'json',
+            success: function(result) {
+              console.log(result);
+              var tableContent = ''; // 변수를 초기화합니다.
+    
+              for (var i = 0; i < result.length; i++) {
+                  var placename = result[i][0];
+                  var timestamp = result[i][1];
+                  var response = result[i][2];
+                  var responsestate = result[i][3];
+                  var drone = result[i][4];
+                  var sns = result[i][5];
+    
+                  tableContent += '<tr data-toggle="modal" data-target="#myModal">' +
+                      '<td><p>' + placename + '</p></td>' +
+                      '<td><p>' + timestamp + '</p></td>' +
+                      '<td><p>' + response + '</p></td>' +
+                      '<td><p>' + responsestate + '</p></td>' +
+                      '<td><p>' + drone + '</p></td>' +
+                      '<td><p>' + sns + '</p></td>' +
+                      '</tr>';
+              }
+              var tableBody = document.getElementById('table-body');
+              tableBody.innerHTML = tableContent;
+          },
+            error: function(request, status, error) {
+              console.log(error);
+              // Handle the error here, such as displaying an error message
+            }
+          });
+        }
+    </script> 
       <table
         id="table"
-        data-url="../static/eventtable.json"
         data-filter-control="true"
         data-pagination="true"
         data-page-size="25">
@@ -20,7 +60,13 @@
             <th data-field="sns" data-filter-control="select" data-sortable="true"data-width="10" data-width-unit="%">SNS 발송<i class="fa fa-caret-down" style="margin-left:2%;"></i></th>
           </tr>
         </thead>
+        <tbody id="table-body">
+        </tbody>
       </table>
+      <script>
+        get_eventlog();
+        window.setInterval("get_eventlog()", 1000);
+      </script>
     </div>
   </div>
   
