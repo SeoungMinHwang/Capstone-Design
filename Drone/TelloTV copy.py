@@ -1,3 +1,5 @@
+import threading
+from flask import Flask, Response
 from djitellopy import Tello
 import cv2
 import numpy as np
@@ -52,7 +54,7 @@ move_po = [50,50]
 wantMove = math.sqrt((move_po[0]*move_po[0]) + (move_po[1]*move_po[1]))
 
 # 
-face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
+face_cascade = cv2.CascadeClassifier('C:\A_capston\Capstone-Design\Capstone-Design\Drone\cascades\data\haarcascade_frontalface_alt2.xml')
 # body_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_upperbody.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
@@ -70,6 +72,7 @@ class FrontEnd(object):
     
     def __init__(self):
         # Init Tello object that interacts with the Tello drone
+        print("tello start")
         self.tello = Tello()
 
         # Drone velocities between -100~100
@@ -271,88 +274,81 @@ class FrontEnd(object):
             # if not self.send_rc_control and not OVERRIDE: 원래파일
             if self.send_rc_control and not OVERRIDE: 
                 # 해당 위치 근처까지 이동
-                # self.for_back_velocity = S * 2
-                # self.moving_distance += (0.1*S)
-                self.tello.move_forward(50)
                 
-                # print(self.tello.get_distance_tof())
-                
-                if self.moving_distance >= wantMove:
-                # if self.tello.go_xyz_speed(20,30,50,20): #x,y,z,속도
                     
-                    #거리만큼 이동하였으면 얼굴찾기
-                    for (x, y, w, h) in faces:
+                #거리만큼 이동하였으면 얼굴찾기
+                for (x, y, w, h) in faces:
+                    
+                    # 
+                    roi_gray = gray[y:y+h, x:x+w] #(ycord_start, ycord_end)
+                    roi_color = frameRet[y:y+h, x:x+w]
+
+                    # setting Face Box properties
+                    fbCol = (255, 0, 0) #BGR 0-255 
+                    fbStroke = 2
+                    
+                    # end coords are the end of the bounding box x & y
+                    end_cord_x = x + w
+                    end_cord_y = y + h
+                    end_size = w*2
+
+                    # these are our target coordinates
+                    targ_cord_x = int((end_cord_x + x)/2)
+                    targ_cord_y = int((end_cord_y + y)/2) + UDOffset
+
+                    # This calculates the vector from your face to the center of the screen
+                    vTrue = np.array((cWidth,cHeight,tSize))
+                    vTarget = np.array((targ_cord_x,targ_cord_y,end_size))
+                    vDistance = vTrue-vTarget
+
+                    # 
+                    if not args.debug:
+                        # for turning
+                        if vDistance[0] < -szX:
+                            self.yaw_velocity = S
+                            # self.left_right_velocity = S2
+                        elif vDistance[0] > szX:
+                            self.yaw_velocity = -S
+                            # self.left_right_velocity = -S2
+                        else:
+                            self.yaw_velocity = 0
                         
-                        # 
-                        roi_gray = gray[y:y+h, x:x+w] #(ycord_start, ycord_end)
-                        roi_color = frameRet[y:y+h, x:x+w]
+                        # for up & down
+                        if vDistance[1] > szY:
+                            self.up_down_velocity = S
+                        elif vDistance[1] < -szY:
+                            self.up_down_velocity = -S
+                        else:
+                            self.up_down_velocity = 0
 
-                        # setting Face Box properties
-                        fbCol = (255, 0, 0) #BGR 0-255 
-                        fbStroke = 2
-                        
-                        # end coords are the end of the bounding box x & y
-                        end_cord_x = x + w
-                        end_cord_y = y + h
-                        end_size = w*2
+                        F = 0
+                        if abs(vDistance[2]) > acc[tDistance]:
+                            F = S
 
-                        # these are our target coordinates
-                        targ_cord_x = int((end_cord_x + x)/2)
-                        targ_cord_y = int((end_cord_y + y)/2) + UDOffset
+                        # for forward back
+                        if vDistance[2] > 0:
+                            self.for_back_velocity = S + F
+                        elif vDistance[2] < 0:
+                            self.for_back_velocity = -S - F
+                        else:
+                            self.for_back_velocity = 0
+                                    # Draw the face bounding box
+                    cv2.rectangle(frameRet, (x, y), (end_cord_x, end_cord_y), fbCol, fbStroke)
 
-                        # This calculates the vector from your face to the center of the screen
-                        vTrue = np.array((cWidth,cHeight,tSize))
-                        vTarget = np.array((targ_cord_x,targ_cord_y,end_size))
-                        vDistance = vTrue-vTarget
+                    # Draw the target as a circle
+                    cv2.circle(frameRet, (targ_cord_x, targ_cord_y), 10, (0,255,0), 2)
 
-                        # 
-                        if not args.debug:
-                            # for turning
-                            if vDistance[0] < -szX:
-                                self.yaw_velocity = S
-                                # self.left_right_velocity = S2
-                            elif vDistance[0] > szX:
-                                self.yaw_velocity = -S
-                                # self.left_right_velocity = -S2
-                            else:
-                                self.yaw_velocity = 0
-                            
-                            # for up & down
-                            if vDistance[1] > szY:
-                                self.up_down_velocity = S
-                            elif vDistance[1] < -szY:
-                                self.up_down_velocity = -S
-                            else:
-                                self.up_down_velocity = 0
+                    # Draw the safety zone
+                    cv2.rectangle(frameRet, (targ_cord_x - szX, targ_cord_y - szY), (targ_cord_x + szX, targ_cord_y + szY), (0,255,0), fbStroke)
 
-                            F = 0
-                            if abs(vDistance[2]) > acc[tDistance]:
-                                F = S
-
-                            # for forward back
-                            if vDistance[2] > 0:
-                                self.for_back_velocity = S + F
-                            elif vDistance[2] < 0:
-                                self.for_back_velocity = -S - F
-                            else:
-                                self.for_back_velocity = 0
-                                        # Draw the face bounding box
-                        cv2.rectangle(frameRet, (x, y), (end_cord_x, end_cord_y), fbCol, fbStroke)
-
-                        # Draw the target as a circle
-                        cv2.circle(frameRet, (targ_cord_x, targ_cord_y), 10, (0,255,0), 2)
-
-                        # Draw the safety zone
-                        cv2.rectangle(frameRet, (targ_cord_x - szX, targ_cord_y - szY), (targ_cord_x + szX, targ_cord_y + szY), (0,255,0), fbStroke)
-
-                        # Draw the estimated drone vector position in relation to face bounding box
-                        cv2.putText(frameRet,str(vDistance),(0,64),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                
-                    if noFaces:
-                        self.yaw_velocity = 0
-                        self.up_down_velocity = 0
-                        self.for_back_velocity = 0
-                        print("NO Head")
+                    # Draw the estimated drone vector position in relation to face bounding box
+                    cv2.putText(frameRet,str(vDistance),(0,64),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+            
+                if noFaces:
+                    self.yaw_velocity = 0
+                    self.up_down_velocity = 0
+                    self.for_back_velocity = 0
+                    print("NO Head")
 
                 
 
@@ -374,6 +370,10 @@ class FrontEnd(object):
 
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
+            ret, buffer = cv2.imencode('.jpg', frameRet)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
         # On exit, print the battery
         self.tello.get_battery()
@@ -383,6 +383,11 @@ class FrontEnd(object):
         
         # Call it always before finishing. I deallocate resources.
         self.tello.end()
+        
+    def droneMove(self):
+        self.tello.takeoff()
+        time.sleep(2)  # 2초 동안 대기
+        self.tello.land()
 
 
     def battery(self):
@@ -397,12 +402,38 @@ class FrontEnd(object):
 def lerp(a,b,c):
     return a + c*(b-a)
 
-def main():
-    frontend = FrontEnd()
+frontend = FrontEnd()
+# def main():
+    
+#     # run frontend
+    
+    
+    
+app = Flask(__name__)
 
-    # run frontend
-    frontend.run()
+@app.route("/takeoff")
+def takeoff():
+  
+    drone_move_thread = threading.Thread(target=frontend.droneMove)
 
+    drone_move_thread.start()
+
+    drone_move_thread.join()
+
+@app.route("/land")
+def land():
+  # 드론을 착륙시킵니다.
+#   drone.land()
+    print("Land")
+#   return "드론 착륙"
+
+@app.route("/take_video")
+def take_video():
+    thread = threading.Thread(target=frontend.run)
+    thread.start()
+    return Response(frontend.run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
+    
 
 if __name__ == '__main__':
-    main()
+    app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
+    # main()

@@ -11,6 +11,7 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 cctv_list = query.cctv_list()
 drone_list = query.drone_list()
+map_list = query.map_list()
 
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
@@ -45,6 +46,15 @@ def video_feed(cctv_section):
         return Response(gen_frames(camera5), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section==cctv_list[5]:
         return Response(gen_frames(camera6), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# 전체CCTV
+@app.route('/base')
+def base():
+    if 'username' in session:
+    # CCTV 지역 리스트
+        return render_template('base.html',cctv_list=cctv_list)
+    else:
+        return redirect(url_for('login'))
 
 # CCTV상세정보
 @app.route('/detail')
@@ -102,7 +112,7 @@ def login_confirm():
     idlist = query.get_idlist()
     if inputId in idlist:
         if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
-            map_list = query.map_list()
+            
             session['username'] = inputId
             return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
         else:
@@ -125,7 +135,6 @@ def weather():
 # 메인 페이지(지도)
 @app.route('/map')
 def map():
-    map_list = query.map_list()
     if 'username' in session:
     # CCTV 지역 리스트
         return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
@@ -148,7 +157,7 @@ def dashboard():
     place_per_eventlist = query.event_per_place()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist)
+        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list)
     else:
         return redirect(url_for('login'))
     

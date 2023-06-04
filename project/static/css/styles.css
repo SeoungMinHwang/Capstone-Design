@@ -137,6 +137,12 @@
   height: 100%;
   background: #333333;
   transition: all 0.3s ease;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+}
+.main_container .sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .main_container .sidebar .sidebar__inner{
