@@ -155,9 +155,10 @@ def dashboard():
     day_per_eventlist = query.event_per_day()
     month_per_eventlist = query.event_per_month()
     place_per_eventlist = query.event_per_place()
+    dayplace_per_eventlist = query.event_per_placeday()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list)
+        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
     else:
         return redirect(url_for('login'))
     

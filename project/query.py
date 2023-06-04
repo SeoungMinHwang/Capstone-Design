@@ -98,6 +98,19 @@ def event_per_place(cursor):
         result[i[0]-1] = i[1]
     return result
 
+# dashboard 맵 쿼리
+@auto_conn_disconn
+def event_per_placeday(cursor):
+    result = []
+    cctv = cctv_list()
+    for i in cctv:
+        cursor.execute(f"""select latitude, longitude, count(*)
+                        from FALLEVENT natural join CCTV
+                        where (eventtime between DATE_ADD(Now(), INTERVAL -1 WEEK) AND NOW()) AND (placename = "{i}") """)
+        tmp = cursor.fetchall()[0]
+        result.append([i, tmp[0], tmp[1], tmp[2]])
+    return result
+
 @auto_conn_disconn
 def map_list(cursor):
     result = []
@@ -179,4 +192,4 @@ def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
-# print(len(event_log()))
+# print(event_per_placeday())

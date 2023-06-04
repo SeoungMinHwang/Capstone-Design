@@ -148,56 +148,30 @@
 
   var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-  var circles = [
-    {
-      center: new kakao.maps.LatLng(34.912543818087656, 126.436394346095),
-      radius: 50,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#F3E2A9',
-      fillOpacity: 0.7
-    },
-    {
-      center: new kakao.maps.LatLng(34.91305599869959, 126.43702004357176),
-      radius: 40,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#F2F5A9',
-      fillOpacity: 0.7
-    },
-    {
-      center: new kakao.maps.LatLng(34.9130096158476, 126.43770974215572),
-      radius: 60,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#F5A9A9',
-      fillOpacity: 0.7
-    },
-    {
-      center: new kakao.maps.LatLng(34.91441487047608, 126.43897772651881),
-      radius: 20,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#BCF5A9',
-      fillOpacity: 0.7
-    },
-    {
-      center: new kakao.maps.LatLng(34.91401409169008, 126.43807494454806),
-      radius: 50,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#F3E2A9',
-      fillOpacity: 0.7
-    },
-    {
-      center: new kakao.maps.LatLng(34.914668634757646, 126.43830028258716),
-      radius: 30,
-      strokeWeight: 5,
-      strokeOpacity: 0,
-      fillColor: '#E1F5A9',
-      fillOpacity: 0.7
+  var circles = []
+
+  {% for e in dayplace_per_eventlist %}
+  var colord;
+    if ({{e[3]}} == 1) {
+      colord = '#BCF5A9';
+    } else if ({{e[3]}} >= 2 && {{e[3]}} <= 3) {
+      colord = '#F2F5A9';
+    } else if ({{e[3]}} >= 4 && {{e[3]}} <= 5) {
+      colord = '#E1F5A9';
+    } else if ({{e[3]}} >= 6) {
+      colord = '#F5A9A9';
     }
-  ];
+    circles.push({
+      name: '{{e[0]}}',
+      center: new kakao.maps.LatLng({{e[1]}}, {{e[2]}}),
+      radius: {{e[3]}} * 10,
+      strokeWeight: 5,
+      strokeOpacity: 0,
+      fillColor: colord,
+      fillOpacity: 0.7
+    })
+  {% endfor %}
+
   var tooltip = new kakao.maps.CustomOverlay({
     yAnchor: 1,
     zIndex: 3
@@ -210,7 +184,7 @@
     kakao.maps.event.addListener(circle, 'mouseover', function () {
       var content = '<div class="bg-black text-white" style="text-align:center; font-size:15px;font-weight:900;border-radius: 10px;">' +
         '<div class="border border-dark p-2 position-relative" style="border-radius: 10px;"><div class="triangle"></div>' +
-        '<div class="content" style="margin-bottom: 1px;"><p style="margin-bottom:0;">공대4호관</p><p style="margin-bottom:0;">' + (circleInfo.radius / 10).toString() + '회 발생</p></div></div></div>';
+        '<div class="content" style="margin-bottom: 1px;"><p style="margin-bottom:0;">'+ circleInfo.name +'</p><p style="margin-bottom:0;">' + (circleInfo.radius / 10).toString() + '회 발생</p></div></div></div>';
       tooltip.setContent(content);
       tooltip.setPosition(circle.getPosition());
       tooltip.setMap(map);
