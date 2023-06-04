@@ -370,10 +370,10 @@ class FrontEnd(object):
 
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
-            ret, buffer = cv2.imencode('.jpg', frameRet)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            # ret, buffer = cv2.imencode('.jpg', frameRet)
+            # frame = buffer.tobytes()
+            # yield (b'--frame\r\n'
+            #        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
         # On exit, print the battery
         self.tello.get_battery()
