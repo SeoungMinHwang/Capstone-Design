@@ -66,6 +66,7 @@ def detail():
     else:
         return redirect(url_for('login'))
     
+    # Detail Ajax
 @app.route('/detail_get', methods = ['GET'])    
 def detail_get():
     placename = request.args.get('placename')
@@ -140,6 +141,7 @@ def map():
     else:
         return redirect(url_for('login'))
 
+# AJAX용 map 테이블
 @app.route('/map_get', methods = ['GET'])    
 def map_get():
     placename = request.args.get('placename')
@@ -153,9 +155,10 @@ def dashboard():
     day_per_eventlist = query.event_per_day()
     month_per_eventlist = query.event_per_month()
     place_per_eventlist = query.event_per_place()
+    dayplace_per_eventlist = query.event_per_placeday()
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list)
+        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -166,15 +169,25 @@ def eventlog():
     # CCTV 지역 리스트
         # cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         eventlist = query.show_event()
-        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist)
+        eventlog_list = query.event_log()
+        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
     
+    # 이벤트로그용 AJAX
+@app.route("/eventlog_get")
+def eventlog_get():
+    eventlog_list = query.event_log()
+    result = json.dumps(eventlog_list)
+    return result
+
 # 프로파일
 @app.route("/profile")
 def profile():
     if 'username' in session:
-        return render_template('profile.html')
+        userinfo = query.user_info(session['username'])
+        print(userinfo)
+        return render_template('profile.html', userinfo = userinfo)
     else:
         return redirect(url_for('login'))
     

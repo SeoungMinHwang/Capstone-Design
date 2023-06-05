@@ -101,11 +101,15 @@
           var tableContent = '' // 변수를 초기화합니다.
     
           for (var i = 0; i < result.length; i++) {
-            var timestamp = result[i][0]
-            var responsestate = result[i][1]
-            var sns = result[i][2]
-    
-            tableContent += '<tr data-toggle="modal" data-target="#myModal">' + '<td><p>' + timestamp + '</p></td>' + '<td><p>' + responsestate + '</p></td>' + '<td><p>' + sns + '</p></td>' + '</tr>'
+              var timestamp = result[i][0];
+              var responsestate = result[i][1];
+              var sns = result[i][2];
+
+              tableContent += '<tr data-toggle="modal" data-target="#myModal">' +
+                  '<td><p>' + timestamp + '</p></td>' +
+                  '<td><p>' + responsestate + '</p></td>' +
+                  '<td><p>' + sns + '</p></td>' +
+                  '</tr>';
           }
           var tableBody = document.getElementById('table-body')
           tableBody.innerHTML = tableContent
