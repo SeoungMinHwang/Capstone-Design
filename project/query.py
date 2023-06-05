@@ -106,9 +106,17 @@ def event_per_placeday(cursor):
     for i in cctv:
         cursor.execute(f"""select latitude, longitude, count(*)
                         from FALLEVENT natural join CCTV
-                        where DATE_FORMAT(eventtime, "%Y-%m-%d") = CURDATE() AND (placename = "{i}") """)
+                        where (DATE_FORMAT(eventtime, "%Y-%m-%d") = CURDATE()) AND (placename = "{i}") """)
         tmp = cursor.fetchall()[0]
         result.append([i, tmp[0], tmp[1], tmp[2]])
+    for i in range(len(result)):
+        if result[i][1] == None:
+            cursor.execute(f"""select latitude, longitude
+                            from CCTV
+                            where placename = "{result[i][0]}" """)
+            tmp = cursor.fetchall()[0]
+            result[i][1] = tmp[0]
+            result[i][2] = tmp[1]
     return result
 
 @auto_conn_disconn
