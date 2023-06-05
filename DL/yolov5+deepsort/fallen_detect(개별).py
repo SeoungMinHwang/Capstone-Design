@@ -48,7 +48,10 @@ average_confidence_list = deque()
 
 # 앞에 몇개씩 건너 뛸건지 설정
 window_size = 2
-flag = False
+
+# 알림을 주기적으로 한 번씩만 보내기 위함
+flag = 1
+
 while True:
     
     succes, frame = cap.read()
@@ -89,10 +92,12 @@ while True:
             print("5회에 대한 평균 신뢰도: {:.2f}".format(average_5fps_confidence))
             
             
-            if average_5fps_confidence >= 0.55:
-                print('@@TEST.쓰러짐이 탐지되었습니다(알림보내기)@@')
+            if average_5fps_confidence >= 0.6:
+                if flag == 1:
+                    print('@@TEST.쓰러짐이 탐지되었습니다(알림보내기)@@')
+                flag *= -1
 
-            # 얼마나 건너뛸지 설정
+            # 얼마나 건너뛸지 설정 (기본값 : window_size=2)
             for _ in range(window_size):
                 average_confidence_list.popleft()       
                 
