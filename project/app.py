@@ -169,7 +169,8 @@ def eventlog():
     # CCTV 지역 리스트
         # cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         eventlist = query.show_event()
-        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist)
+        eventlog_list = query.event_log()
+        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
     
