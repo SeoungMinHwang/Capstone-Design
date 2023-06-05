@@ -43,7 +43,7 @@ parser.add_argument('-D', "--debug", action='store_true',
 
 args = parser.parse_args()
 
-# server_url = "http://orion.mokpo.ac.kr:8491/drone_video"
+server_url = "http://orion.mokpo.ac.kr:8491/drone_video"
 
 if args.save_session:
     ddir = "Sessions"
@@ -266,7 +266,7 @@ class FrontEnd(object):
 
             # Display the resulting frame
             cv2.imshow(f'Tello Tracking...',frameRet)
-            request.post(server_url, data=frameRet)
+            # request.post(server_url, data=frameRet)
             ret, buffer = cv2.imencode('.jpg', frameRet)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -281,7 +281,7 @@ class FrontEnd(object):
     def drone_move(self):
         print("drone_move called")
         #이동 시작시 스레드 시작 이후 이동이 끝나면 스레드 종료(메인에서)
-        if not self.drone_Finished == False:
+        if self.drone_Finished == False:
             self.drone_Finished == True
             tl_flight = self.tl_drone.flight
             tl_flight.takeoff().wait_for_completed() 
@@ -333,12 +333,10 @@ class FrontEnd(object):
     def start(self):
         self.drone_thread = threading.Thread(target=self.drone_move)  # 드론 이동 스레드 생성
         self.drone_thread.start()  # 드론 이동 스레드 시작
-        genaRun = self.drone_run()
-        next(genaRun)
         
 frontend = FrontEnd()    
-
-frontend.start()
+frontend.drone_run()
+# frontend.start()
 
 app = Flask(__name__)
 @app.route('/')
@@ -348,11 +346,7 @@ def index():
 @app.route("/takeoff" , methods=['GET', 'POST'])
 def takeoff():
 
-    drone_move_thread = threading.Thread(target=frontend.drone_move)
-
-    drone_move_thread.start()
-
-    drone_move_thread.join()
+    frontend.start()
 
 @app.route("/land")
 def land():
@@ -363,11 +357,11 @@ def land():
 
 @app.route("/take_video")
 def take_video():
-    generator=frontend.drone_run()
-    thread = threading.Thread(target=next(generator))
-    thread.start()
-    return Response(next(generator), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
+    # generator=frontend.drone_run()
+    # thread = threading.Thread(target=next(generator))
+    # thread.start()
+    return Response(frontend.drone_run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
     
-# if __name__ == "__main__":
-#     # app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
 #     main()
