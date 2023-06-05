@@ -98,6 +98,27 @@ def event_per_place(cursor):
         result[i[0]-1] = i[1]
     return result
 
+# dashboard 맵 쿼리
+@auto_conn_disconn
+def event_per_placeday(cursor):
+    result = []
+    cctv = cctv_list()
+    for i in cctv:
+        cursor.execute(f"""select latitude, longitude, count(*)
+                        from FALLEVENT natural join CCTV
+                        where (DATE_FORMAT(eventtime, "%Y-%m-%d") = CURDATE()) AND (placename = "{i}") """)
+        tmp = cursor.fetchall()[0]
+        result.append([i, tmp[0], tmp[1], tmp[2]])
+    for i in range(len(result)):
+        if result[i][1] == None:
+            cursor.execute(f"""select latitude, longitude
+                            from CCTV
+                            where placename = "{result[i][0]}" """)
+            tmp = cursor.fetchall()[0]
+            result[i][1] = tmp[0]
+            result[i][2] = tmp[1]
+    return result
+
 @auto_conn_disconn
 def map_list(cursor):
     result = []
@@ -110,7 +131,7 @@ def map_list(cursor):
 @auto_conn_disconn
 def event_log(cursor):
     result = []
-    cursor.execute(f"""select A.placename, B.eventtime, C.response, C.responsestate, C.droneid, B.sns
+    cursor.execute(f"""select A.placename, B.eventtime, C.response, B.responsestate, C.droneid, B.sns
                    from (CCTV A natural join FALLEVENT B) left join RESPONSE C on B.eventid = C.eventid""")
     for i in cursor.fetchall():
         result.append([i[0], i[1].strftime('%Y-%m-%d %H:%M:%S'), i[2], i[3], i[4], i[5]])
@@ -157,6 +178,7 @@ def droneStatus_log(cursor):
     return statuslog_result
 
 
+# detail화면 테이블을 위한 쿼리문
 @auto_conn_disconn
 def detail_list(cursor, placename):
     result = []
@@ -166,9 +188,16 @@ def detail_list(cursor, placename):
         result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'),i[1],i[2]])
     return result
 
+# detail 화면 지도를 위한 쿼리문
 @auto_conn_disconn
 def detail_place(cursor, placename):
     cursor.execute(f"""select latitude, longitude from CCTV where placename="{placename}" """)
     return cursor.fetchall()[0]
 
-# print(detail_list("공대1호관"))
+# 프로필을 위한 쿼리문
+@auto_conn_disconn
+def user_info(cursor, id):
+    cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
+    return cursor.fetchall()[0]
+
+# print(event_per_placeday())

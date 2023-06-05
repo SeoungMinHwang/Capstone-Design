@@ -3,10 +3,9 @@
 {% block content %}
 <div class="row" style="height: 100%;">
   <div class="card" style="width: 98%; height: 97%; margin: 0 auto; margin-top:1%;">
-    <div style="margin-left:1%; margin-top:1%; height:85%; width:99%;">    
+    <div style="margin-left:1%; margin-top:1%; height:85%; width:99%;">   
       <table
         id="table"
-        data-url="../static/eventtable.json"
         data-filter-control="true"
         data-pagination="true"
         data-page-size="25">
@@ -20,6 +19,18 @@
             <th data-field="sns" data-filter-control="select" data-sortable="true"data-width="10" data-width-unit="%">SNS 발송<i class="fa fa-caret-down" style="margin-left:2%;"></i></th>
           </tr>
         </thead>
+        <tbody>
+          {% for e in eventlog_list %}
+          <tr>
+            <td>{{e[0]}}</td>
+            <td>{{e[1]}}</td>
+            <td>{{e[2]}}</td>
+            <td>{{e[3]}}</td>
+            <td>{{e[4]}}</td>
+            <td>{{e[5]}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>
