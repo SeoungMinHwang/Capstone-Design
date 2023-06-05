@@ -204,16 +204,8 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    response = requests.get('http://192.168.0.23:3000/take_video', stream=True)
-
-  # 동영상 스트림을 읽습니다.
-    while True:
-        chunk = response.raw.read(1024)
-        if not chunk:
-            break
-
-    # 동영상 스트림을 HTML에서 사용할 수 있게 리턴합니다.
-    return chunk
+    droneVd = cv2.VideoCapture('http://192.168.0.23:3000/take_video/streaming_image.jpg')
+    return Response(gen_frames(droneVd), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route("/takeoff")

@@ -27,7 +27,8 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-md-10 col-sm-12">
-                  <div id="videoContainer"></div>
+                  <!--<div id="videoContainer"></div>-->
+                  <img src="{{ url_for('drone_video') }}" onerror="this.src='static/nosignal4.png'" width="50%" style="border-radius: 10px;" />
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <div class="row justify-content-center">
@@ -253,6 +254,7 @@
         $('#myModal').show()
         statusda = setInterval(updateStatus, 3000)
         // 팝업창이 켜지면 스트리밍재생
+        /**
         var videoElement = document.createElement('video')
         videoElement.width = '100%'
         videoElement.controls = true
@@ -265,6 +267,7 @@
     
         videoElement.appendChild(sourceElement)
         videoContainer.appendChild(videoElement)
+        **/
       })
     })
   </script>

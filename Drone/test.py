@@ -270,7 +270,8 @@ class FrontEnd(object):
             ret, buffer = cv2.imencode('.jpg', frameRet)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
+                   b'Content-Disposition: inline; filename=streaming_image.jpg\r\n')
             
                 
         cv2.destroyAllWindows()
