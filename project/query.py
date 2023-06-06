@@ -122,9 +122,9 @@ def event_per_placeday(cursor):
 @auto_conn_disconn
 def map_list(cursor):
     result = []
-    cursor.execute(f"""select placename, latitude, longitude from CCTV """)
+    cursor.execute(f"""select placename, latitude, longitude, place, placegruop, ip, working from CCTV """)
     for i in cursor.fetchall():
-        result.append([i[0],float(i[1]), float(i[2])])
+        result.append([i[0],float(i[1]), float(i[2]), i[3], i[4], i[5], i[6]])
     return result
 
 # 이벤트로그 쿼리문

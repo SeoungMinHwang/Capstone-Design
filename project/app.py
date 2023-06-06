@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, request, redirect, url_for,session
+from flask import Flask, render_template, Response, request, redirect, url_for,session, flash
 import cv2, camera, query, go_login, json
 from weather_search import get_weather_daum, job
 import json
@@ -11,7 +11,6 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 cctv_list = query.cctv_list()
 drone_list = query.drone_list()
-map_list = query.map_list()
 
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
@@ -109,10 +108,10 @@ def login_confirm():
     inputId = request.form['inputId']
     inputPassword = request.form['inputPassword']
     # CCTV 지역 리스트
+    map_list = query.map_list()
     idlist = query.get_idlist()
     if inputId in idlist:
         if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
-            
             session['username'] = inputId
             return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
         else:
@@ -136,6 +135,7 @@ def weather():
 @app.route('/map')
 def map():
     if 'username' in session:
+        map_list = query.map_list()
     # CCTV 지역 리스트
         return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
     else:
@@ -158,6 +158,7 @@ def dashboard():
     dayplace_per_eventlist = query.event_per_placeday()
     if 'username' in session:
     # CCTV 지역 리스트
+        map_list = query.map_list()
         return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
     else:
         return redirect(url_for('login'))
@@ -181,7 +182,7 @@ def eventlog_get():
     result = json.dumps(eventlog_list)
     return result
 
-# 프로파일
+# 프로필
 @app.route("/profile")
 def profile():
     if 'username' in session:
@@ -190,7 +191,56 @@ def profile():
         return render_template('profile.html', userinfo = userinfo)
     else:
         return redirect(url_for('login'))
+
+# CCTV추가
+@app.route('/cctv_add')
+def cctv_add():
+    if 'username' in session:
+        map_list = query.map_list()
+        return render_template('cctv_add.html',cctv_list=cctv_list, map_list=map_list)
+    else:
+        return redirect(url_for('login'))
     
+# CCTV추가 확인
+@app.route("/cctv_add_confirm",methods=['POST'])
+def cctv_add_confirm():
+    map_list = query.map_list()
+    flash('정상 등록 되었습니다.')
+    clickLat = request.form['clickLat']
+    clickLng = request.form['clickLng']
+    inputAddress = request.form['inputAddress']
+    inputPlacename = request.form['inputPlacename']
+    inputPlacegruop = request.form['inputPlacegruop']
+    inputIP = request.form['inputIP']
+    inputWorking = request.form['inputWorking']
+    if clickLat == "" and clickLng == "":
+        flash('지도에서 위치를 클릭해주세요')
+        return render_template('cctv_add.html', map_list=map_list)
+    if inputPlacename in cctv_list:
+        flash('장소가 중복됩니다. 수정해주세요.')
+        return render_template('cctv_add.html', map_list=map_list)
+
+    else:
+        # cctv 추가하는 쿼리문 넣는곳
+        return render_template('cctv_add.html', map_list=map_list)
+
+# CCTV삭제
+@app.route('/cctv_substract')
+def cctv_substract():
+    if 'username' in session:
+        map_list = query.map_list()
+        return render_template('cctv_substract.html', map_list=map_list)
+    else:
+        return redirect(url_for('login'))
+
+# CCTV삭제 확인
+@app.route("/cctv_substract_confirm",methods=['POST'])
+def cctv_substract_confirm():
+    map_list = query.map_list()
+    flash('삭제완료 되었습니다.')
+    # cctv 삭제 하는 쿼리문 넣는곳
+    return render_template('cctv_substract.html', map_list=map_list)
+
 #이벤트 발생시 드론화면
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
 def drone_popup():

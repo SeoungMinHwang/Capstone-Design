@@ -1,0 +1,171 @@
+<head>
+</head>
+{%with messages = get_flashed_messages()%}
+  {%if messages %}
+    <script type="text/javascript">
+      alert("{{messages[-1]}}");
+    </script>
+    {%endif%}
+{%endwith%}
+{% extends 'base.html' %}
+{% block content %}
+<div class="row" style="height:100%; width:100%; padding:10px;">
+    <div class="col-6">
+        <div id="map" style="height:100%;width:100%;border-radius: 10px;"></div>
+    </div>
+    <div class="col-6">
+        <form  class="card needs-validation" style="padding:5%; font-size:15px; height:100%;" action="/cctv_substract_confirm" method="post" novalidate>
+            <h5 style="margin-left:5%; margin-bottom:2%; font-weight:900; color:goldenrod;"><i class="fa fa-exclamation-circle" style="margin-right:5px;"></i>삭제할 CCTV를 지도에서 클릭해주세요</h5>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="clickLat" class="col-sm-12 col-form-label">위도</label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="clickLat" id="clickLat" placeholder="Latitude">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="clickLng" class="col-sm-12 col-form-label">경도</label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="clickLng" id="clickLng" placeholder="longitude">
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputAddress" class="col-sm-12 col-form-label">주소</label>
+                <input type="text" readonly class="form-control form-control-lg input-lg" name="inputAddress" id="inputAddress" placeholder="Address">
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputPlacegruop" class="col-sm-12 col-form-label">장소 그룹</label>
+                <input type="text" readonly class="form-control form-control-lg input-lg" name="inputPlacegruop" id="inputPlacegruop" placeholder="Placegruop">
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputPlacename" class="col-sm-12 col-form-label">장소 이름</label>
+                <input type="text" readonly class="form-control form-control-lg input-lg" name="inputPlacename" id="inputPlacename" placeholder="Placename">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label for="inputIP" class="col-sm-12 col-form-label">IP</label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="inputIP" id="inputIP" placeholder="xxx.xxx.xxx.xxx" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputWorking" class="col-sm-12 col-form-label">작동 여부</label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="inputWorking" id="inputWorking" placeholder="작동/미작동" required>
+                </div>
+            </div>
+
+            <div style="width:100%;">
+                <div class="form-check" style="float:right; margin-right:4%;">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">삭제에 동의합니다</label>
+                    <div class="invalid-feedback" required>
+                    동의 없이 삭제 불가합니다
+                    </div>
+                </div>
+            </div>
+            <div style="width:100%;">
+                <button type="submit" style="width:fit-content; font-size:18px; padding:7px; float:right; margin-right:4%; margin-top:5%;" class="btn btn-lg btn-secondary btn-block">삭제</button>
+            </div>
+          </form>
+    </div>
+</div>
+
+<!-- 지도 -->
+<script>
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
+        level: 3, // 지도의 확대 레벨
+    };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+var positions = [];
+{% for e in map_list %}
+      positions.push({
+          title: '{{e[0]}}',
+          latlng: new kakao.maps.LatLng({{e[1]}}, {{e[2]}})
+      })
+{% endfor %}
+
+var imageSrc = "../static/marker.png";
+var imageSrc_clicked = "../static/marker_click.png";
+var imageSize = new kakao.maps.Size(30, 40); 
+var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+var markers = [];
+var clickedMarker = null; // 이전에 클릭한 marker를 저장할 변수
+
+function addMarker(position, title) {
+    var imageSize = new kakao.maps.Size(30, 40);
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var markerImageClicked = new kakao.maps.MarkerImage(imageSrc_clicked, imageSize);
+
+    var marker = new kakao.maps.Marker({
+        map: map,
+        position: position,
+        title: title,
+        image: markerImage
+    });
+
+    kakao.maps.event.addListener(marker, "click", function() {
+        if (clickedMarker) {
+            clickedMarker.setImage(markerImage);
+        }
+        
+        var placename = marker.getTitle();
+        var result_lat = document.getElementById('clickLat');
+        var result_lng = document.getElementById('clickLng'); 
+        var reuslt_Address = document.getElementById('inputAddress');
+        var reuslt_Gruop = document.getElementById('inputPlacegruop');
+        var result_Placename = document.getElementById('inputPlacename');
+        var result_IP = document.getElementById('inputIP');
+        var result_Working = document.getElementById('inputWorking');
+        
+        marker.setImage(markerImageClicked);
+        clickedMarker = marker;
+        
+        {% for e in map_list %}
+        if ('{{e[0]}}' == placename){
+            result_lat.value = '{{e[1]}}';
+            result_lng.value = '{{e[2]}}';
+            reuslt_Address.value = '{{e[3]}}';
+            reuslt_Gruop.value = '{{e[4]}}';
+            result_Placename.value = '{{e[0]}}';
+            result_IP.value = '{{e[5]}}';
+            result_Working.value = '{{e[6]}}';
+        }
+        {% endfor %}
+    });
+
+    marker.setMap(map);
+    markers.push(marker);
+}
+
+for (var i = 0; i < positions.length; i++) {
+    addMarker(positions[i].latlng, positions[i].title);
+}
+
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
+</script>
+
+<!-- validation 검사 -->
+<script>
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>
+{% endblock %}

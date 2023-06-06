@@ -1,0 +1,152 @@
+<head>
+</head>
+{%with messages = get_flashed_messages()%}
+  {%if messages %}
+    <script type="text/javascript">
+      alert("{{messages[-1]}}");
+    </script>
+    {%endif%}
+{%endwith%}
+{% extends 'base.html' %}
+{% block content %}
+<div class="row" style="height:100%; width:100%; padding:10px;">
+    <div class="col-6">
+        <div id="map" style="height:100%;width:100%;border-radius: 10px;"></div>
+    </div>
+    <div class="col-6">
+        <form  class="card needs-validation" style="padding:5%; font-size:15px; height:100%;" action="/cctv_add_confirm" method="post" novalidate>
+            <h5 style="margin-left:5%; margin-bottom:2%; font-weight:900; color:goldenrod;"><i class="fa fa-exclamation-circle" style="margin-right:5px;"></i>위도/경도는 맵을 클릭하시고, 전부 작성 바랍니다</h5>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="clickLat" class="col-sm-12 col-form-label">위도<i class="fa fa-map-pin" style="margin-left:5px;"></i></label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="clickLat" id="clickLat" placeholder="Click on the map!" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="clickLng" class="col-sm-12 col-form-label">경도<i class="fa fa-map-pin" style="margin-left:5px;"></i></label>
+                    <input type="text" readonly class="form-control form-control-lg input-lg" name="clickLng" id="clickLng" placeholder="Click on the map!" required>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputAddress" class="col-sm-12 col-form-label">주소</label>
+                <input type="text" class="form-control form-control-lg input-lg" name="inputAddress" id="inputAddress" placeholder="Address" value="전라남도 무안군 청계면 영산로 1666" required>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputPlacegruop" class="col-sm-12 col-form-label">장소 그룹</label>
+                <input type="text" class="form-control form-control-lg input-lg" name="inputPlacegruop" id="inputPlacegruop" placeholder="Placegruop" value="목포대학교" required>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="inputPlacename" class="col-sm-12 col-form-label" style="display:flex;">장소 이름<p style="margin-top:5px; margin-left:5px; margin-bottom:0;font-size:10px;">( 중복금지 )</p></label>
+                <input type="text" class="form-control form-control-lg input-lg" name="inputPlacename" id="inputPlacename" placeholder="Placename" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label for="inputIP" class="col-sm-12 col-form-label">IP</label>
+                    <input type="text" class="form-control form-control-lg input-lg" name="inputIP" id="inputIP" placeholder="xxx.xxx.xxx.xxx" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputWorking" class="col-sm-12 col-form-label">작동 여부</label>
+                    <select class="form-control form-control-lg input-lg" style="line-height:normal" name="inputWorking" id="inputWorking" required>
+                        <option value="O">작동</option>
+                        <option value="X">미작동</option>
+                    </select>
+                </div>
+            </div>
+            <div style="width:100%;">
+                <button type="submit" style="width:fit-content; font-size:18px; padding:7px; float:right; margin-right:4%; margin-top:5%;" class="btn btn-lg btn-secondary btn-block">등록</button>
+            </div>
+          </form>
+    </div>
+</div>
+
+<!-- 지도 -->
+<script>
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
+        level: 3, // 지도의 확대 레벨
+    };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+var imageSrc = "../static/marker.png";
+var imageSrc_new = "../static/marker_new.png";
+var imageSize = new kakao.maps.Size(30, 40); 
+var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+var markerImage_new = new kakao.maps.MarkerImage(imageSrc_new, imageSize); 
+
+
+// 지도를 클릭한 위치에 표출할 마커입니다
+var marker2 = new kakao.maps.Marker({ 
+    // 지도 중심좌표에 마커를 생성합니다 
+    position: map.getCenter(),
+    image : markerImage_new
+}); 
+
+var positions = [];
+{% for e in map_list %}
+      positions.push({
+          title: '{{e[0]}}',
+          latlng: new kakao.maps.LatLng({{e[1]}}, {{e[2]}})
+      })
+{% endfor %}
+
+  for (var i = 0; i < positions.length; i ++) {
+    // 마커 이미지의 이미지 크기 입니다
+    
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+        position: positions[i].latlng, // 마커를 표시할 위치
+        title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image : markerImage // 마커 이미지 
+    });
+    marker.setMap(map);
+  }
+
+// 지도에 클릭 이벤트를 등록합니다
+// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng; 
+    
+    // 마커 위치를 클릭한 위치로 옮깁니다
+    marker2.setPosition(latlng);
+    marker2.setMap(map);
+    
+    var Lat_message = latlng.getLat();
+    var Lng_message =latlng.getLng();
+    
+    var result_lat = document.getElementById('clickLat');
+    var result_lng = document.getElementById('clickLng'); 
+    result_lat.value = Lat_message;
+    result_lng.value = Lng_message;
+    
+});
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
+</script>
+
+<!-- validation 검사 -->
+<script>
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>
+
+{% endblock %}
