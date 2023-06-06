@@ -12,7 +12,7 @@
 </style>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
 <div class="row" style="height:85%;">
-    <div class="map" id="map" style="margin-left:15px; width:100%;height:100%;border-radius: 10px;"></div>
+    <div class="map" id="map" style="margin-left:15px; margin-top:5px; width:100%;height:100%;border-radius: 10px;"></div>
     <div class="col-2" style="margin-top:30px; margin-left:3%; height:50%;">
         <table id="table"  class="bg-dark p-2 text-dark bg-opacity-10" data-page-size="5" data-toggle="table" style="width:auto;border-radius: 10px;">
             <thead>
@@ -57,13 +57,15 @@
 
   <!-- 카카오맵 -->
 <script>
-  var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
-      mapOption = {
-          center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
-          level: 2 // 지도의 확대 레벨
-      };
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+        mapOption = {
+            center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
+            level: 2 // 지도의 확대 레벨
+        };
 
-  var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    var zoomControl = new kakao.maps.ZoomControl();
+    map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
 
   var positions = [];
 

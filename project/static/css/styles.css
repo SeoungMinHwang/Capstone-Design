@@ -24,14 +24,14 @@
   z-index: 9999;
 }
 
-.top_navbar .hamburger{
+.top_navbar .submenubutton{
   width: 60px;
   background: #1d1d1d;
   position: relative;
   font-size: 28px;
 }
 
-.top_navbar .hamburger .hamburger__inner{
+.top_navbar .submenubutton .submenubutton__inner{
   position: absolute;
   top: 50%;
   left: 50%;
@@ -41,7 +41,7 @@
   height: 20px;
 }
 
-.top_navbar .hamburger__inner > div{
+.top_navbar .submenubutton__inner > div{
   width: 30px;
   height: 2px;
   background: #fff;
@@ -50,12 +50,12 @@
   left: 5px;
 }
 
-.top_navbar .hamburger div.two{
+.top_navbar .submenubutton div.two{
   top: 10px;
   width: 40px;
 }
 
-.top_navbar .hamburger div.three{
+.top_navbar .submenubutton div.three{
   top: 20px;
 }
 
@@ -68,13 +68,9 @@
   padding: 0 20px;
 }
 
-.top_navbar .menu .logo{
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
 .top_navbar .menu .right_menu{
   margin-top: 10px;
+  display:inline-block;
 }
 
 .top_navbar .menu .right_menu ul{
@@ -83,9 +79,17 @@
 
 .top_navbar .menu .right_menu ul li{
   position: relative;
+  
 }
 
 .top_navbar .menu .right_menu ul li .fas{
+  font-size: 22px;
+  cursor: pointer;
+  vertical-align: middle;
+  color: #ffffff;
+}
+
+.top_navbar .menu .right_menu .fa{
   font-size: 22px;
   cursor: pointer;
   vertical-align: middle;
@@ -114,6 +118,7 @@
   cursor: pointer;
   color: #000000;
   font-weight: 900;
+  font-size:12px;
 }
 
 .top_navbar .menu .right_menu ul li .profile_dd .dd_item:hover{
@@ -128,6 +133,46 @@
   border: 10px solid;
   border-color: transparent transparent #fff transparent;
 }
+
+.top_navbar .menu .right_menu ul li .camera_dd{
+  position: absolute;
+  top: 35px;
+  right: -10px;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  padding: 10px 0;
+  width: 180px;
+  border-radius: 3px;
+  display: none;
+  user-select: none;
+}
+
+.top_navbar .menu .right_menu ul li .camera_dd.active{
+  display: block;
+}
+
+.top_navbar .menu .right_menu ul li .camera_dd .dd_camera{
+  padding: 10px;
+  cursor: pointer;
+  color: #000000;
+  font-weight: 900;
+  font-size:12px;
+
+}
+
+.top_navbar .menu .right_menu ul li .camera_dd .dd_camera:hover{
+  background: #929292;
+}
+
+.top_navbar .menu .right_menu ul li .camera_dd:before{
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: 28px;
+  border: 10px solid;
+  border-color: transparent transparent #fff transparent;
+}
+
 
 .main_container .sidebar{
   position: fixed;
@@ -237,17 +282,6 @@
   color: #1d1d1d;
 }
 
-.main_container .container .item{
-  float: right;
-  text-align: left;
-  background: #fff;
-  border: 1px solid #E0F2F1;
-  margin-bottom: 30px;
-  margin-right: 30px;
-  padding: 20px;
-  font-size: 20px;
-  line-height: 22px;
-}
 
 /* after adding active class */
 .wrapper.active .sidebar{

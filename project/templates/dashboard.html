@@ -31,9 +31,7 @@
       <!-- 상단 -->
       <div class="row" style="height:50%; margin-left:0.1%;">
         <div class="card" style="width:50%; height:98%; padding:1%;">
-          <h5 class="card-title"
-            style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700; font-size:20px;">CCTV별 누적 감지
-          </h5>
+          <h5 class="card-title"style="margin-left: 5%; margin-top: 2%; text-align: left; font-weight: 700; font-size:20px;">CCTV별 누적 감지</h5>
           <canvas id="DetRateByCCTV" style="width:90%;padding:1%; margin-left:5%;"></canvas>
         </div>
         <div class="card" style="width:49%; height:98%; margin-left:1%; padding:1%;">
@@ -118,10 +116,10 @@
           </ul>
           <div class="tab-content">
             <div id="day" class="tab-pane fade in active">
-              <canvas id="DayofWeek" style="height:100%; width:60%; margin-top:1%; margin-left:1%;"></canvas>
+              <canvas id="DayofWeek" style="height:110%; width:60%; margin-top:1%; margin-left:1%;"></canvas>
             </div>
             <div id="mon" class="tab-pane fade">
-              <canvas id="Monthly" style="height:110px; margin-top:1%;"></canvas>
+              <canvas id="Monthly" style="height:135px; margin-top:1%;"></canvas>
             </div>
           </div>
         </div>
@@ -164,7 +162,7 @@
     circles.push({
       name: '{{e[0]}}',
       center: new kakao.maps.LatLng({{e[1]}}, {{e[2]}}),
-      radius: {{e[3]}} * 10,
+      radius: {{e[3]}} * 12,
       strokeWeight: 5,
       strokeOpacity: 0,
       fillColor: colord,
@@ -184,7 +182,7 @@
     kakao.maps.event.addListener(circle, 'mouseover', function () {
       var content = '<div class="bg-black text-white" style="text-align:center; font-size:15px;font-weight:900;border-radius: 10px;">' +
         '<div class="border border-dark p-2 position-relative" style="border-radius: 10px;"><div class="triangle"></div>' +
-        '<div class="content" style="margin-bottom: 1px;"><p style="margin-bottom:0;">'+ circleInfo.name +'</p><p style="margin-bottom:0;">' + (circleInfo.radius / 10).toString() + '회 발생</p></div></div></div>';
+        '<div class="content" style="margin-bottom: 1px;"><p style="margin-bottom:0;">'+ circleInfo.name +'</p><p style="margin-bottom:0;">' + (circleInfo.radius / 12).toString() + '회 발생</p></div></div></div>';
       tooltip.setContent(content);
       tooltip.setPosition(circle.getPosition());
       tooltip.setMap(map);

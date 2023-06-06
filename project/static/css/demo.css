@@ -10,38 +10,13 @@ body {
    font-family: 'Roboto', sans-serif;
    font-style: normal;
    font-weight: 300;
-   font-smoothing: antialiased;
+   font-smooth: antialiased;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
    font-size: 15px;
    background: #eee;
 }
 
-.intro {
-   background: #fff;
-   padding: 60px 30px;
-   color: #333;
-   margin-bottom: 15px;
-   line-height: 1.5;
-   text-align: right;
-   margin-left: 50px;
-}
-
-.intro h1 {
-   font-size: 25pt;
-   padding-bottom: 15px;
-
-}
-
-.intro p {
-   font-size: 14px;
-}
-
-.action {
-   text-align: center;
-   display: block;
-   margin-top: 20px;
-}
 
 a.btn {
    text-decoration: none;
