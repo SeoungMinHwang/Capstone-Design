@@ -182,7 +182,7 @@ def droneStatus_log(cursor):
 @auto_conn_disconn
 def detail_list(cursor, placename):
     result = []
-    cursor.execute(f"""select eventtime,responsestate,sns from (FALLEVENT natural join CCTV) natural join RESPONSE WHERE placename="{placename}";
+    cursor.execute(f"""select eventtime, responsestate, sns from (FALLEVENT natural join CCTV) WHERE placename="{placename}" ORDER BY eventtime DESC;
  """)
     for i in cursor.fetchall():
         result.append([i[0].strftime('%Y-%m-%d %H:%M:%S'),i[1],i[2]])
