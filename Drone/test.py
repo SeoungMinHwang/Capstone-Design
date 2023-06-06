@@ -286,7 +286,7 @@ class FrontEnd(object):
             self.drone_Finished == True
             tl_flight = self.tl_drone.flight
             tl_flight.takeoff().wait_for_completed() 
-            # tl_flight.forward(distance=50).wait_for_completed()  #앞뒤 좌우 50이동
+            tl_flight.forward(distance=50).wait_for_completed()  #앞뒤 좌우 50이동
             # tl_flight.go(x=50, y=30, z=30, speed=30).wait_for_completed()
             
             tl_flight.land().wait_for_completed()  #착륙

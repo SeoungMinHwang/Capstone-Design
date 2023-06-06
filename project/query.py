@@ -172,7 +172,8 @@ def drone_state(cursor):
 @auto_conn_disconn
 def droneStatus_log(cursor):
     sql = '''select droneid, dronestate, droneplace, working
-            from DRONE;'''
+            from DRONE
+            WHERE droneplace = '목포대학교';'''
     cursor.execute(sql)
     statuslog_result = json.dumps(cursor.fetchall(), ensure_ascii=False)
     return statuslog_result

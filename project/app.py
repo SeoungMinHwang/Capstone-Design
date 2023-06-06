@@ -213,11 +213,11 @@ def takeoff():
     drone_url = "http://192.168.0.23:3000/takeoff"
     response = requests.get(drone_url)
 
-  # 응답을 처리합니다.
+    # 응답을 처리합니다.
     if response.status_code == 200:
-        return "The other Flask server took off!"
+        return "<script>window.onload = function() { alert('작동'); };</script>"
     else:
-        return "The other Flask server could not take off."
+        return "<script>window.onload = function() { alert('실패'); };</script>"
 
 
 @app.route("/land")
