@@ -12,6 +12,7 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 cctv_list = query.cctv_list()
 drone_list = query.drone_list()
 map_list = query.map_list()
+log_cnt = len(query.event_log())
 
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
@@ -52,9 +53,13 @@ def video_feed(cctv_section):
 def base():
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('base.html',cctv_list=cctv_list)
+        return render_template('base.html',cctv_list=cctv_list, log_cnt=log_cnt)
     else:
         return redirect(url_for('login'))
+    
+@app.route('/base_get')
+def base_get():
+    return str(len(query.event_log()))
 
 # CCTV상세정보
 @app.route('/detail')
@@ -173,13 +178,6 @@ def eventlog():
         return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
-    
-    # 이벤트로그용 AJAX
-@app.route("/eventlog_get")
-def eventlog_get():
-    eventlog_list = query.event_log()
-    result = json.dumps(eventlog_list)
-    return result
 
 # 프로파일
 @app.route("/profile")

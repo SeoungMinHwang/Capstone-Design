@@ -184,7 +184,29 @@
   <!-- <footer class="credit">Vision Guard Monitoring System - <a title="Team BlackSwan"
       href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
   </footer> -->
+<script>
+  function get_base() {
+    $.ajax({
+      url: '/base_get',
+      async: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-HTTP-Method-Override': 'GET'
+      },
+      dataType: 'text',
+      success: function (result) {
+        console.log(result)
+      },
+      error: function (request, status, error) {
+        console.log(error)
+        // Handle the error here, such as displaying an error message
+      }
+    })
+  }
 
+  get_base()
+  window.setInterval('get_base()', 1000)
+</script>
 </body>
 
 </html>

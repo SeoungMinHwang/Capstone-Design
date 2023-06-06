@@ -200,4 +200,4 @@ def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
-# print(event_per_placeday())
+print(len(event_log()))
