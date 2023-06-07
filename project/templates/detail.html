@@ -28,13 +28,13 @@
               <div class="row">
                 <div class="col-md-10 col-sm-12">
                   <!-- <div id="videoContainer"></div> -->
-                  <img src="{{ url_for('drone_video') }}" onerror="this.src='static/nosignal4.png'" width="50%" style="border-radius: 10px;" />
+                  <img src="{{ url_for('drone_video') }}" onerror="this.src='static/nosignal4.png'" width="70%" style="border-radius: 10px;" />
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <div class="row justify-content-center">
                     <div class="modal-body-content">
                       <div class="form-group text-center">
-                        <label for="recipient-name" class="control-label" style="font-size:15px;">State</label>
+                        <label id="selectDroneLabel" for="recipient-name" class="control-label" style="font-size:15px;">State</label>
                         <div id="status_label">
                           <label id="status" class="control-label" style="font-size:24px;">State</label>
                         </div>
@@ -230,6 +230,8 @@
             $('#status').css('color', 'green')
           } else if (status[0][1] == '출동중') {
             $('#status').css('color', 'blue')
+          } else if (status[0][1] == '복귀중') {
+            $('#status').css('color', 'orange')
           } else {
             $('#status').css('color', 'black')
           }
@@ -372,6 +374,8 @@
                 // Set the selected button to green color
                 btn.textContent = '선택';
                 btn.style.backgroundColor = 'green';
+                $('#selectDroneLabel').text("Drone: " + droneNum)
+                
                 alert(droneNum + '번 드론이 선택되었습니다.');
               };
             })(selectButton, log[0]));
