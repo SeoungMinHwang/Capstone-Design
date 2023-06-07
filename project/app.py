@@ -220,6 +220,7 @@ def cctv_add_confirm():
 
     else:
         # cctv 추가하는 쿼리문 넣는곳
+        query.cctv_insert(clickLat, clickLng, inputAddress, inputPlacename, inputPlacegruop, inputIP, inputWorking)
         return render_template('cctv_add.html', map_list=map_list)
 
 # CCTV삭제
@@ -237,6 +238,8 @@ def cctv_substract_confirm():
     map_list = query.map_list()
     flash('삭제완료 되었습니다.')
     # cctv 삭제 하는 쿼리문 넣는곳
+    inputPlacename = request.form['inputPlacename']
+    query.cctv_delete(inputPlacename)
     return render_template('cctv_substract.html', map_list=map_list)
 
 #이벤트 발생시 드론화면

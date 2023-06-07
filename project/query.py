@@ -201,4 +201,15 @@ def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
-print(len(event_log()))
+@auto_conn_disconn
+def cctv_insert(cursor, lat, lng, address, placename, placegruop, ip, working):
+    cursor.execute(f"""insert into CCTV values(null, "{lat}", "{lng}","{address}", "{placename}","{placegruop}","{ip}","{working}") """)
+    return
+
+@auto_conn_disconn
+def cctv_delete(cursor,placename):
+    cursor.execute(f"""delete from CCTV where placename="{placename}" """)
+    return
+
+# print(len(event_log()))
+# cctv_insert(None,34.91208581705009, 126.43579017055809, "전라남도 무안군 청계면 영산로 1666", "")
