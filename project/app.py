@@ -254,7 +254,7 @@ def frame_generator(frame_base64):
 
 @app.route('/drone_video', methods=['GET', 'POST'])
 def drone_video():
-    droneVd = cv2.VideoCapture('http://192.168.0.23:3000/take_video/streaming_image.jpg')
+    droneVd = cv2.VideoCapture('http://192.168.0.23:3000/take_video')
     return Response(gen_frames(droneVd), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
