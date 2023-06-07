@@ -264,11 +264,7 @@ def takeoff():
     drone_url = "http://192.168.0.23:3000/takeoff"
     response = requests.get(drone_url)
 
-    # 응답을 처리합니다.
-    if response.status_code == 200:
-        return "<script>window.onload = function() { alert('작동'); };</script>"
-    else:
-        return "<script>window.onload = function() { alert('실패'); };</script>"
+    return response
 
 
 @app.route("/land")

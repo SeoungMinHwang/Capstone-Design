@@ -2,7 +2,7 @@
 
 {% extends 'base.html' %}
 {% block content %}
-  <!--               <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
+  <!--                <div style="background-color: #000000; margin-top:10px; margin-right: 10px; margin-left:5px; width: 70%; background-repeat: no-repeat; background-size:20%; background-position:center;">
     <div class="ratio" style="width: 100%; height: 100%;">
         <img onclick="sec_get('{{sec}}');" src="{{ url_for('video_feed', cctv_section=sec) }}"
             onerror="this.src='static/nosignal4.png'" width="50%">
@@ -10,7 +10,7 @@
             <h4>{{sec}}</h4>
         </div>
     </div>
-</div>               -->
+</div>                -->
   <!-- Modal -->
   <!-- Bootstrap CSS -->
   <!-- jQuery UI -->
@@ -27,7 +27,7 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-md-10 col-sm-12">
-                  <!--<div id="videoContainer"></div>-->
+                  <!-- <div id="videoContainer"></div> -->
                   <img src="{{ url_for('drone_video') }}" onerror="this.src='static/nosignal4.png'" width="50%" style="border-radius: 10px;" />
                 </div>
                 <div class="col-md-2 col-sm-12">
@@ -44,7 +44,7 @@
                   <div class="row justify-content-center">
                     <div class="modal-body-footer">
                       <div class="form-group text-center">
-                        <button onclick="location.href='/takeoff'" type="button" class="btn btn-primary btn-lg drone-select-button" style="background-color: #28a745;">출발</button>
+                        <button onclick="takeoffbtn" type="button" class="btn btn-primary btn-lg drone-select-button" style="background-color: #28a745;">출발</button>
                         <button onclick="location.href='/land'" type="button" class="btn btn-secondary btn-lg drone-select-button" style="background-color:#6c757d;">귀환</button>
                       </div>
                     </div>
@@ -87,6 +87,22 @@
     </div>
   </div>
   <script>
+    $(document).ready(function () {
+      $('#takeoffbtn').click(function () {
+        $.ajax({
+          url: '/takeoff',
+          method: 'GET',
+          success: function (data) {
+            $('#dataLabel').text(data)
+          },
+          error: function (xhr, status, error) {
+            console.error(error)
+          }
+        })
+      })
+    })
+  </script>
+  <script>
     function get_detail() {
       $.ajax({
         url: '/detail_get',
@@ -102,15 +118,11 @@
           var tableContent = '' // 변수를 초기화합니다.
     
           for (var i = 0; i < result.length; i++) {
-              var timestamp = result[i][0];
-              var responsestate = result[i][1];
-              var sns = result[i][2];
-
-              tableContent += '<tr data-toggle="modal" data-target="#myModal">' +
-                  '<td><p>' + timestamp + '</p></td>' +
-                  '<td><p>' + responsestate + '</p></td>' +
-                  '<td><p>' + sns + '</p></td>' +
-                  '</tr>';
+            var timestamp = result[i][0]
+            var responsestate = result[i][1]
+            var sns = result[i][2]
+    
+            tableContent += '<tr data-toggle="modal" data-target="#myModal">' + '<td><p>' + timestamp + '</p></td>' + '<td><p>' + responsestate + '</p></td>' + '<td><p>' + sns + '</p></td>' + '</tr>'
           }
           var tableBody = document.getElementById('table-body')
           tableBody.innerHTML = tableContent
@@ -255,19 +267,19 @@
         statusda = setInterval(updateStatus, 3000)
         // 팝업창이 켜지면 스트리밍재생
         /**
-        var videoElement = document.createElement('video')
-        videoElement.width = '100%'
-        videoElement.controls = true
-        videoElement.style.maxWidth = '100%'
-        videoElement.style.height = 'auto'
-    
-        var sourceElement = document.createElement('source')
-        sourceElement.src = 'http://192.168.0.23:3000/take_video'
-        sourceElement.type = 'video/mp4'
-    
-        videoElement.appendChild(sourceElement)
-        videoContainer.appendChild(videoElement)
-        **/
+            var videoElement = document.createElement('video')
+            videoElement.width = '100%'
+            videoElement.controls = true
+            videoElement.style.maxWidth = '100%'
+            videoElement.style.height = 'auto'
+        
+            var sourceElement = document.createElement('source')
+            sourceElement.src = 'http://192.168.0.23:3000/take_video'
+            sourceElement.type = 'video/mp4'
+        
+            videoElement.appendChild(sourceElement)
+            videoContainer.appendChild(videoElement)
+            **/
       })
     })
   </script>
