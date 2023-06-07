@@ -261,6 +261,7 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
+    query.update_drone_state()
     drone_url = "http://192.168.0.23:3000/takeoff"
     response = requests.get(drone_url)
 

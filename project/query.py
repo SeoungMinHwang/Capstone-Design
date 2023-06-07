@@ -170,6 +170,12 @@ def drone_state(cursor):
     return status_result
 
 @auto_conn_disconn
+def update_drone_state(cursor):
+    sql = '''UPDATE DRONE SET dronestate= '출동중' WHERE droneid = 1;'''
+    cursor.execute(sql)
+    return
+
+@auto_conn_disconn
 def droneStatus_log(cursor):
     sql = '''select droneid, dronestate, droneplace, working
             from DRONE
