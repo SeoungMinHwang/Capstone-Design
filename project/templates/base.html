@@ -22,44 +22,84 @@
   <!-- table -->
   <link href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css" rel="stylesheet">
   <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+  <script
+    src="https://unpkg.com/bootstrap-table@1.21.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
   <!-- 카카오맵 -->
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=07a938b94c7bff9361f7a8a8e0b26bbd"></script>
 
   <script>
     $(document).ready(function () {
-      $(".hamburger .hamburger__inner").click(function () {
+      $(".submenubutton .submenubutton__inner").click(function () {
         $(".wrapper").toggleClass("active")
       })
 
       $(".top_navbar .fas").click(function () {
+        $(".camera_dd").removeClass("active");
         $(".profile_dd").toggleClass("active");
+        
+      });
+
+      $(".top_navbar .cameraicon").click(function () {
+        $(".profile_dd").removeClass("active");
+        $(".camera_dd").toggleClass("active");
       });
     })
     
-    function logout() {
-      window.location.href = '/logout'
-    } function profile() {
-      window.location.href = '/profile'
-    }    // detail.html 하이퍼링크
+    $(document).on("click", function (e) {
+      if ($(e.target).closest(".submenubutton").length) {
+        return;
+      }
+      if ($(e.target).hasClass("cameraicon")) {
+        return;
+      }
+      if ($(e.target).hasClass("fas")) {
+        return;
+      }
+      $(".top_navbar .active").removeClass("active");
+    });
+    $(".top_navbar").on("click", function (e) {
+      $(".top_navbar .active").removeClass("active");
+    });
+
     function sec_get(obj) {
       var section = '/detail?section=' + obj
       window.location.href = section
-    }    
-    $(document).ready(function() {
-      $('.has-submenu > a').click(function(e) {
+    }
+    $(document).ready(function () {
+      $('.has-submenu > a').click(function (e) {
         e.preventDefault();
         $(this).parent().toggleClass('active');
       });
     });
+    
   </script>
   <style>
-    a{
+    a {
       text-decoration: none;
     }
-    a:hover, a:active, a:visited, a:link{
+
+    a:hover,
+    a:active,
+    a:visited,
+    a:link {
       text-decoration: none;
-  }
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: gray;
+      box-shadow: inset 2px 2px 2px rgba(255, 255, 255, .25), inset -2px -2px 2px rgba(255, 255, 255, 0.25);
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #fff;
+      border-radius: 10px;
+      background: #fff;
+    }
   </style>
 </head>
 
@@ -67,23 +107,31 @@
 
   <div class="wrapper">
     <div class="top_navbar">
-      <div class="hamburger">
-        <div class="hamburger__inner">
+      <div class="submenubutton">
+        <div class="submenubutton__inner">
           <div class="one"></div>
           <div class="two"></div>
           <div class="three"></div>
         </div>
       </div>
       <div class="menu">
-        <div class="logo">
+        <div>
           <a href="/map"><img src="../static/banner.png " style="height:100%;" alt="logo"></a>
         </div>
         <div class="right_menu">
           <ul>
-            <li><i class="fas fa-user"></i>
+            <li>
+              <svg class="cameraicon" style="margin-right:15px; fill:#fff" height="30" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" x="0px" y="0px"><title></title><g data-name="camera video"><path d="M14,21H4a4,4,0,0,1-4-4V7A4,4,0,0,1,4,3H14a4,4,0,0,1,4,4V17A4,4,0,0,1,14,21ZM4,5A2,2,0,0,0,2,7V17a2,2,0,0,0,2,2H14a2,2,0,0,0,2-2V7a2,2,0,0,0-2-2Z"/><path d="M21.65,21a2.35,2.35,0,0,1-1.84-.88l-3.59-4.5A1,1,0,0,1,16,15V9a1,1,0,0,1,.22-.62l3.59-4.5A2.35,2.35,0,0,1,24,5.35v13.3A2.35,2.35,0,0,1,21.65,21ZM18,14.65l3.38,4.22a.36.36,0,0,0,.62-.22V5.35a.36.36,0,0,0-.62-.22L18,9.35Z"/></g><text x="0" y="39" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"></text><text x="0" y="44" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"></text></svg>
+              <div class="camera_dd">
+                <div class="dd_camera" onclick="location.href='/cctv_add'">CCTV 추가</div>
+                <div class="dd_camera" onclick="location.href='/cctv_substract'">CCTV 삭제</div>
+              </div>
+            </li>
+            <li>
+              <i class="fas fa-user"></i>
               <div class="profile_dd">
-                <div class="dd_item" onclick="profile()">Profile</div>
-                <div class="dd_item" onclick="logout()">Logout</div>
+              <div class="dd_item" onclick="location.href='/profile'">프로필</div>
+              <div class="dd_item" onclick="location.href='/logout'">로그아웃</div>
               </div>
             </li>
           </ul>
@@ -109,14 +157,15 @@
                 <span class="title">모니터링 &nbsp;<i class="fa fa-caret-down"></i></span></a>
               <ul class="submenu">
                 <li><a href="/all_cctv"><span class="icon"><i class="fa fa-caret-square-o-right"></i></span>
-                  <span class="title">목포대학교 &nbsp;<i class="fa fa-caret-down"></i></span></a></li>
-                    <ul class="ssubmenu">
-                      {% for e in cctv_list %}
-                      <li><a href="/detail?section={{e}}"><span class="icon"><i class="fa fa-map-marker" style="margin-left:5px;"></i></span>
-                        <span class="title">{{e}}</span></a></li>
-                      {% endfor %}
+                    <span class="title">목포대학교 &nbsp;<i class="fa fa-caret-down"></i></span></a></li>
+                <ul class="ssubmenu">
+                  {% for e in cctv_list %}
+                  <li><a href="/detail?section={{e}}"><span class="icon"><i class="fa fa-map-marker"
+                          style="margin-left:5px;"></i></span>
+                      <span class="title">{{e}}</span></a></li>
+                  {% endfor %}
 
-                    </ul>
+                </ul>
               </ul>
             </li>
             <li>
@@ -132,12 +181,6 @@
               </a>
             </li>
           </ul>
-          <!-- <div class="profile">
-            <div class="profile_info">
-              <p>&nbsp;&nbsp;&nbsp;Welcome</p>
-              <p class="profile_name">&nbsp;&nbsp;&nbsp;Admin</p>
-            </div>
-          </div> -->
         </div>
       </div>
       <!-- 메인화면 -->
@@ -146,37 +189,6 @@
           {% block content %}
           {% endblock %}
         </div>
-        <!-- <header class="intro">
-          <h1> CSS Sidebar Menu with icons Example </h1>
-          <p> SideBar Menu Using HTML CSS and jQuery.</p>
-          <p> Written in HTML, CSS, JavaScript... </p>
-          <div class="action">
-            <a href="https://www.codehim.com/menu/css-sidebar-navigation-menu-with-icons/"
-              title="Back to download and tutorial page" class="btn back">Back to Tutorial</a>
-            <a href="https://github.com/codingmarket07/SideBar-Menu-N19" title="View, Fork or Star on GitHub"
-              class="btn github">View on GitHub</a>
-          </div>
-        </header>
-
-
-        <div class="item">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
-          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
-          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
-          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
-        </div>
-        <div class="item">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
-          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
-          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
-          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
-        </div>
-        <div class="item">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab a nesciunt doloribus. Explicabo minus cumque,
-          molestiae tempore repellendus iusto enim maiores pariatur officiis perferendis excepturi, ut dolore laborum
-          eligendi laudantium placeat aspernatur! Quos dolorum unde officiis labore est animi excepturi neque,
-          provident, inventore nobis expedita facilis aspernatur, nihil in atque?
-        </div> -->
       </div>
     </div>
 

@@ -20,14 +20,15 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content" style="width: 60vw; z-index: 1;">
         <div class="modal-header">
-          <h4 class="modal-title" id="myModalLabel">{{ sec }} -- 드론 2</h4>
+          <h4 class="modal-title" id="myModalLabel">{{ sec }} -- 드론</h4>
         </div>
         <div class="modal-body">
           <div id="draggable">
             <div class="container-fluid">
               <div class="row">
                 <div class="col-md-10 col-sm-12">
-                  <div id="videoContainer"></div>
+                  <!--<div id="videoContainer"></div>-->
+                  <img src="{{ url_for('drone_video') }}" onerror="this.src='static/nosignal4.png'" width="50%" style="border-radius: 10px;" />
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <div class="row justify-content-center">
@@ -253,6 +254,7 @@
         $('#myModal').show()
         statusda = setInterval(updateStatus, 3000)
         // 팝업창이 켜지면 스트리밍재생
+        /**
         var videoElement = document.createElement('video')
         videoElement.width = '100%'
         videoElement.controls = true
@@ -265,6 +267,7 @@
     
         videoElement.appendChild(sourceElement)
         videoContainer.appendChild(videoElement)
+        **/
       })
     })
   </script>
@@ -273,7 +276,7 @@
   <script>
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
-        center: new kakao.maps.LatLng({{place[0]}}, {{place[1]}}), // 지도의 중심좌표
+        center: new kakao.maps.LatLng({{place[0]}}+0.000090158612188, {{place[1]}}-0.00000044471388), // 지도의 중심좌표
         level: 2 // 지도의 확대 레벨
       }
     
@@ -327,16 +330,27 @@
             
             if (log[3] == 'X') {
               selectButton.textContent = '고장'
-              selectButton.style.backgroundColor = 'red'
+              selectButton.style.backgroundColor = 'white'
               selectButton.disabled = 'disabled'
             }else{
-              selectButton.textContent = '작동'
-              selectButton.style.backgroundColor = 'green'
+              selectButton.textContent = '사용'
+              selectButton.style.backgroundColor = 'gray'
             }
-            selectButton.addEventListener('click', function () {
-              // 버튼 클릭 시 알림 표시
-              alert(log[0]+'번 드론이 선택되었습니다.')
-            })
+            selectButton.addEventListener('click', (function (btn, droneNum) {
+              return function () {
+                // Reset all buttons to gray color
+                var buttons = eventlogBody.getElementsByTagName('button');
+                for (var i = 0; i < buttons.length; i++) {
+                  buttons[i].textContent = '사용';
+                  buttons[i].style.backgroundColor = 'gray';
+                }
+          
+                // Set the selected button to green color
+                btn.textContent = '선택';
+                btn.style.backgroundColor = 'green';
+                alert(droneNum + '번 드론이 선택되었습니다.');
+              };
+            })(selectButton, log[0]));
             buttonCell.appendChild(selectButton)
             row.appendChild(buttonCell)
     
