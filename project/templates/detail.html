@@ -90,12 +90,24 @@
     $(document).ready(function () {
       $('#takeoffbtn').click(function () {
         $.ajax({
-          url: '/takeoff',
+          url: 'http://192.168.0.23:3000/takeoff',
           method: 'GET',
           success: function (data) {
-            $('#dataLabel').text(data)
+            alert(data);
+            $.ajax({
+              url: '/takeoff',
+              method: 'GET',
+              success: function(data) {
+                  print("드론상태 업데이트 완료")
+              },
+              error: function(xhr, status, error) {
+                  alert('업데이트에 오류가 발생하였습니다.');
+                  console.error(error);
+              }
+          });
           },
           error: function (xhr, status, error) {
+            alert('드론동작에 오류가 발생하였습니다.');
             console.error(error)
           }
         })

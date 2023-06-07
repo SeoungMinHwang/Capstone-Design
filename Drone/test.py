@@ -367,7 +367,7 @@ def index():
 def takeoff():
     #frontend.start()
     frontend.drone_move()
-    return 200
+    return "드론이 이동합니다"
 
 @app.route("/land")
 def land():
