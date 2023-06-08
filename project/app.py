@@ -12,6 +12,7 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 cctv_list = query.cctv_list()
 drone_list = query.drone_list()
 user_access = ""
+log_cnt = len(query.event_log())
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -51,9 +52,13 @@ def video_feed(cctv_section):
 def base():
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('base.html',user_access=user_access,cctv_list=cctv_list)
+        return render_template('base.html',user_access=user_access,cctv_list=cctv_list,log_cnt=log_cnt)
     else:
         return redirect(url_for('login'))
+    
+@app.route('/base_get')
+def base_get():
+    return str(len(query.event_log()))
 
 # CCTV상세정보
 @app.route('/detail')
@@ -177,15 +182,8 @@ def eventlog():
         return render_template('eventlog.html',user_access=user_access,cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
-    
-    # 이벤트로그용 AJAX
-@app.route("/eventlog_get")
-def eventlog_get():
-    eventlog_list = query.event_log()
-    result = json.dumps(eventlog_list)
-    return result
 
-# 프로필
+# 프로파일
 @app.route("/profile")
 def profile():
     if 'username' in session:
@@ -225,7 +223,8 @@ def cctv_add_confirm():
 
     else:
         # cctv 추가하는 쿼리문 넣는곳
-        return render_template('cctv_add.html', user_access=user_access,map_list=map_list)
+        query.cctv_insert(clickLat, clickLng, inputAddress, inputPlacename, inputPlacegruop, inputIP, inputWorking)
+        return render_template('cctv_add.html',user_access=user_access, map_list=map_list)
 
 # CCTV삭제
 @app.route('/cctv_substract')
@@ -242,6 +241,8 @@ def cctv_substract_confirm():
     map_list = query.map_list()
     flash('삭제완료 되었습니다.')
     # cctv 삭제 하는 쿼리문 넣는곳
+    inputPlacename = request.form['inputPlacename']
+    query.cctv_delete(inputPlacename)
     return render_template('cctv_substract.html', user_access=user_access,map_list=map_list)
 
 #이벤트 발생시 드론화면
@@ -263,11 +264,9 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
-    drone_url = "http://192.168.0.23:3000/takeoff"
-    response = requests.get(drone_url)
+    querydd=query.update_drone_state()
 
-    # 응답을 처리합니다.
-    return response
+    return querydd
 
 
 @app.route("/land")

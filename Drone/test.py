@@ -18,12 +18,15 @@ recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 dimensions = (960, 720)
 
-S = 20
-S2 = 5
+# 제어에 사용할 상수 값 정의
+S = 20  # 속도
+S2 = 20  # 좌우 이동 속도
+szX = 100  # 좌우 이동 임계값
+szY = 100  # 상하 이동 임계값
+acc = [500,250,250,150,110,70,50]
 UDOffset = 150
 
 faceSizes = [1026, 684, 456, 304, 202, 136, 90]
-acc = [500,250,250,150,110,70,50]
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, add_help=False)
 parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
@@ -58,6 +61,7 @@ class FrontEnd(object):
     # 초기화
     def __init__(self):
         self.tl_drone = robot.Drone()
+        
         print("Drone started")
         
         self.for_back_velocity = 0
@@ -70,16 +74,23 @@ class FrontEnd(object):
         
         self.send_rc_control = False
         
+        self.tDistance = args.distance
+        
         # 드론이 이동했는지
         self.drone_Finished = False
         self.drone_fin=False
         
         self.drone_thread = None  # 드론 이동을 담당할 스레드
         
+        
+        self.tl_flight = None
+        #드론이 이동한 내용에 대한 정보
+        self.movement_history = []
+        
     def drone_run(self):
         print("Running")
         self.tl_drone.initialize()
-
+        self.tl_flight = self.tl_drone.flight
         #버전확인
         version = self.tl_drone.get_sdk_version()
         print("Drone SDK Version: {0}".format(version))
@@ -110,7 +121,7 @@ class FrontEnd(object):
         #필요 변수
         OVERRIDE = False
         should_stop = False
-        tDistance = args.distance
+        
         oSpeed = args.override_speed
         
         # Safety Zone X
@@ -164,7 +175,7 @@ class FrontEnd(object):
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=2)
 
             # Target size
-            tSize = faceSizes[tDistance]
+            tSize = faceSizes[self.tDistance]
 
             # These are our center dimensions
             cWidth = int(dimensions[0]/2)
@@ -178,7 +189,7 @@ class FrontEnd(object):
                 break
             
             #얼굴 탐지
-            if OVERRIDE: 
+            if OVERRIDE or self.drone_fin == True: 
                 for (x, y, w, h) in faces:
                     # 
                     roi_gray = gray[y:y+h, x:x+w] #(ycord_start, ycord_end)
@@ -201,37 +212,10 @@ class FrontEnd(object):
                     vTrue = np.array((cWidth,cHeight,tSize))
                     vTarget = np.array((targ_cord_x,targ_cord_y,end_size))
                     vDistance = vTrue-vTarget
+                    
                     #얼굴 따라가기
-                    if not args.debug:
-                        # for turning
-                        if vDistance[0] < -szX:
-                            self.yaw_velocity = S
-                            # self.left_right_velocity = S2
-                        elif vDistance[0] > szX:
-                            self.yaw_velocity = -S
-                            # self.left_right_velocity = -S2
-                        else:
-                            self.yaw_velocity = 0
+                    self.control_drone(vDistance)
                         
-                        # for up & down
-                        if vDistance[1] > szY:
-                            self.up_down_velocity = S
-                        elif vDistance[1] < -szY:
-                            self.up_down_velocity = -S
-                        else:
-                            self.up_down_velocity = 0
-
-                        F = 0
-                        if abs(vDistance[2]) > acc[tDistance]:
-                            F = S
-
-                        # for forward back
-                        if vDistance[2] > 0:
-                            self.for_back_velocity = S + F
-                        elif vDistance[2] < 0:
-                            self.for_back_velocity = -S - F
-                        else:
-                            self.for_back_velocity = 0
                             
                     cv2.rectangle(frameRet, (x, y), (end_cord_x, end_cord_y), fbCol, fbStroke)
 
@@ -246,20 +230,18 @@ class FrontEnd(object):
                     
                     
                 if noFaces:
-                    self.yaw_velocity = 0
-                    self.up_down_velocity = 0
-                    self.for_back_velocity = 0
+                    
                     print("NO Head")
                             
             cv2.circle(frameRet, (cWidth, cHeight), 10, (0,0,255), 2)
 
-            dCol = lerp(np.array((0,0,255)),np.array((255,255,255)),tDistance+1/7)
+            dCol = lerp(np.array((0,0,255)),np.array((255,255,255)),self.tDistance+1/7)
             
             if OVERRIDE:
                 show = "OVERRIDE: {}".format(oSpeed)
                 dCol = (255,255,255)
             else:
-                show = "AI: {}".format(str(tDistance))
+                show = "AI: {}".format(str(self.tDistance))
 
             # Draw the distance choosen
             cv2.putText(frameRet,show,(32,664),cv2.FONT_HERSHEY_SIMPLEX,1,dCol,2)
@@ -270,26 +252,64 @@ class FrontEnd(object):
             ret, buffer = cv2.imencode('.jpg', frameRet)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
-                   b'Content-Disposition: inline; filename=streaming_image.jpg\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             
                 
         cv2.destroyAllWindows()
         tl_camera.stop_video_stream()
 
         self.tl_drone.close()
+        print(self.movement_history)
+        
+    # 드론 제어 함수
+    def control_drone(self, vDistance):
+        if self.drone_fin == True:
+            # 좌우 회전
+            if vDistance[0] < -szX:
+                self.tl_flight.rotate(angle=S)
+            elif vDistance[0] > szX:
+                self.tl_flight.rotate(angle=-S)
+            else:
+                self.tl_flight.rotate(angle=0)
+
+            # 상하 이동
+            if vDistance[1] > szY:
+                self.tl_flight.up(distance=S)
+            elif vDistance[1] < -szY:
+                self.tl_flight.down(distance=S)
+            else:
+                self.tl_flight.up(distance=0)
+
+            # 가속도 계산
+            F = 0
+            if abs(vDistance[2]) > acc[self.tDistance]:
+                F = S
+
+            # 전후 이동
+            if vDistance[2] > 0:
+                self.tl_flight.forward(distance=S + F)
+            elif vDistance[2] < 0:
+                self.tl_flight.backward(distance=S + F)
+            else:
+                self.tl_flight.forward(distance=0)
+                
+            self.movement_history.append(vDistance)
         
     def drone_move(self):
         print("drone_move called")
         #이동 시작시 스레드 시작 이후 이동이 끝나면 스레드 종료(메인에서)
         if self.drone_Finished == False:
             self.drone_Finished == True
-            tl_flight = self.tl_drone.flight
-            tl_flight.takeoff().wait_for_completed() 
-            tl_flight.forward(distance=50).wait_for_completed()  #앞뒤 좌우 50이동
+            self.tl_flight.takeoff().wait_for_completed() 
+            self.tl_flight.forward(distance=150).wait_for_completed()
             # tl_flight.go(x=50, y=30, z=30, speed=30).wait_for_completed()
+            self.drone_fin = True
+    # 복귀 함수
+    def return_home(self):
+        # 이동한 위치 정보를 역순으로 복귀
+        print("복귀")
+           
             
-            tl_flight.land().wait_for_completed()  #착륙
         # tl_flight.rotate(angle=180).wait_for_completed() #+-180도회전
         # tl_flight.rotate(angle=-180).wait_for_completed()
         
@@ -336,7 +356,6 @@ class FrontEnd(object):
         self.drone_thread.start()  # 드론 이동 스레드 시작
         
 frontend = FrontEnd()    
-frontend.drone_run()
 # frontend.start()
 
 app = Flask(__name__)
@@ -344,16 +363,17 @@ app = Flask(__name__)
 def index():
     return render_template("drone_popup.html")
 
-@app.route("/takeoff" , methods=['GET', 'POST'])
+@app.route("/takeoff" , methods=['GET'])
 def takeoff():
-
-    frontend.start()
+    #frontend.start()
+    frontend.drone_move()
+    return "드론이 이동합니다"
 
 @app.route("/land")
 def land():
   # 드론을 착륙시킵니다.
 #   drone.land()
-    print("Land")
+    frontend.return_home()
 #   return "드론 착륙"
 
 @app.route("/take_video")
@@ -362,7 +382,7 @@ def take_video():
     # thread = threading.Thread(target=next(generator))
     # thread.start()
     return Response(frontend.drone_run(), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-cache'})
-    
+        
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=3000, threaded=True)
 #     main()

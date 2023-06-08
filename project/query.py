@@ -170,6 +170,12 @@ def drone_state(cursor):
     return status_result
 
 @auto_conn_disconn
+def update_drone_state(cursor):
+    sql = '''UPDATE DRONE SET dronestate= '출동중' WHERE droneid = 1;'''
+    cursor.execute(sql)
+    return
+
+@auto_conn_disconn
 def droneStatus_log(cursor):
     sql = '''select droneid, dronestate, droneplace, working
             from DRONE
@@ -206,4 +212,14 @@ def user_access(cursor, id):
     cursor.execute(f"""select access from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
-# print(event_per_placeday())
+def cctv_insert(cursor, lat, lng, address, placename, placegruop, ip, working):
+    cursor.execute(f"""insert into CCTV values(null, "{lat}", "{lng}","{address}", "{placename}","{placegruop}","{ip}","{working}") """)
+    return
+
+@auto_conn_disconn
+def cctv_delete(cursor,placename):
+    cursor.execute(f"""delete from CCTV where placename="{placename}" """)
+    return
+
+# print(len(event_log()))
+# cctv_insert(None,34.91208581705009, 126.43579017055809, "전라남도 무안군 청계면 영산로 1666", "")

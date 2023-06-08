@@ -35,8 +35,8 @@ class YoloDetector():
 
 cap = cv2.VideoCapture(0)
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 detector = YoloDetector(model_name='best.pt')
 
@@ -47,7 +47,7 @@ conf_list = []
 average_confidence_list = deque()
 
 # 앞에 몇개씩 건너 뛸건지 설정
-window_size = 2
+window_size = 1
 
 # 알림을 주기적으로 한 번씩만 보내기 위함
 flag = 1
@@ -55,7 +55,7 @@ flag = 1
 while True:
     
     succes, frame = cap.read()
-    start = time.perf_counter()
+    # start = time.perf_counter()
     
     
     if not succes:
@@ -71,19 +71,19 @@ while True:
 
     
     # 결과 시각화
-    for result in results.xyxy[0]:
-        x1, y1, x2, y2, conf, cls = result
+    # for result in results.xyxy[0]:
+    #     x1, y1, x2, y2, conf, cls = result
         
-        if conf > 0.6:
-            cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-            cv2.putText(frame, f'{detector.classes[0]} {conf:.2f}', (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    #     if conf > 0.5:
+    #         cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+    #         cv2.putText(frame, f'{detector.classes[0]} {conf:.2f}', (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     
     
     # FPS 계산 및 신뢰도 평균 출력 (2초동안 측정된(2FPS에 해당하는) 신뢰도의 평균신뢰도를 구함)
     current_time = time.time()
-    if current_time - prev_time >= 2.0:
+    if current_time - prev_time >= 1.0:
         average_confidence = detector.calculate_average_confidence(conf_list)
-        print("2초마다 평균 신뢰도: {:.2f}".format(average_confidence))
+        print("1초마다 평균 신뢰도: {:.2f}".format(average_confidence))
         
         # 5회에 대한 평균 계산 (슬라이딩 윈도우 방식)
         average_confidence_list.append(average_confidence)
@@ -106,19 +106,19 @@ while True:
         conf_list = []
 
      
-    end = time.perf_counter()
-    totalTime = end - start
-    fps = 1 / totalTime
+    # end = time.perf_counter()
+    # totalTime = end - start
+    # fps = 1 / totalTime
     
-    cv2.putText(frame, "FPS: " + str(int(fps)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
-    cv2.imshow('img', frame)
+    # cv2.putText(frame, "FPS: " + str(int(fps)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+    # cv2.imshow('img', frame)
 
     
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    # if cv2.waitKey(1) & 0xFF == ord('q'):
+    #     break
     
 
     
 
-cap.release()
-cv2.destroyAllWindows()
+# cap.release()
+# cv2.destroyAllWindows()
