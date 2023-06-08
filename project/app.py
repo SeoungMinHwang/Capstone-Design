@@ -60,6 +60,13 @@ def base():
 def base_get():
     return str(len(query.event_log()))
 
+@app.route('/base_cnt')
+def base_cnt():
+    place = query.last_event()
+    global log_cnt
+    log_cnt = len(query.event_log())
+    return place
+
 # CCTV상세정보
 @app.route('/detail')
 def detail():
@@ -142,7 +149,7 @@ def map():
     if 'username' in session:
         map_list = query.map_list()
     # CCTV 지역 리스트
-        return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+        return render_template('map.html',cctv_list=cctv_list, map_list=map_list, log_cnt=log_cnt)
     else:
         return redirect(url_for('login'))
 

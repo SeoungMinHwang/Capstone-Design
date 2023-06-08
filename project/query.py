@@ -136,6 +136,11 @@ def event_log(cursor):
     for i in cursor.fetchall():
         result.append([i[0], i[1].strftime('%Y-%m-%d %H:%M:%S'), i[2], i[3], i[4], i[5]])
     return result
+
+@auto_conn_disconn
+def last_event(cursor):
+    cursor.execute(f"""select placename from FALLEVENT natural join CCTV order by eventtime DESC LIMIT 1""")
+    return cursor.fetchall()[0][0]
                       
 
 @auto_conn_disconn
@@ -211,5 +216,4 @@ def cctv_delete(cursor,placename):
     cursor.execute(f"""delete from CCTV where placename="{placename}" """)
     return
 
-# print(len(event_log()))
-# cctv_insert(None,34.91208581705009, 126.43579017055809, "전라남도 무안군 청계면 영산로 1666", "")
+# print(last_event())
