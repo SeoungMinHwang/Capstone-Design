@@ -1,11 +1,9 @@
 import cv2
 
-
 # 카메라 주소 설정
 def camera_start():
     # video = pafy.new(url='https://youtu.be/N2NtCIVPo2M', gdata=False)
     # best = video.getbestvideo(preftype = 'webm')
-
     # camera1 = cv2.VideoCapture(0)
     # camera1 = 'http://172.23.21.249:8888/stream.mjpg'
     # camera1 = cv2.VideoCapture('http://192.168.46.226:8000/stream.mjpg')

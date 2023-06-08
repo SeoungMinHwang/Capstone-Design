@@ -175,6 +175,12 @@ def drone_state(cursor):
     return status_result
 
 @auto_conn_disconn
+def update_drone_state(cursor):
+    sql = '''UPDATE DRONE SET dronestate= '출동중' WHERE droneid = 1;'''
+    cursor.execute(sql)
+    return
+
+@auto_conn_disconn
 def droneStatus_log(cursor):
     sql = '''select droneid, dronestate, droneplace, working
             from DRONE
@@ -204,6 +210,11 @@ def detail_place(cursor, placename):
 @auto_conn_disconn
 def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
+    return cursor.fetchall()[0]
+
+@auto_conn_disconn
+def user_access(cursor, id):
+    cursor.execute(f"""select access from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
 @auto_conn_disconn

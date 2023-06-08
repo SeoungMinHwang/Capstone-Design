@@ -25,7 +25,13 @@
     src="https://unpkg.com/bootstrap-table@1.21.4/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
   <!-- 카카오맵 -->
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=07a938b94c7bff9361f7a8a8e0b26bbd"></script>
-
+  {% if user_access[0] !='admin' %}
+  <style>
+      .cameraicon{
+          display:none;
+      }
+  </style>
+  {% endif %}
   <script>
     $(document).ready(function () {
       $(".submenubutton .submenubutton__inner").click(function () {

@@ -9,10 +9,8 @@ app = Flask(__name__)
 app.secret_key='daemeolikkakkala'
 camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
-cctv_list = query.cctv_list()
-drone_list = query.drone_list()
+user_access = ""
 log_cnt = len(query.event_log())
-
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -34,6 +32,7 @@ def gen_frames(camera):
 # 지역에 따른 response연결
 @app.route('/video_feed/<string:cctv_section>')
 def video_feed(cctv_section):
+    cctv_list = query.cctv_list()
     if cctv_section==cctv_list[0]:
         return Response(gen_frames(camera1), mimetype='multipart/x-mixed-replace; boundary=frame')
     elif cctv_section==cctv_list[1]:
@@ -52,7 +51,8 @@ def video_feed(cctv_section):
 def base():
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('base.html',cctv_list=cctv_list, log_cnt=log_cnt)
+        cctv_list = query.cctv_list()
+        return render_template('base.html',user_access=user_access,cctv_list=cctv_list,log_cnt=log_cnt)
     else:
         return redirect(url_for('login'))
     
@@ -73,7 +73,7 @@ def detail():
     if 'username' in session:
         sec = request.args.get('section')
         place = query.detail_place(sec)
-        return render_template('detail.html',sec=sec, place = place)
+        return render_template('detail.html',user_access=user_access,sec=sec, place = place)
     else:
         return redirect(url_for('login'))
     
@@ -97,7 +97,8 @@ def login():
 def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
-        return render_template('all_cctv.html',cctv_list=cctv_list)
+        cctv_list = query.cctv_list()
+        return render_template('all_cctv.html',user_access=user_access,cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
     
@@ -125,7 +126,10 @@ def login_confirm():
     if inputId in idlist:
         if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
             session['username'] = inputId
-            return render_template('map.html',cctv_list=cctv_list, map_list=map_list)
+            global user_access
+            user_access = query.user_access(session['username'])
+            cctv_list = query.cctv_list()
+            return render_template('map.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
         else:
             return redirect(url_for('login'))
     else:
@@ -149,7 +153,8 @@ def map():
     if 'username' in session:
         map_list = query.map_list()
     # CCTV 지역 리스트
-        return render_template('map.html',cctv_list=cctv_list, map_list=map_list, log_cnt=log_cnt)
+        cctv_list = query.cctv_list()
+        return render_template('map.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
 
@@ -171,7 +176,10 @@ def dashboard():
     if 'username' in session:
     # CCTV 지역 리스트
         map_list = query.map_list()
-        return render_template('dashboard.html',drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
+        cctv_list = query.cctv_list()
+        drone_list = query.drone_list()
+
+        return render_template('dashboard.html',user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -180,10 +188,10 @@ def dashboard():
 def eventlog():
     if 'username' in session:
     # CCTV 지역 리스트
-        # cctv_list = ['공대1,2호관','공대3호관','공대4호관','공대5호관','대외협력관','스포츠센터']
         eventlist = query.show_event()
         eventlog_list = query.event_log()
-        return render_template('eventlog.html',cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
+        cctv_list = query.cctv_list()
+        return render_template('eventlog.html',user_access=user_access,cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
 
@@ -193,7 +201,7 @@ def profile():
     if 'username' in session:
         userinfo = query.user_info(session['username'])
         print(userinfo)
-        return render_template('profile.html', userinfo = userinfo)
+        return render_template('profile.html',user_access=user_access, userinfo = userinfo)
     else:
         return redirect(url_for('login'))
 
@@ -202,7 +210,8 @@ def profile():
 def cctv_add():
     if 'username' in session:
         map_list = query.map_list()
-        return render_template('cctv_add.html',cctv_list=cctv_list, map_list=map_list)
+        cctv_list = query.cctv_list()
+        return render_template('cctv_add.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
     
@@ -210,6 +219,7 @@ def cctv_add():
 @app.route("/cctv_add_confirm",methods=['POST'])
 def cctv_add_confirm():
     map_list = query.map_list()
+    cctv_list = query.cctv_list()
     flash('정상 등록 되었습니다.')
     clickLat = request.form['clickLat']
     clickLng = request.form['clickLng']
@@ -220,22 +230,25 @@ def cctv_add_confirm():
     inputWorking = request.form['inputWorking']
     if clickLat == "" and clickLng == "":
         flash('지도에서 위치를 클릭해주세요')
-        return render_template('cctv_add.html', map_list=map_list)
+        return render_template('cctv_add.html', user_access=user_access,map_list=map_list)
     if inputPlacename in cctv_list:
         flash('장소가 중복됩니다. 수정해주세요.')
-        return render_template('cctv_add.html', map_list=map_list)
+        return render_template('cctv_add.html', user_access=user_access,map_list=map_list)
 
     else:
         # cctv 추가하는 쿼리문 넣는곳
         query.cctv_insert(clickLat, clickLng, inputAddress, inputPlacename, inputPlacegruop, inputIP, inputWorking)
-        return render_template('cctv_add.html', map_list=map_list)
+        map_list = query.map_list()
+        cctv_list = query.cctv_list()
+        return render_template('cctv_add.html',user_access=user_access, map_list=map_list)
 
 # CCTV삭제
 @app.route('/cctv_substract')
 def cctv_substract():
     if 'username' in session:
         map_list = query.map_list()
-        return render_template('cctv_substract.html', map_list=map_list)
+        cctv_list = query.cctv_list()
+        return render_template('cctv_substract.html', user_access=user_access,map_list=map_list)
     else:
         return redirect(url_for('login'))
 
@@ -247,7 +260,7 @@ def cctv_substract_confirm():
     # cctv 삭제 하는 쿼리문 넣는곳
     inputPlacename = request.form['inputPlacename']
     query.cctv_delete(inputPlacename)
-    return render_template('cctv_substract.html', map_list=map_list)
+    return render_template('cctv_substract.html', user_access=user_access,map_list=map_list)
 
 #이벤트 발생시 드론화면
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
@@ -268,14 +281,9 @@ def drone_video():
 
 @app.route("/takeoff")
 def takeoff():
-    drone_url = "http://192.168.0.23:3000/takeoff"
-    response = requests.get(drone_url)
+    querydd=query.update_drone_state()
 
-    # 응답을 처리합니다.
-    if response.status_code == 200:
-        return "<script>window.onload = function() { alert('작동'); };</script>"
-    else:
-        return "<script>window.onload = function() { alert('실패'); };</script>"
+    return querydd
 
 
 @app.route("/land")
