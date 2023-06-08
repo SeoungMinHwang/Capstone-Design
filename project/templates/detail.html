@@ -45,8 +45,7 @@
                     <div class="modal-body-footer">
                       <div class="form-group text-center">
                         <button id="takeoffbtn" type="button" class="btn btn-primary btn-lg drone-select-button" style="background-color: #28a745;">출발</button>
-                        <button onclick="location.href='/land'" type="button" class="btn btn-secondary btn-lg drone-select-button" style="background-color:#6c757d;">귀환</button>
-                      </div>
+                        <button id="returnbtn" type="button" class="btn btn-primary btn-lg drone-select-button" style="background-color: #6c757d;">복귀</button></div>
                     </div>
                   </div>
                 </div>
@@ -86,7 +85,7 @@
       </div>
     </div>
   </div>
-  <script>
+  <script>returnbtn
     $(document).ready(function () {
       $('#takeoffbtn').click(function () {
         $.ajax({
@@ -96,6 +95,29 @@
             alert(data)
             $.ajax({
               url: '/takeoff',
+              method: 'GET',
+              success: function (data) {
+                print('드론상태 업데이트 완료')
+              },
+              error: function (xhr, status, error) {
+                alert('업데이트에 오류가 발생하였습니다.')
+                console.error(error)
+              }
+            })
+          },
+          error: function (xhr, status, error) {
+            console.error(error)
+          }
+        })
+      })
+      $('#returnbtn').click(function () {
+        $.ajax({
+          url: 'http://192.168.0.23:3000/land',
+          method: 'GET',
+          success: function (data) {
+            alert(data)
+            $.ajax({
+              url: '/land',
               method: 'GET',
               success: function (data) {
                 print('드론상태 업데이트 완료')
