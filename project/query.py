@@ -201,4 +201,9 @@ def user_info(cursor, id):
     cursor.execute(f"""select id, fame, phonenumber, email from USERS where id = "{id}" """)
     return cursor.fetchall()[0]
 
+@auto_conn_disconn
+def user_access(cursor, id):
+    cursor.execute(f"""select access from USERS where id = "{id}" """)
+    return cursor.fetchall()[0]
+
 # print(event_per_placeday())

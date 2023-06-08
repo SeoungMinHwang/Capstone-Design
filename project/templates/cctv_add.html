@@ -9,6 +9,13 @@
 {%endwith%}
 {% extends 'base.html' %}
 {% block content %}
+{% if '{{user_access[0]}}'!='admin' %}
+<style>
+    .cameraicon{
+        display:none;
+    }
+</style>
+{% endif %}
 <div class="row" style="height:100%; width:100%; padding:10px;">
     <div class="col-6">
         <div id="map" style="height:100%;width:100%;border-radius: 10px;"></div>
@@ -52,6 +59,15 @@
                 </div>
             </div>
             <div style="width:100%;">
+                <div class="form-check" style="float:right; margin-right:4%;">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">추가에 동의합니다</label>
+                    <div class="invalid-feedback" required>
+                    동의 없이 추가 불가합니다
+                    </div>
+                </div>
+            </div>
+            <div style="width:100%;">
                 <button type="submit" style="width:fit-content; font-size:18px; padding:7px; float:right; margin-right:4%; margin-top:5%;" class="btn btn-lg btn-secondary btn-block">등록</button>
             </div>
           </form>
@@ -60,6 +76,7 @@
 
 <!-- 지도 -->
 <script>
+    console.log('{{user_access[0]}}');
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
         center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
