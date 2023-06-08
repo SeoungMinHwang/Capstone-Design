@@ -208,6 +208,10 @@ def user_info(cursor, id):
     return cursor.fetchall()[0]
 
 @auto_conn_disconn
+def user_access(cursor, id):
+    cursor.execute(f"""select access from USERS where id = "{id}" """)
+    return cursor.fetchall()[0]
+
 def cctv_insert(cursor, lat, lng, address, placename, placegruop, ip, working):
     cursor.execute(f"""insert into CCTV values(null, "{lat}", "{lng}","{address}", "{placename}","{placegruop}","{ip}","{working}") """)
     return
