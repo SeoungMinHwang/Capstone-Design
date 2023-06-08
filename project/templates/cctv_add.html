@@ -9,13 +9,6 @@
 {%endwith%}
 {% extends 'base.html' %}
 {% block content %}
-{% if '{{user_access[0]}}'!='admin' %}
-<style>
-    .cameraicon{
-        display:none;
-    }
-</style>
-{% endif %}
 <div class="row" style="height:100%; width:100%; padding:10px;">
     <div class="col-6">
         <div id="map" style="height:100%;width:100%;border-radius: 10px;"></div>
@@ -76,7 +69,6 @@
 
 <!-- 지도 -->
 <script>
-    console.log('{{user_access[0]}}');
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
         center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
