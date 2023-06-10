@@ -224,3 +224,24 @@ def cctv_delete(cursor,placename):
 
 # print(len(event_log()))
 # cctv_insert(None,34.91208581705009, 126.43579017055809, "전라남도 무안군 청계면 영산로 1666", "")
+
+# dashboard 맵 쿼리
+@auto_conn_disconn
+def event_per_placeday_select(cursor, date):
+    result = []
+    cctv = cctv_list()
+    for i in cctv:
+        cursor.execute(f"""select latitude, longitude, count(*)
+                        from FALLEVENT natural join CCTV
+                        where (DATE_FORMAT(eventtime, "%Y-%m-%d") = "{date}") AND (placename = "{i}") """)
+        tmp = cursor.fetchall()[0]
+        result.append([i, tmp[0], tmp[1], tmp[2]])
+    for i in range(len(result)):
+        if result[i][1] == None:
+            cursor.execute(f"""select latitude, longitude
+                            from CCTV
+                            where placename = "{result[i][0]}" """)
+            tmp = cursor.fetchall()[0]
+            result[i][1] = tmp[0]
+            result[i][2] = tmp[1]
+    return result
