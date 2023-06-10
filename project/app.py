@@ -73,7 +73,7 @@ def detail():
     if 'username' in session:
         sec = request.args.get('section')
         place = query.detail_place(sec)
-        return render_template('detail.html',user_access=user_access,sec=sec, place = place)
+        return render_template('detail.html',log_cnt = log_cnt,user_access=user_access,sec=sec, place = place)
     else:
         return redirect(url_for('login'))
     
@@ -98,7 +98,7 @@ def all_cctv():
     if 'username' in session:
     # CCTV 지역 리스트
         cctv_list = query.cctv_list()
-        return render_template('all_cctv.html',user_access=user_access,cctv_list=cctv_list)
+        return render_template('all_cctv.html',log_cnt = log_cnt,user_access=user_access,cctv_list=cctv_list)
     else:
         return redirect(url_for('login'))
     
@@ -154,7 +154,7 @@ def map():
         map_list = query.map_list()
     # CCTV 지역 리스트
         cctv_list = query.cctv_list()
-        return render_template('map.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
+        return render_template('map.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list, log_cnt = log_cnt)
     else:
         return redirect(url_for('login'))
 
@@ -179,7 +179,7 @@ def dashboard():
         cctv_list = query.cctv_list()
         drone_list = query.drone_list()
 
-        return render_template('dashboard.html',user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
+        return render_template('dashboard.html',log_cnt = log_cnt,user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
     else:
         return redirect(url_for('login'))
     
@@ -191,7 +191,7 @@ def eventlog():
         eventlist = query.show_event()
         eventlog_list = query.event_log()
         cctv_list = query.cctv_list()
-        return render_template('eventlog.html',user_access=user_access,cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
+        return render_template('eventlog.html',log_cnt = log_cnt,user_access=user_access,cctv_list=cctv_list, eventlist = eventlist, eventlog_list = eventlog_list)
     else:
         return redirect(url_for('login'))
 
@@ -201,7 +201,7 @@ def profile():
     if 'username' in session:
         userinfo = query.user_info(session['username'])
         print(userinfo)
-        return render_template('profile.html',user_access=user_access, userinfo = userinfo)
+        return render_template('profile.html',log_cnt = log_cnt,user_access=user_access, userinfo = userinfo)
     else:
         return redirect(url_for('login'))
 
@@ -211,7 +211,7 @@ def cctv_add():
     if 'username' in session:
         map_list = query.map_list()
         cctv_list = query.cctv_list()
-        return render_template('cctv_add.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
+        return render_template('cctv_add.html',log_cnt = log_cnt, user_access=user_access,cctv_list=cctv_list, map_list=map_list)
     else:
         return redirect(url_for('login'))
     
@@ -230,17 +230,17 @@ def cctv_add_confirm():
     inputWorking = request.form['inputWorking']
     if clickLat == "" and clickLng == "":
         flash('지도에서 위치를 클릭해주세요')
-        return render_template('cctv_add.html', user_access=user_access,map_list=map_list)
+        return render_template('cctv_add.html', log_cnt = log_cnt, user_access=user_access,map_list=map_list)
     if inputPlacename in cctv_list:
         flash('장소가 중복됩니다. 수정해주세요.')
-        return render_template('cctv_add.html', user_access=user_access,map_list=map_list)
+        return render_template('cctv_add.html', log_cnt = log_cnt, user_access=user_access,map_list=map_list)
 
     else:
         # cctv 추가하는 쿼리문 넣는곳
         query.cctv_insert(clickLat, clickLng, inputAddress, inputPlacename, inputPlacegruop, inputIP, inputWorking)
         map_list = query.map_list()
         cctv_list = query.cctv_list()
-        return render_template('cctv_add.html',user_access=user_access, map_list=map_list)
+        return render_template('cctv_add.html',log_cnt = log_cnt, user_access=user_access, map_list=map_list)
 
 # CCTV삭제
 @app.route('/cctv_substract')
@@ -248,7 +248,7 @@ def cctv_substract():
     if 'username' in session:
         map_list = query.map_list()
         cctv_list = query.cctv_list()
-        return render_template('cctv_substract.html', user_access=user_access,map_list=map_list)
+        return render_template('cctv_substract.html',log_cnt = log_cnt, user_access=user_access,map_list=map_list)
     else:
         return redirect(url_for('login'))
 
@@ -260,7 +260,7 @@ def cctv_substract_confirm():
     # cctv 삭제 하는 쿼리문 넣는곳
     inputPlacename = request.form['inputPlacename']
     query.cctv_delete(inputPlacename)
-    return render_template('cctv_substract.html', user_access=user_access,map_list=map_list)
+    return render_template('cctv_substract.html',log_cnt = log_cnt, user_access=user_access,map_list=map_list)
 
 #이벤트 발생시 드론화면
 @app.route('/detail/drone_popup' ,methods=['GET', 'POST'])
