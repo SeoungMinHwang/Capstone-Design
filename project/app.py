@@ -1,8 +1,9 @@
-from flask import Flask, render_template, Response, request, redirect, url_for,session, flash
+from flask import Flask, render_template, Response, request, redirect, url_for,session, flash, jsonify
 import cv2, camera, query, go_login, json
 from weather_search import get_weather_daum, job
 import json
 import requests
+from datetime import date
 # from bs4 import BeautifulSoup
 
 app = Flask(__name__)
@@ -169,20 +170,29 @@ def map_get():
 # 대시보드
 @app.route("/dashboard")
 def dashboard():
+    today = date.today()
+    inputdate = today.strftime("%Y-%m-%d")
     day_per_eventlist = query.event_per_day()
     month_per_eventlist = query.event_per_month()
     place_per_eventlist = query.event_per_place()
-    dayplace_per_eventlist = query.event_per_placeday()
     if 'username' in session:
     # CCTV 지역 리스트
         map_list = query.map_list()
         cctv_list = query.cctv_list()
         drone_list = query.drone_list()
 
-        return render_template('dashboard.html',log_cnt = log_cnt,user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist)
+        return render_template('dashboard.html',log_cnt = log_cnt,user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, inputdate=inputdate)
     else:
         return redirect(url_for('login'))
-    
+
+# 대시보드 맵 날짜별 로 불러오기 ajax
+@app.route("/dashboard_ajax", methods=['POST'])
+def dashboard_ajax():
+    inputdate = request.form['detectday']
+    dayplace_per_eventlist = query.event_per_placeday_select(inputdate)
+    response = jsonify(dayplace_per_eventlist)
+    return response
+
 # 이벤트로그
 @app.route("/eventlog")
 def eventlog():
@@ -255,11 +265,11 @@ def cctv_substract():
 # CCTV삭제 확인
 @app.route("/cctv_substract_confirm",methods=['POST'])
 def cctv_substract_confirm():
-    map_list = query.map_list()
     flash('삭제완료 되었습니다.')
     # cctv 삭제 하는 쿼리문 넣는곳
     inputPlacename = request.form['inputPlacename']
     query.cctv_delete(inputPlacename)
+    map_list = query.map_list()
     return render_template('cctv_substract.html',log_cnt = log_cnt, user_access=user_access,map_list=map_list)
 
 #이벤트 발생시 드론화면
