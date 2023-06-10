@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <title> Vision Guard Monitoring System</title>
@@ -202,6 +201,25 @@
       href="https://github.com/hs0224/Capstone-Design" target="_blank">Team BlackSwan</a>
   </footer> -->
 <script>
+  var log= {{log_cnt}} ;
+  function alert_place(){
+    $.ajax({
+      url: '/base_cnt',
+      async: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-HTTP-Method-Override': 'GET'
+      },
+      dataType: 'text',
+      success: function (result) {
+        alert(result+"에서 응급상황이 발생했습니다.");
+      },
+      error: function (request, status, error) {
+        console.log(error)
+        // Handle the error here, such as displaying an error message
+      }
+    })
+  }
   function get_base() {
     $.ajax({
       url: '/base_get',
@@ -212,7 +230,12 @@
       },
       dataType: 'text',
       success: function (result) {
-        console.log(result)
+        console.log(result);
+        console.log(log);
+        if (result != log){
+          alert_place()
+          log = result
+        }
       },
       error: function (request, status, error) {
         console.log(error)
@@ -220,8 +243,6 @@
       }
     })
   }
-
-  get_base()
   window.setInterval('get_base()', 1000)
 </script>
 </body>

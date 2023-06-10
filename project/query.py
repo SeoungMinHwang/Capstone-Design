@@ -136,6 +136,11 @@ def event_log(cursor):
     for i in cursor.fetchall():
         result.append([i[0], i[1].strftime('%Y-%m-%d %H:%M:%S'), i[2], i[3], i[4], i[5]])
     return result
+
+@auto_conn_disconn
+def last_event(cursor):
+    cursor.execute(f"""select placename from FALLEVENT natural join CCTV order by eventtime DESC LIMIT 1""")
+    return cursor.fetchall()[0][0]
                       
 
 @auto_conn_disconn

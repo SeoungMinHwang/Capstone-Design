@@ -61,6 +61,13 @@ def base():
 def base_get():
     return str(len(query.event_log()))
 
+@app.route('/base_cnt')
+def base_cnt():
+    place = query.last_event()
+    global log_cnt
+    log_cnt = len(query.event_log())
+    return place
+
 # CCTV상세정보
 @app.route('/detail')
 def detail():
