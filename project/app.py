@@ -168,32 +168,13 @@ def dashboard():
     day_per_eventlist = query.event_per_day()
     month_per_eventlist = query.event_per_month()
     place_per_eventlist = query.event_per_place()
-    dayplace_per_eventlist = query.event_per_placeday_select(inputdate)
     if 'username' in session:
     # CCTV 지역 리스트
         map_list = query.map_list()
         cctv_list = query.cctv_list()
         drone_list = query.drone_list()
 
-        return render_template('dashboard.html',user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist,inputdate=inputdate)
-    else:
-        return redirect(url_for('login'))
-
-@app.route("/dashboard_confirm",methods=['POST'])
-def dashboard_confirm():
-    inputdate = request.form['detectday']
-    day_per_eventlist = query.event_per_day()
-    month_per_eventlist = query.event_per_month()
-    place_per_eventlist = query.event_per_place()
-    dayplace_per_eventlist = query.event_per_placeday_select(inputdate)
-    print(dayplace_per_eventlist)
-    if 'username' in session:
-    # CCTV 지역 리스트
-        map_list = query.map_list()
-        cctv_list = query.cctv_list()
-        drone_list = query.drone_list()
-
-        return render_template('dashboard.html',user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, dayplace_per_eventlist = dayplace_per_eventlist,inputdate=inputdate)
+        return render_template('dashboard.html',user_access=user_access,drone_list=drone_list,cctv_list=cctv_list, day_per_eventlist = day_per_eventlist, month_per_eventlist = month_per_eventlist, place_per_eventlist = place_per_eventlist, map_list=map_list, inputdate=inputdate)
     else:
         return redirect(url_for('login'))
 
