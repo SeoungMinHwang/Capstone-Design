@@ -60,7 +60,7 @@
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
         mapOption = {
             center: new kakao.maps.LatLng(34.91348745941784, 126.43773384035988), // 지도의 중심좌표
-            level: 2 // 지도의 확대 레벨
+            level: 14 // 지도의 확대 레벨
         };
 
     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
@@ -160,6 +160,24 @@
 
       addMarker(positions[i].latlng, content, positions[i].title);
   }
+  const levels = [13,12,11,10,9,8,7,6,5,4,3];
+let currentIndex = 0;
+
+function setLevelSequentially() {
+  if (currentIndex >= levels.length) {
+    // 실행할 레벨이 더 이상 없으면 종료
+    return;
+  }
+
+  const level = levels[currentIndex];
+  map.setCenter(new kakao.maps.LatLng(34.91348745941784, 126.43773384035988));
+  map.setLevel(level);
+  currentIndex++;
+
+  setTimeout(setLevelSequentially, 100);
+}
+
+setLevelSequentially();
 </script>
 
 
