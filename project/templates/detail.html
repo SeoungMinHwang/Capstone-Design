@@ -34,9 +34,9 @@
                   <div class="row justify-content-center">
                     <div class="modal-body-content">
                       <div class="form-group text-center">
-                        <label id="selectDroneLabel" for="recipient-name" class="control-label" style="font-size:15px;">State</label>
+                        <label id="selectDroneLabel" for="recipient-name" class="control-label" style="font-size:15px;">드론 선택</label>
                         <div id="status_label">
-                          <label id="status" class="control-label" style="font-size:24px;">State</label>
+                          <label id="status" class="control-label" style="font-size:24px;">1번드론</label>
                         </div>
                       </div>
                     </div>
@@ -89,18 +89,17 @@
     $(document).ready(function () {
       $('#takeoffbtn').click(function () {
         $.ajax({
-          url: 'http://192.168.0.23:3000/takeoff',
-          method: 'GET',
+          url: '/takeoff',
+          method: 'POST',
+          data: { number: vardrone }
           success: function (data) {
-            alert(data)
             $.ajax({
-              url: '/takeoff',
+              url: 'http://192.168.0.23:3000/takeoff',
               method: 'GET',
               success: function (data) {
-                print('드론상태 업데이트 완료')
+                alert(data)
               },
               error: function (xhr, status, error) {
-                alert('업데이트에 오류가 발생하였습니다.')
                 console.error(error)
               }
             })
@@ -112,18 +111,17 @@
       })
       $('#returnbtn').click(function () {
         $.ajax({
-          url: 'http://192.168.0.23:3000/land',
-          method: 'GET',
+          url: '/land',
+          method: 'POST',
+          data: { number: vardrone }
           success: function (data) {
-            alert(data)
             $.ajax({
-              url: '/land',
+              url: 'http://192.168.0.23:3000/land',
               method: 'GET',
               success: function (data) {
-                print('드론상태 업데이트 완료')
+                alert(data)
               },
               error: function (xhr, status, error) {
-                alert('업데이트에 오류가 발생하였습니다.')
                 console.error(error)
               }
             })
@@ -240,14 +238,17 @@
 
   <!-- 테이블 -->
   <script>
+    var vardrone=1;
     // Function to update the status
     function updateStatus() {
       $.ajax({
         url: '/droneStatus',
+        type: 'POST',
+        data: { number: vardrone },
         success: function (data) {
           // 서버로부터 받아온 상태를 처리하는 코드
           var status = JSON.parse(data)
-          if (status[0][1] == '대기') {
+          if (status[0][1] == '대기중') {
             $('#status').css('color', 'green')
           } else if (status[0][1] == '출동중') {
             $('#status').css('color', 'blue')
@@ -298,12 +299,12 @@
       })
     
       $('#table').on('dblclick', 'tr', function () {
-        var $thirdColumn = $(this).find('td:eq(2)') // 선택한 행의 3열(td)을 가져옴
+        var $thirdColumn = $(this).find('td:eq(1)') // 선택한 행의 3열(td)을 가져옴
         var columnContent = $thirdColumn.text() // 3열의 내용을 가져옴
     
         if (columnContent !== '완료') {
-          $('#myModal').show() // 모달 창을 닫음
-          statusda = setInterval(updateStatus, 3000)
+          $('#myModal').show()
+          statusda = setInterval(updateStatus, 2000)
         } 
       })
     })
@@ -386,7 +387,7 @@
                 btn.textContent = '선택';
                 btn.style.backgroundColor = 'green';
                 $('#selectDroneLabel').text("Drone: " + droneNum)
-                
+                vardrone = droneNum
                 alert(droneNum + '번 드론이 선택되었습니다.');
               };
             })(selectButton, log[0]));

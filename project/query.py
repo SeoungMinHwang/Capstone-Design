@@ -164,10 +164,10 @@ def drone_list(cursor):
     return result
 
 @auto_conn_disconn
-def drone_state(cursor):
-    sql = '''select droneid, dronestate 
+def drone_state(cursor, dronenum=1):
+    sql = f'''select droneid, dronestate 
             from DRONE 
-            WHERE droneid = 1 
+            WHERE droneid = {dronenum} 
             group by droneid, dronestate desc 
             limit 1;'''
     cursor.execute(sql)
@@ -175,8 +175,11 @@ def drone_state(cursor):
     return status_result
 
 @auto_conn_disconn
-def update_drone_state(cursor):
-    sql = '''UPDATE DRONE SET dronestate= '출동중' WHERE droneid = 1;'''
+def update_drone_state(cursor, move, dronenum=1):
+    if move == "go":   
+        sql = f'''UPDATE DRONE SET dronestate= '출동중' WHERE droneid ={dronenum};'''
+    else:
+        sql = f'''UPDATE DRONE SET dronestate= '복귀중' WHERE droneid = {dronenum};'''
     cursor.execute(sql)
     return
 
