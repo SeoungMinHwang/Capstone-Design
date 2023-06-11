@@ -87,6 +87,8 @@
   </div>
   <script>returnbtn
     $(document).ready(function () {
+      var data1 = 30;  // 데이터1
+      var data2 = 50;  // 데이터2
       $('#takeoffbtn').click(function () {
         $.ajax({
           url: '/takeoff',
@@ -96,6 +98,10 @@
             $.ajax({
               url: 'http://192.168.0.23:3000/takeoff',
               method: 'GET',
+              data: {
+                data1: data1,
+                data2: data2
+              },
               success: function (data) {
                 alert(data)
               },

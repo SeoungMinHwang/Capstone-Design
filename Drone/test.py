@@ -214,7 +214,7 @@ class FrontEnd(object):
                     vDistance = vTrue-vTarget
                     
                     #몇 프레임 이상 생기면 얼굴 따라가기
-                    if count_track>=5:
+                    if count_track>=3:
                         
                         self.control_drone(vDistance)
                         
@@ -377,8 +377,9 @@ def index():
 
 @app.route("/takeoff" , methods=['GET'])
 def takeoff():
-    # frontend.start()
-    frontend.drone_move(30,50)
+    data1 = request.args.get('data1')  # 'data1' 쿼리 매개변수 가져오기
+    data2 = request.args.get('data2')  # 'data2' 쿼리 매개변수 가져오기
+    frontend.drone_move(data1,data2)
     return "드론이 이동합니다"
 
 @app.route("/land")
