@@ -307,7 +307,7 @@
   positions.push({
     title: '{{e[0]}}',
     latlng: new kakao.maps.LatLng({{ e[1]}}, {{ e[2]}})
-      })
+        })
   {% endfor %}
   var imageSrc = "../static/marker.png";
   var markers = [];
@@ -348,6 +348,7 @@
           var data = placePerEventList[index];
           for (var i = 0; i < markers.length; i++) {
             if (markers[i].Gb == label) {
+              console.log(markers[i].Gb);
               markers[i].setMap(map);
             }
           }
@@ -381,7 +382,12 @@
 
     }
   });
+  var circles = [];
   function daymap(requestParam) {
+    if (circles.length != 0) {
+      map = new kakao.maps.Map(mapContainer, mapOption);
+      circles = []
+    }
     $.ajax({
       type: 'POST',
       url: '/dashboard_ajax',
@@ -389,15 +395,7 @@
       data: { detectday: requestParam },
       success: function (result) {
         //시작
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = {
-          center: new kakao.maps.LatLng(34.913392690803335, 126.4377071300018), // 지도의 중심좌표
-          level: 3 // 지도의 확대 레벨
-        };
-    
-        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-    
-        var circles = [];
+        circles = [];
         for (var i = 0; i < result.length; i++) {
           var colord;
           if (result[i][3] == 1) {

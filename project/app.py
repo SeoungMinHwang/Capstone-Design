@@ -12,6 +12,7 @@ camera1,camera2,camera3,camera4,camera5,camera6 = camera.camera_start()
 
 user_access = ""
 log_cnt = len(query.event_log())
+RUFirst = 0
 
 # camera = cv2.VideoCapture('http://192.168.35.226:8000/stream.mjpg')
 # camera1 = cv2.VideoCapture(0)
@@ -128,6 +129,8 @@ def login_confirm():
         if (go_login.hash_password(inputPassword) == query.get_password(inputId)):
             session['username'] = inputId
             global user_access
+            global RUFirst
+            RUFirst = 0
             user_access = query.user_access(session['username'])
             cctv_list = query.cctv_list()
             return render_template('map.html',user_access=user_access,cctv_list=cctv_list, map_list=map_list)
@@ -140,6 +143,8 @@ def login_confirm():
 @app.route('/logout')
 def logout():
     session.pop('username',None)
+    global RUFirst
+    RUFirst=0
     return redirect(url_for('login'))
 
 # 날씨 정보 불러오기
@@ -166,6 +171,16 @@ def map_get():
     eventlist = query.event_list(placename)
     result = json.dumps(eventlist)
     return result
+
+# 로그인해서들어오면 확대
+@app.route('/map_first', methods = ['GET'])    
+def map_first():
+    global RUFirst
+    if RUFirst == 0:
+        RUFirst = 1
+        return jsonify(result=0)
+    else:
+        return jsonify(result=1)
 
 # 대시보드
 @app.route("/dashboard")
