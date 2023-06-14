@@ -308,7 +308,7 @@ class FrontEnd(object):
             self.drone_Finished == True
             self.tl_flight.takeoff().wait_for_completed() 
             # self.tl_flight.forward(distance=120).wait_for_completed()
-            self.tl_flight.go(x=self.locx, y=self.locy, z=100, speed=20).wait_for_completed()
+            self.tl_flight.go(x=self.locx, y=self.locy, z=50, speed=20).wait_for_completed()
             self.tl_flight.land().wait_for_completed()
             self.drone_fin = True
             # self.movement_history.append([self.locX,self.locY])
@@ -403,7 +403,7 @@ def land():
     
     conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
     cursor = conn.cursor()
-    sql = f'''UPDATE DRONE SET dronestate= '대기중' WHERE droneid = {dronenum};'''
+    sql = f'''UPDATE DRONE SET dronestate= '복귀완료' WHERE droneid = {dronenum};'''
     cursor.execute(sql)
     conn.commit()
     conn.close()
