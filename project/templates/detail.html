@@ -85,59 +85,71 @@
       </div>
     </div>
   </div>
-  <script>returnbtn
+  <script>
+    var data1 = 30;  // 데이터1
+    var data2 = 50;  // 데이터2
+    function f_takeoffbtn(){
+      $.ajax({
+        url: 'http://192.168.0.23:3000/takeoff',
+        method: 'GET',
+        dataType: 'json',
+        data: {
+          data1: data1,
+          data2: data2,
+          number: vardrone
+        },
+        success: function (data) {
+          alert(data)
+        },
+        error: function (xhr, status, error) {
+          console.error(error)
+        }
+      })
+    }
+    function f_landbtn(){
+      $.ajax({
+        url: 'http://192.168.0.23:3000/land',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+          alert(data)
+        },
+        error: function (xhr, status, error) {
+          console.error(error)
+        }
+      })
+    }
     $(document).ready(function () {
-      var data1 = 30;  // 데이터1
-      var data2 = 50;  // 데이터2
       $('#takeoffbtn').click(function () {
         $.ajax({
           url: '/takeoff',
           method: 'POST',
-          data: { number: vardrone }
+          dataType: 'json',
+          data: { number: vardrone },
           success: function (data) {
-            $.ajax({
-              url: 'http://192.168.0.23:3000/takeoff',
-              method: 'GET',
-              data: {
-                data1: data1,
-                data2: data2
-              },
-              success: function (data) {
-                alert(data)
-              },
-              error: function (xhr, status, error) {
-                console.error(error)
-              }
-            })
+            f_takeoffbtn();
           },
           error: function (xhr, status, error) {
-            console.error(error)
+            console.error(error);
           }
-        })
-      })
+        });
+      });
+
       $('#returnbtn').click(function () {
         $.ajax({
           url: '/land',
           method: 'POST',
-          data: { number: vardrone }
+          dataType: 'json',
+          data: { number: vardrone },
           success: function (data) {
-            $.ajax({
-              url: 'http://192.168.0.23:3000/land',
-              method: 'GET',
-              success: function (data) {
-                alert(data)
-              },
-              error: function (xhr, status, error) {
-                console.error(error)
-              }
-            })
+            f_landbtn();
           },
           error: function (xhr, status, error) {
-            console.error(error)
+            console.error(error);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   </script>
   <script>
     function get_detail() {

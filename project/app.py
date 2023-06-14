@@ -304,20 +304,20 @@ def drone_video():
     return Response(gen_frames(droneVd), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route("/takeoff", methods=["POST"])
+@app.route("/takeoff", methods=['GET', 'POST'])
 def takeoff():
     dronenumber = request.form['number']  # Ajax 요청으로부터 전달된 번호 받기
     querydd=query.update_drone_state("go", dronenumber)
 
-    return querydd
+    return jsonify({'success': True})  # 성공 응답 반환
 
 
-@app.route("/land", methods=["POST"])
+@app.route("/land", methods=['GET', 'POST'])
 def land():
     dronenumber = request.form['number']  # Ajax 요청으로부터 전달된 번호 받기
     querydd=query.update_drone_state("back", dronenumber)
 
-    return querydd
+    return jsonify({'success': True})  # 성공 응답 반환
 
 @app.route("/droneStatus", methods=["POST"])
 def droneStatus():

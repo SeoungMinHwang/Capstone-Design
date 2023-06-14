@@ -1,3 +1,4 @@
+import pymysql
 import robomaster
 from robomaster import robot
 # from robomaster import flight
@@ -10,6 +11,7 @@ import math
 import os
 from flask import Flask, render_template, Response, request, redirect, url_for,session
 import threading
+from flask_cors import CORS
 
 robomaster.config.LOCAL_IP_STR = "192.168.10.2"
 
@@ -371,23 +373,41 @@ frontend = FrontEnd()
 # frontend.start()
 
 app = Flask(__name__)
+CORS(app)
 @app.route('/')
 def index():
     return render_template("drone_popup.html")
 
-@app.route("/takeoff" , methods=['GET'])
+@app.route("/takeoff" , methods=['POST'])
 def takeoff():
-    data1 = request.args.get('data1')  # 'data1' 쿼리 매개변수 가져오기
-    data2 = request.args.get('data2')  # 'data2' 쿼리 매개변수 가져오기
+    data1 = request.form['data1']  # 'data1' 쿼리 매개변수 가져오기
+    data2 = request.form['data2']  # 'data2' 쿼리 매개변수 가져오기
+    dronenum = request.form['number']  # 'data2' 쿼리 매개변수 가져오기
     frontend.drone_move(data1,data2)
-    return "드론이 이동합니다"
+    
+    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
+    cursor = conn.cursor()
+    sql = f'''UPDATE DRONE SET dronestate= '지점착륙' WHERE droneid ={dronenum};'''
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+    
+    return True
 
-@app.route("/land")
+@app.route("/land", methods=['POST'])
 def land():
   # 드론을 착륙시킵니다.
-#   drone.land()
+  
+    dronenum = request.form['number']  # 'data2' 쿼리 매개변수 가져오기
     frontend.return_home()
-    return "드론 복귀"
+    
+    conn = pymysql.connect(host='orion.mokpo.ac.kr',port = 8391, user='remote', password='1234', db='capstone', charset='utf8')
+    cursor = conn.cursor()
+    sql = f'''UPDATE DRONE SET dronestate= '대기중' WHERE droneid = {dronenum};'''
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+    return True
 
 @app.route("/take_video")
 def take_video():
