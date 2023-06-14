@@ -86,12 +86,12 @@
     </div>
   </div>
   <script>
-    var data1 = 30;  // 데이터1
-    var data2 = 50;  // 데이터2
+    var data1 = 100;  // 데이터1
+    var data2 = 0;  // 데이터2
     function f_takeoffbtn(){
       $.ajax({
         url: 'http://192.168.0.23:3000/takeoff',
-        method: 'GET',
+        method: 'POST',
         dataType: 'json',
         data: {
           data1: data1,
@@ -109,8 +109,9 @@
     function f_landbtn(){
       $.ajax({
         url: 'http://192.168.0.23:3000/land',
-        method: 'GET',
+        method: 'POST',
         dataType: 'json',
+        data: { number: vardrone },
         success: function (data) {
           alert(data)
         },
@@ -171,7 +172,7 @@
             var responsestate = result[i][1]
             var sns = result[i][2]
     
-            tableContent += '<tr data-toggle="modal" data-target="#myModal">' + '<td><p>' + timestamp + '</p></td>' + '<td><p>' + responsestate + '</p></td>' + '<td><p>' + sns + '</p></td>' + '</tr>'
+            tableContent += '<tr>' + '<td><p>' + timestamp + '</p></td>' + '<td><p>' + responsestate + '</p></td>' + '<td><p>' + sns + '</p></td>' + '</tr>'
           }
           var tableBody = document.getElementById('table-body')
           tableBody.innerHTML = tableContent
